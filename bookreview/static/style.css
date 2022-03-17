@@ -1,0 +1,16 @@
+body {
+	display: flex;
+	flex-direction: column;
+}
+html, body {
+	height: 100%;
+}
+
+content {
+	flex-grow: 1;
+}
+
+a {
+	text-decoration: none;
+	color: white;
+}

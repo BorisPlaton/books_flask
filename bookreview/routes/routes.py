@@ -1,18 +1,28 @@
-from flask import Blueprint
+from flask import Blueprint, render_template, url_for, redirect
+
 
 routes = Blueprint('main', __name__)
 
 
 @routes.route('/')
 def index():
-    return 'main page'
+    """
+    Домашняя страница.
+    """
+    return render_template('index.html')
 
 
 @routes.route('/login')
 def login():
-    return 'login page'
+    """
+    Страница авторизации.
+    """
+    return render_template('login.html')
 
 
 @routes.route('/register')
 def register():
-    return 'register page'
+    """
+    Страница регистрации.
+    """
+    return render_template('register.html')

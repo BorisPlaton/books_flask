@@ -6,25 +6,27 @@
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 	<link rel="stylesheet" href="../static/style.css">
-	<title>{% block title%} Bookview {% endblock %}</title>
+	<title>{% block title %} Bookview {% endblock %}</title>
 </head>
 <body>
 
 <!-- SITE HEADER -->
-<a href="" id="top_page"></a>
-<header class="container-fluid">
+{% block header %}
+<header class="container-fluid shadow-sm">
 	<div class="row">
 		<div class="col-12 p-4 d-flex justify-content-center justify-content-md-start">
-			<h1 class="fw-bold display-6 mb-0">BOOKVIEW</h1>
+			<a href="{{ url_for('routes.index') }}" id="top"><h1 class="fw-bold display-6 mb-0 text-dark">BOOK<span class="text-warning lead">VIEW</span></h1></a>
 		</div>
 	</div>
 </header>
+{% endblock %}
 
 <!-- NAVBAR -->
-<nav class="container-fluid " style="background-color: #ededed;">
+{% block navbar %}
+<nav class="container-fluid shadow-sm" style="background-color: #ededed;">
 	<div class="container p-4">
 		<div class="row justify-content-center">
-			<div class="col-md-6 col-12">
+			<div class="col-md-6">
 				<form action="" method="post">
 					<div class="d-flex align-items-center form-outline form-white">
 						<input type="text" class="form-control" placeholder="Найти книгу">
@@ -35,19 +37,20 @@
 		</div>
 	</div>
 </nav>
+{% endblock %}
 
 <!-- CONTENT -->
 <content class="container p-5">
-{% block body %}
+{% block content %}
 
 {% endblock %}
 </content>
 
 <!-- FOOTER -->
-<footer class="container-fluid bg-secondary p-5 position-relative">
+<footer class="container-fluid bg-secondary px-5 py-4 position-relative">
 	<div class="row">
 
-		<div class="col-12 mb-2 d-flex justify-content-center text-light">
+		<div class="col-12 d-flex justify-content-center text-light">
 			<h5 class="mb-0 fw-bold">BOOKVIEW <span class="lead">2022</span></h5>			
 		</div>
 
@@ -71,7 +74,7 @@
 	</div>
 
 	<!-- GO TO THE TOP -->
-	<a href="#top_page"><div class="position-absolute text-light bg-success fs-3 circle bottom-0 end-0 m-3 p-2"><i class="bi bi-arrow-up-circle"></i></div></a>
+	<a href="#top"><div class="position-absolute text-light fs-2 bottom-0 end-0 m-3 px-1 rounded bg-success"><i class="bi bi-arrow-up-circle"></i></div></a>
 </footer>
 
 

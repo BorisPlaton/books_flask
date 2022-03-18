@@ -1,2 +1,65 @@
 {% extends 'base.html' %}
 
+{% block title %} Bookview | Login {% endblock %}
+
+{% block navbar %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="row justify-content-center align-items-center" style="height:100%;">
+
+        <!-- LOGIN FORM -->
+        <div class="col-md-4 col-9 border rounded p-4 justify-content-center">
+            <form action="{{ url_for('routes.login') }}" method="post" novalidate>
+                {{ form.csrf_token }}
+                <div class="row justify-content-center g-2">
+
+                    <div class="col-12">
+                        <h3 class="text-center mb-2">Вход</h3>
+                    </div>
+
+                    <!-- LOGIN INPUT -->
+                    <div class="col-12">
+                        {{ form.login(class='form-control', placeholder=form.login.label.text) }}
+                        {% for error in form.login.errors %}
+                            <small class="form-text text-danger">
+                                {{ error }}
+                            </small>
+                        {% endfor %}
+                    </div>
+
+                    <!-- PASSWORD INPUT -->
+                    <div class="col-12">
+                        {{ form.password(class='form-control', placeholder=form.password.label.text) }}
+                        {% for error in form.password.errors %}
+                            <small class="form-text text-danger">
+                                {{ error }}
+                            </small>
+                        {% endfor %}
+                    </div>
+
+                    <!-- REMEMBER ME CHECKBOX -->
+                    <div class="col-12">
+                        {{ form.remember(class='form-check-input') }}
+                        {{ form.remember.label }}
+                    </div>
+
+                    <!-- LINK TO REGISTRATION PAGE -->
+                    <div class="col-12">
+                        <small><a href="{{ url_for('routes.register') }}" class="text-primary">Нет аккаунта?</a></small>
+                    </div>
+
+                    <!-- SUBMIT BUTTON -->
+                    <div class="d-flex justify-content-center">
+                        {{ form.submit(class='btn btn-outline-primary mt-4') }}
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+
+{% endblock %}

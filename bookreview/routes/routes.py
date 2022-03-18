@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, url_for, redirect
+from bookreview.forms import LoginForm, RegisterForm
 
-
-routes = Blueprint('main', __name__)
+routes = Blueprint('routes', __name__)
 
 
 @routes.route('/')
@@ -12,17 +12,21 @@ def index():
     return render_template('index.html')
 
 
-@routes.route('/login')
+@routes.route('/login', methods=["POST", "GET"])
 def login():
     """
     Страница авторизации.
     """
-    return render_template('login.html')
+    login_form = LoginForm()
+    if login_form.validate_on_submit():
+        return f"login {login_form.login.data} password {login_form.password.data} remember {login_form.remember.data}"
+    return render_template('login.html', form=login_form)
 
 
-@routes.route('/register')
+@routes.route('/register', methods=["POST", "GET"])
 def register():
     """
     Страница регистрации.
     """
-    return render_template('register.html')
+    register_form = RegisterForm()
+    return render_template('register.html', form=register_form)

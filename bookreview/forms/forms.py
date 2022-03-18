@@ -1,6 +1,7 @@
-from flask_wtf import FlaskForm, Form
-from wtforms.validators import InputRequired, EqualTo, Email
-from wtforms.fields import StringField, PasswordField, SubmitField, BooleanField, EmailField
+from flask_wtf import FlaskForm
+from wtforms.validators import InputRequired, EqualTo, Email, ValidationError
+from wtforms.fields import StringField, PasswordField, SubmitField, BooleanField
+from bookreview.models.models import User
 
 
 class LoginForm(FlaskForm):
@@ -16,3 +17,11 @@ class RegisterForm(FlaskForm):
     password = PasswordField("Пароль", validators=[InputRequired("Введите пароль")])
     confirm_password = PasswordField("Повторите пароль", validators=[EqualTo('password', "Пароли должны совпадать")])
     submit = SubmitField("Зарегистрироваться")
+
+    def validate_email(self, email):
+        if User.query.filter_by(email=email.data).first():
+            raise ValidationError('Такая почта уже зарегистрирована')
+
+    def validate_login(self, login):
+        if User.query.filter_by(login=login.data).first():
+            raise ValidationError('Такой логин уже зарегистрирован')

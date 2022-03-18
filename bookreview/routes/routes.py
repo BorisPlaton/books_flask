@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, url_for, redirect
-from bookreview.forms import LoginForm, RegisterForm
+from bookreview.forms.forms import LoginForm, RegisterForm
 
 routes = Blueprint('routes', __name__)
 
@@ -29,4 +29,6 @@ def register():
     Страница регистрации.
     """
     register_form = RegisterForm()
+    if register_form.validate_on_submit():
+        return f"login {register_form.login.data} password {register_form.password.data}"
     return render_template('register.html', form=register_form)

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm, Form
 from wtforms.validators import InputRequired, EqualTo
-from wtforms.fields import StringField, PasswordField, SubmitField, SelectField, BooleanField, EmailField
+from wtforms.fields import StringField, PasswordField, SubmitField, BooleanField, EmailField
 
 
 class LoginForm(FlaskForm):

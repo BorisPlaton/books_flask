@@ -7,7 +7,12 @@
 
 {% block content %}
 
-    <div class="row justify-content-center align-items-center" style="height:100%;">
+    <div class="row flex-column justify-content-center align-items-center" style="height:100%;">
+
+
+        {% for ctg, msg in get_flashed_messages(True) %}
+            <div class="col-md-4 col-9 alert alert-{{ ctg }}" style="width: 350px;">{{ msg }}</div>
+        {% endfor %}
 
         <!-- LOGIN FORM -->
         <div class="col-md-4 col-9 border rounded p-4 justify-content-center">

@@ -14,3 +14,6 @@ class User(db.Model, UserMixin):
     password = db.Column(db.Text, nullable=False)
     profile_photo = db.Column(db.Text, default='standard_user_pic.jpg')
     username = db.Column(db.String(24))
+
+    def __repr__(self):
+        return f"User {self.id} | {self.login} | {self.email}"

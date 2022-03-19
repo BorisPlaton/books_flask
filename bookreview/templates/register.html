@@ -50,14 +50,14 @@
         {% endfor %}
     </div>
 
-    <!-- LINK TO REGISTRATION PAGE -->
+    <!-- LINK TO LOGIN PAGE -->
     <div class="col-12 mt-0">
         <small><a href="{{ url_for('routes.login') }}" class="text-primary">Войти</a></small>
     </div>
 
     <!-- SUBMIT BUTTON -->
     <div class="d-flex justify-content-center">
-        {{ form.submit(class='btn btn-outline-primary mt-4') }}
+        {{ form.submit(class='btn btn-outline-primary mt-3') }}
     </div>
 
 {% endblock %}

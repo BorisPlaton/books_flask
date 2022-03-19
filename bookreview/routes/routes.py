@@ -1,7 +1,7 @@
-from flask import Blueprint, render_template, url_for, redirect, flash
+from flask import Blueprint, render_template, url_for, redirect, abort
 from flask_login import current_user, login_user, logout_user, login_required
 from flask_bcrypt import check_password_hash, generate_password_hash
-from bookreview.forms.forms import LoginForm, RegisterForm
+from bookreview.forms.forms import LoginForm, RegisterForm, RecoveryForm
 from bookreview.models.models import User
 from bookreview import db
 
@@ -33,6 +33,19 @@ def login():
         return "Вы вошли"
 
     return render_template('login.html', form=login_form)
+
+
+@routes.route("/recovery/<option>")
+def recovery(option: str):
+    """
+    Восстановление пароля или логина.
+    :param option: Путь, который указывает, что нужно восстановить
+    """
+    recovery_form = RecoveryForm()
+    if option in ("password", "login"):
+        form_title = "пароля" if option == "password" else "логина"
+        return render_template("recovery.html", form=recovery_form, title=form_title)
+    abort(404)
 
 
 @routes.route('/register', methods=["POST", "GET"])

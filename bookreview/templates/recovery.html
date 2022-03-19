@@ -1,0 +1,35 @@
+{% extends 'base_auth.html' %}
+
+{% block title %} Bookview | Recovery {% endblock %}
+
+{% block form_action %} # {% endblock %}
+
+{% block auth_body %}
+    
+    <!-- FORM TITLE -->
+    <div class="col-12">
+        <h3 class="text-center mb-3 fs-5">Восстановление {{ title }}</h3>
+    </div>
+
+    <!-- EMAIL INPUT -->
+    <div class="col-12">
+        {{ form.email(class="form-control", placeholder=form.email.label.text)}}
+    </div>
+
+    <div class="col-12">
+        <p class="m-0" style="line-height: 1em;"><small class="text-secondary">Введите вашу почту, на которую мы отправим лист для востановления {{ title }}.</small></p>
+    </div>
+
+    <!-- SUBMIT BUTTON  -->
+    <div class="col-12 d-flex justify-content-between align-items-center mt-3">
+        <small><a href="{{ url_for('routes.login') }}" class="text-primary">Войти</a></small>
+        {{ form.submit(class="btn btn-outline-primary", placeholder=form.submit.label.text)}}
+    </div>
+
+
+    <div class="col-12"></div>
+
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

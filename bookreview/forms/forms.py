@@ -6,6 +6,10 @@ from bookreview.models.models import User
 
 
 class LoginForm(FlaskForm):
+    """
+    Форма для авторизации пользователя при входе на сайт.
+    Проверяет правильность ввода пароля и логина. В ином случае вызывает ошибку ValidationError.
+    """
     login = StringField("Логин", validators=[InputRequired("Введите логин")])
     password = PasswordField("Пароль", validators=[InputRequired("Введите пароль")])
     remember = BooleanField("Запомнить меня")
@@ -22,6 +26,10 @@ class LoginForm(FlaskForm):
 
 
 class RegisterForm(FlaskForm):
+    """
+    Форма для регистрации пользователя.
+    Проверяет уникальность логина и почты. В ином случае вызывает ошибку ValidationError.
+    """
     login = StringField("Логин", validators=[InputRequired("Введите логин")])
     email = StringField("Почта", validators=[InputRequired("Введите почту"), Email("Введите почту")])
     password = PasswordField("Пароль", validators=[InputRequired("Введите пароль")])
@@ -35,3 +43,12 @@ class RegisterForm(FlaskForm):
     def validate_login(self, login):
         if User.query.filter_by(login=login.data).first():
             raise ValidationError('Такой логин уже зарегистрирован')
+
+
+class RecoveryForm(FlaskForm):
+    email = StringField("Почта", validators=[InputRequired("Введите почту"), Email("Введите почту")])
+    submit = SubmitField("Отправить")
+
+    def validate_email(self, email):
+        if not User.query.filter_by(email=email.data).first():
+            raise ValidationError('Такой почты нет')

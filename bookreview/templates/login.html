@@ -5,7 +5,8 @@
 {% block form_action %} {{ url_for('routes.login') }} {% endblock %}
 
 {% block auth_body %}
-
+    
+    <!-- FORM TITLE -->
     <div class="col-12">
         <h4 class="text-center fs-5 mb-3">Вход в аккаунт</h4>
     </div>
@@ -31,8 +32,8 @@
     </div>
 
     <!-- REMEMBER ME CHECKBOX -->
-    <div class="col-12">
-        {{ form.remember(class='form-check-input') }}
+    <div class="col-12 d-flex mt-1 align-items-center">
+        {{ form.remember(class='form-check-input me-1') }}
         {{ form.remember.label }}
     </div>
 

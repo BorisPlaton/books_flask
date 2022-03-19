@@ -29,10 +29,8 @@ def login():
 
     if login_form.validate_on_submit():
         user = User.query.filter_by(login=login_form.login.data).first()
-        if user and check_password_hash(user.password, login_form.password.data):  # Проверяем корректность данных
-            login_user(user)
-            return "Вы вошли"
-        flash("Неправильный логин или пароль", category="danger")
+        login_user(user)
+        return "Вы вошли"
 
     return render_template('login.html', form=login_form)
 
@@ -65,5 +63,8 @@ def register():
 @routes.route('/logout')
 @login_required
 def logout():
+    """
+    Выход из учетной записи.
+    """
     logout_user()
     return redirect(url_for('routes.login'))

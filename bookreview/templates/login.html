@@ -1,70 +1,54 @@
-{% extends 'base.html' %}
+{% extends 'base_auth.html' %}
 
 {% block title %} Bookview | Login {% endblock %}
 
-{% block navbar %}
-{% endblock %}
+{% block form_action %} {{ url_for('routes.login') }} {% endblock %}
 
-{% block content %}
+{% block auth_body %}
 
-    <div class="row flex-column justify-content-center align-items-center" style="height:100%;">
-
-
-        {% for ctg, msg in get_flashed_messages(True) %}
-            <div class="col-md-4 col-9 alert alert-{{ ctg }}" style="width: 350px;">{{ msg }}</div>
-        {% endfor %}
-
-        <!-- LOGIN FORM -->
-        <div class="col-md-4 col-9 border rounded p-4 justify-content-center">
-            <form action="{{ url_for('routes.login') }}" method="post" novalidate>
-                {{ form.csrf_token }}
-                <div class="row justify-content-center g-2">
-
-                    <div class="col-12">
-                        <h3 class="text-center mb-2">Вход</h3>
-                    </div>
-
-                    <!-- LOGIN INPUT -->
-                    <div class="col-12">
-                        {{ form.login(class='form-control', placeholder=form.login.label.text) }}
-                        {% for error in form.login.errors %}
-                            <small class="form-text text-danger">
-                                {{ error }}
-                            </small>
-                        {% endfor %}
-                    </div>
-
-                    <!-- PASSWORD INPUT -->
-                    <div class="col-12">
-                        {{ form.password(class='form-control', placeholder=form.password.label.text) }}
-                        {% for error in form.password.errors %}
-                            <small class="form-text text-danger">
-                                {{ error }}
-                            </small>
-                        {% endfor %}
-                    </div>
-
-                    <!-- REMEMBER ME CHECKBOX -->
-                    <div class="col-12">
-                        {{ form.remember(class='form-check-input') }}
-                        {{ form.remember.label }}
-                    </div>
-
-                    <!-- LINK TO REGISTRATION PAGE -->
-                    <div class="col-12">
-                        <small><a href="{{ url_for('routes.register') }}" class="text-primary">Нет аккаунта?</a></small>
-                    </div>
-
-                    <!-- SUBMIT BUTTON -->
-                    <div class="d-flex justify-content-center">
-                        {{ form.submit(class='btn btn-outline-primary mt-4') }}
-                    </div>
-
-                </div>
-
-            </form>
-        </div>
+    <div class="col-12">
+        <h4 class="text-center fs-5 mb-3">Вход в аккаунт</h4>
     </div>
 
+    <!-- LOGIN INPUT -->
+    <div class="col-12">
+        {{ form.login(class='form-control', placeholder=form.login.label.text) }}
+        {% for error in form.login.errors %}
+            <small class="form-text text-danger">
+                {{ error }}
+            </small>
+        {% endfor %}
+    </div>
 
+    <!-- PASSWORD INPUT -->
+    <div class="col-12">
+        {{ form.password(class='form-control', placeholder=form.password.label.text) }}
+        {% for error in form.password.errors %}
+            <small class="form-text text-danger">
+                {{ error }}
+            </small>
+        {% endfor %}
+    </div>
+
+    <!-- REMEMBER ME CHECKBOX -->
+    <div class="col-12">
+        {{ form.remember(class='form-check-input') }}
+        {{ form.remember.label }}
+    </div>
+
+    <!-- SUBMIT BUTTON -->
+    <div class="d-flex justify-content-center align-items-center">
+        {{ form.submit(class='btn mt-2 btn-outline-primary') }}
+    </div>
+
+    <!-- PASSWORD RECOVERY LINK -->
+    <div class="col-12 mt-5 d-flex flex-column">
+        <small><a href="{{ url_for('routes.register') }}" class="text-primary">Востановить логин</a></small>
+        <small><a href="{{ url_for('routes.register') }}" class="text-primary">Забыли пароль?</a></small>
+        <small><a href="{{ url_for('routes.register') }}" class="text-primary">Создать аккаунт</a></small>
+    </div>
+
+{% endblock %}
+
+{% block footer %}
 {% endblock %}

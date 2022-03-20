@@ -2,7 +2,7 @@
 
 {% block title %} Bookview | Recovery {% endblock %}
 
-{% block form_action %} # {% endblock %}
+{% block form_action %} {{ url_for('routes.recovery', option=option) }} {% endblock %}
 
 {% block auth_body %}
     
@@ -14,6 +14,12 @@
     <!-- EMAIL INPUT -->
     <div class="col-12">
         {{ form.email(class="form-control", placeholder=form.email.label.text)}}
+        {% for error in form.email.errors %}
+        <small class="form-text text-danger">
+            {{ error }}
+        </small>
+        <br>
+        {% endfor %}
     </div>
 
     <div class="col-12">

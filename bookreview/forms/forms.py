@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_bcrypt import check_password_hash
-from wtforms.validators import InputRequired, EqualTo, Email, ValidationError
-from wtforms.fields import StringField, PasswordField, SubmitField, BooleanField
+from wtforms.validators import InputRequired, EqualTo, Email, ValidationError, Length
+from wtforms.fields import StringField, PasswordField, SubmitField, BooleanField, Field
 from bookreview.models.models import User
 
 
@@ -30,7 +30,7 @@ class RegisterForm(FlaskForm):
     Форма для регистрации пользователя.
     Проверяет уникальность логина и почты. В ином случае вызывает ошибку ValidationError.
     """
-    login = StringField("Логин", validators=[InputRequired("Введите логин")])
+    login = StringField("Логин", validators=[InputRequired("Введите логин"), Length(max=24)])
     email = StringField("Почта", validators=[InputRequired("Введите почту"), Email("Введите почту")])
     password = PasswordField("Пароль", validators=[InputRequired("Введите пароль")])
     confirm_password = PasswordField("Повторите пароль", validators=[EqualTo('password', "Пароли должны совпадать")])
@@ -50,5 +50,5 @@ class RecoveryForm(FlaskForm):
     submit = SubmitField("Отправить")
 
     def validate_email(self, email):
-        if not User.query.filter_by(email=email.data).first():
+        if not self.email.errors and not User.query.filter_by(email=email.data).first():
             raise ValidationError('Такой почты нет')

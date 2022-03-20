@@ -1,6 +1,6 @@
 {% extends 'base_auth.html' %}
 
-{% block title %} Bookview | Login {% endblock %}
+{% block title %} Bookview | Вход в аккаунт {% endblock %}
 
 {% block form_action %} {{ url_for('routes.login') }} {% endblock %}
 
@@ -31,23 +31,24 @@
         {% endfor %}
     </div>
 
+    <!-- RESSET PASSWORD LINK -->
+    <div class="col-12 mt-1 d-flex flex-column">
+        <small><a href="{{ url_for('routes.resset_password') }}" class="text-primary">Забыли пароль?</a></small>
+    </div>
+
     <!-- REMEMBER ME CHECKBOX -->
-    <div class="col-12 d-flex mt-1 align-items-center">
+    <div class="col-12 d-flex align-items-center">
         {{ form.remember(class='form-check-input me-1') }}
         {{ form.remember.label }}
     </div>
 
     <!-- SUBMIT BUTTON -->
-    <div class="d-flex justify-content-center align-items-center">
-        {{ form.submit(class='btn mt-3 btn-outline-primary', style="width: 40%;") }}
+    <div class="col-12 d-flex justify-content-between align-items-center mt-5">
+        <small><a href="{{ url_for('routes.register') }}" class="text-primary">Создать аккаунт</a></small>
+        {{ form.submit(class='btn btn-outline-primary', style="width: 40%;") }}
     </div>
 
-    <!-- RECOVERY AND REGISTRATION LINKS -->
-    <div class="col-12 mt-5 d-flex flex-column">
-        <small><a href="{{ url_for('routes.recovery', option='login') }}" class="text-primary">Востановить логин</a></small>
-        <small><a href="{{ url_for('routes.recovery', option='password') }}" class="text-primary">Забыли пароль?</a></small>
-        <small><a href="{{ url_for('routes.register') }}" class="text-primary">Создать аккаунт</a></small>
-    </div>
+    
 
 {% endblock %}
 

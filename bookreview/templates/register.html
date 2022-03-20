@@ -1,6 +1,6 @@
 {% extends 'base_auth.html' %}
 
-{% block title %} Bookview | Register {% endblock %}
+{% block title %} Bookview | Регистрация {% endblock %}
 
 {% block form_action %} {{ url_for('routes.register') }} {% endblock %}
 
@@ -52,13 +52,13 @@
     </div>
 
     <!-- LINK TO LOGIN PAGE -->
-    <div class="col-12 mt-0">
+    <div class="col-12 mt-1">
         <small><a href="{{ url_for('routes.login') }}" class="text-primary">Войти</a></small>
     </div>
 
     <!-- SUBMIT BUTTON -->
-    <div class="d-flex justify-content-center">
-        {{ form.submit(class='btn btn-outline-primary mt-3') }}
+    <div class="d-flex justify-content-center mt-5">
+        {{ form.submit(class='btn btn-outline-primary') }}
     </div>
 
 {% endblock %}

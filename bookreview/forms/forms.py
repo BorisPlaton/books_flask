@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_bcrypt import check_password_hash
 from wtforms.validators import InputRequired, EqualTo, Email, ValidationError, Length
-from wtforms.fields import StringField, PasswordField, SubmitField, BooleanField, Field
+from wtforms.fields import StringField, PasswordField, SubmitField, BooleanField
 from bookreview.models.models import User
 
 
@@ -45,10 +45,27 @@ class RegisterForm(FlaskForm):
             raise ValidationError('Такой логин уже зарегистрирован')
 
 
-class RecoveryForm(FlaskForm):
+class EmailSendForm(FlaskForm):
+    """
+    Форма для отправки письма пользователю.
+    Проверяет правильность существование почты. В ином случае вызывает ошибку ValidationError.
+    """
     email = StringField("Почта", validators=[InputRequired("Введите почту"), Email("Введите почту")])
     submit = SubmitField("Отправить")
 
     def validate_email(self, email):
+        """
+        Проверяет существование почты только если данные в поле email корректны.
+        """
         if not self.email.errors and not User.query.filter_by(email=email.data).first():
             raise ValidationError('Такой почты нет')
+
+
+class SetNewPassword(FlaskForm):
+    """
+    Форма для изменения пароля
+    """
+    new_password = PasswordField("Пароль", validators=[InputRequired("Введите новый пароль")])
+    confirm_new_password = PasswordField("Повторите пароль", validators=[EqualTo('new_password',
+                                                                                 message="Пароли должны совпадать")])
+    submit = SubmitField("Сохранить")

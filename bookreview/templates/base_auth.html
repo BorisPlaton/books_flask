@@ -25,7 +25,7 @@
 
                     <!-- LOGO -->
                     <div class="col-12">
-                        <a href="{{ url_for('routes.index') }}"><h5 class="fw-bold fs-2 text-center mb-3 text-dark">BOOK<span class="text-warning lead">VIEW</span></h5></a>
+                        <a href="{{ url_for('main.index') }}"><h5 class="fw-bold fs-2 text-center mb-3 text-dark">BOOK<span class="text-warning lead">VIEW</span></h5></a>
                     </div>
 
                     {% block auth_body %}
@@ -55,7 +55,7 @@
                         </div>
 
                         <div class="col-12 mt-0">
-                            <small><a href="{{ url_for('routes.register') }}" class="text-primary">Забыли пароль?</a></small>
+                            <small><a href="{{ url_for('authorization.register') }}" class="text-primary">Забыли пароль?</a></small>
                         </div>
 
                         <!-- REMEMBER ME CHECKBOX -->
@@ -71,7 +71,7 @@
 
                         <!-- SUBMIT BUTTON -->
                         <div class="d-flex justify-content-between align-items-center">
-                            <small><a href="{{ url_for('routes.register') }}" class="text-primary">Создать аккаунт</a></small>
+                            <small><a href="{{ url_for('authorization.register') }}" class="text-primary">Создать аккаунт</a></small>
                             {{ form.submit(class='btn btn-outline-primary') }}
                         </div>
 

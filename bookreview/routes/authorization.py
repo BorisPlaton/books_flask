@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, url_for, redirect, abort, flash
+from flask import Blueprint, render_template, url_for, redirect, flash
 from flask_login import current_user, login_user, logout_user, login_required
 from flask_bcrypt import generate_password_hash
 from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
@@ -7,18 +7,10 @@ from bookreview.models.models import User
 from bookreview.func import send_reset_message, send_confirm_message
 from bookreview import db, app
 
-routes = Blueprint('routes', __name__)
+authorization = Blueprint('authorization', __name__)
 
 
-@routes.route('/')
-def index():
-    """
-    Домашняя страница.
-    """
-    return render_template('index.html')
-
-
-@routes.route('/login', methods=["POST", "GET"])
+@authorization.route('/login', methods=["POST", "GET"])
 def login():
     """
     Страница авторизации.
@@ -26,19 +18,19 @@ def login():
     """
 
     if current_user.is_authenticated:
-        return redirect(url_for('routes.index'))
+        return redirect(url_for('main.index'))
 
     login_form = LoginForm()
 
     if login_form.validate_on_submit():
         user = User.query.filter_by(login=login_form.login.data).first()
         login_user(user)
-        return "Вы вошли"
+        return redirect(url_for('main.index'))
 
     return render_template('login.html', form=login_form)
 
 
-@routes.route("/resset_password", methods=["POST", "GET"])
+@authorization.route("/resset_password", methods=["POST", "GET"])
 def resset_password():
     """
     Восстановление пароля.
@@ -46,7 +38,7 @@ def resset_password():
     """
 
     if current_user.is_authenticated:
-        return redirect(url_for('routes.index'))
+        return redirect(url_for('main.index'))
 
     email_form = EmailSendForm()
 
@@ -56,12 +48,12 @@ def resset_password():
         send_reset_message(user)
 
         flash(f"На вашу почту было отправлено письмо для изменения пароля", category="primary")
-        return redirect(url_for('routes.login'))
+        return redirect(url_for('authorization.login'))
 
     return render_template("recovery.html", form=email_form)
 
 
-@routes.route("/set_new_password/<token>", methods=["POST", "GET"])
+@authorization.route("/set_new_password/<token>", methods=["POST", "GET"])
 def set_new_password(token):
     """
     Изменение пароля пользователя со страницы входа в аккаунт.
@@ -70,7 +62,7 @@ def set_new_password(token):
     """
 
     if current_user.is_authenticated:
-        return redirect(url_for('routes.index'))
+        return redirect(url_for('main.index'))
 
     s = URLSafeTimedSerializer(app.config["SECRET_KEY"])
     password_resset_form = SetNewPassword()
@@ -82,17 +74,17 @@ def set_new_password(token):
             user.password = generate_password_hash(password_resset_form.new_password.data)
             db.session.commit()
             flash("Пароль успешно изменён", category="success")
-            return redirect(url_for("routes.login"))
+            return redirect(url_for("authorization.login"))
         return render_template("set_new_password.html", form=password_resset_form, token=token)
     except BadSignature:
         flash("Неверная ссылка", category='danger')
     except SignatureExpired:
         flash("Срок действия ссылки истёк", category='danger')
 
-    return redirect(url_for('routes.login'))
+    return redirect(url_for('authorization.login'))
 
 
-@routes.route("/confirm_registration/<token>")
+@authorization.route("/confirm_registration/<token>")
 def confirm_registration(token):
     """
     Подтверждение регистрации пользователя и занесения его в базу данных.
@@ -101,7 +93,7 @@ def confirm_registration(token):
     """
 
     if current_user.is_authenticated:
-        return redirect(url_for('routes.index'))
+        return redirect(url_for('main.index'))
 
     s = URLSafeTimedSerializer(app.config["SECRET_KEY"])
     try:
@@ -115,10 +107,10 @@ def confirm_registration(token):
     except SignatureExpired:
         flash("Срок действий ссылки истёк", category="danger")
 
-    return redirect(url_for("routes.login"))
+    return redirect(url_for("authorization.login"))
 
 
-@routes.route('/register', methods=["POST", "GET"])
+@authorization.route('/register', methods=["POST", "GET"])
 def register():
     """
     Страница регистрации.
@@ -126,7 +118,7 @@ def register():
     """
 
     if current_user.is_authenticated:
-        return redirect(url_for('routes.index'))
+        return redirect(url_for('main.index'))
 
     register_form = RegisterForm()
     if register_form.validate_on_submit():
@@ -136,16 +128,16 @@ def register():
             "password": generate_password_hash(register_form.password.data).decode('utf-8'),
         })
         flash("На вашу почту было отправлено письмо для подтверждения регистрации", category="primary")
-        return redirect(url_for('routes.login'))
+        return redirect(url_for('authorization.login'))
 
     return render_template('register.html', form=register_form)
 
 
-@routes.route('/logout')
+@authorization.route('/logout')
 @login_required
 def logout():
     """
     Выход из учетной записи.
     """
     logout_user()
-    return redirect(url_for('routes.login'))
+    return redirect(url_for('authorization.login'))

@@ -2,7 +2,7 @@
 
 {% block title %} Bookview | Регистрация {% endblock %}
 
-{% block form_action %} {{ url_for('routes.register') }} {% endblock %}
+{% block form_action %} {{ url_for('authorization.register') }} {% endblock %}
 
 {% block auth_body %}
     
@@ -53,7 +53,7 @@
 
     <!-- LINK TO LOGIN PAGE -->
     <div class="col-12 mt-1">
-        <small><a href="{{ url_for('routes.login') }}" class="text-primary">Войти</a></small>
+        <small><a href="{{ url_for('authorization.login') }}" class="text-primary">Войти</a></small>
     </div>
 
     <!-- SUBMIT BUTTON -->

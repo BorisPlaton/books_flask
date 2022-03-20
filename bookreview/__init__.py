@@ -13,6 +13,7 @@ bcrypt = Bcrypt(app)
 mail = Mail(app)
 
 from bookreview.models.models import load_user
-from bookreview.routes.routes import routes
+from bookreview.routes import authorization, main
 
-app.register_blueprint(routes)
+app.register_blueprint(authorization)
+app.register_blueprint(main)

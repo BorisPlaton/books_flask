@@ -11,27 +11,33 @@
 
 <div class="container">
 	
-	<div class="row border-bottom pb-4">
+	<div class="row border-bottom pb-4 align-items-center">
 
 		<!-- PROFILE PIC -->
 		<div class="col-lg-4 p-0 d-flex flex-column align-items-center justify-content-center">
 
-			<img src="{{ url_for('static', filename='profile_img/' + current_user.profile_photo)}}" class="rounded-circle mb-2 img-fluid w-50">
+			<div class="user_photo rounded-circle" style="background-image: url({{ url_for('static', filename='profile_img/' + current_user.profile_photo) }});">
+				<div class="holder rounded-circle d-flex justify-content-center align-items-center">
 
-			<form action="{{ url_for('main.settings') }}" method="post" enctype="multipart/form-data" novalidate>
-				<div class="d-flex flex-column align-items-center justify-content-center">
-					{{ form.csrf_token }}
-					{{ form.photo(class='form-control form-control-sm', id="formFileSm") }}
-					{% for error in form.photo.errors %}
-				        <p class="m-0" style="line-height: 1em;">
-				            <small class="form-text text-danger">
-				                {{ error }}
-				            </small>
-				        </p>
-			        {% endfor %}
-					{{ form.submit(class='btn btn-outline-primary btn-sm mt-2')}}
+					<button type="button" class="btn user_pick_photo p-5 border-none" data-bs-toggle="modal" data-bs-target="#exampleModal">
+					  <i class="bi bi-camera-fill text-light fs-5"></i>
+					</button>
+					<!-- <form action="{{ url_for('main.settings') }}" method="post" enctype="multipart/form-data" novalidate>
+						<div class="d-flex align-items-start justify-content-start">
+							{{ form.csrf_token }}
+							{{ form.photo(class='form-control form-control-sm', id="formFileSm") }}
+							{% for error in form.photo.errors %}
+						        <p class="m-0" style="line-height: 1em;">
+						            <small class="form-text text-danger">
+						                {{ error }}
+						            </small>
+						        </p>
+					        {% endfor %}
+							{{ form.submit(class='btn btn-outline-primary btn-sm')}}
+						</div>
+					</form> -->
 				</div>
-			</form>
+			</div>
 
 		</div>
 
@@ -41,7 +47,7 @@
 			<div class="row g-3 lead">
 
 				<!-- EMAIL -->
-				<div class="col-lg-6 d-flex flex-column">
+				<div class="col-lg-6 d-flex flex-column ">
 					<h4 class="text-secondary mb-0">Почта:</h4>
 					<span class="fs-5">{{ current_user.email }}</span>
 				</div>

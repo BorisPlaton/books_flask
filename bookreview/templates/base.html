@@ -54,21 +54,29 @@
 				<div class="sticky-top">
 					<div class="d-flex flex-column justify-content-start px-4 border-end">
 
-						<!-- USERNAME AND PROFILE PIC -->
-						<div class="d-flex align-items-center justify-content-start mb-3">
-							<img class="rounded-circle" style="height: 30px;" src="{{ url_for('static', filename='profile_img/' + current_user.profile_photo) }}">
-							<a href="#" class="text-dark"><span class="ms-2 fs-5">{{ current_user.username }}</span></a>
-						</div>
+						{% if current_user.is_authenticated %}
+							<!-- USERNAME AND PROFILE PIC -->
+							<div class="d-flex align-items-center justify-content-start mb-3">
+								<img class="rounded-circle" style="height: 30px;" src="{{ url_for('static', filename='profile_img/' + current_user.profile_photo) }}">
+								<a href="#" class="text-dark"><span class="ms-2 fs-5">{{ current_user.username }}</span></a>
+							</div>
 
-						<!-- SETTINGS -->
-						<div class="">
-							<a href="{{ url_for('main.settings') }}" class="sidebar_link"><i class="bi bi-gear me-1"></i>Настройки</a>
-						</div>
+							<!-- SETTINGS -->
+							<div>
+								<a href="{{ url_for('main.settings') }}" class="sidebar_link"><i class="bi bi-gear me-1"></i>Настройки</a>
+							</div>
 
-						<!-- EXIT -->
-						<div>
-							<a href="{{ url_for('authorization.logout') }}" class="sidebar_link"><i class="bi bi-box-arrow-left me-1"></i>Выход</a>
-						</div>
+							<!-- EXIT -->
+							<div>
+								<a href="{{ url_for('authorization.logout') }}" class="sidebar_link"><i class="bi bi-box-arrow-left me-1"></i>Выход</a>
+							</div>
+						{% else %}
+							<!-- LOG IN -->
+							<div>
+								<a href="{{ url_for('authorization.login') }}" class="sidebar_link"><i class="bi bi-box-arrow-in-right me-1"></i>Вход</a>
+							</div>
+						{% endif %}
+
 
 
 					</div>	

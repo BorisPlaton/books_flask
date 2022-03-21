@@ -27,3 +27,33 @@ a:hover {
 .sidebar_link:hover {
 	color: #212529;
 }
+
+.user_photo {
+	width: 175px;
+	height: 175px;
+	background-repeat:no-repeat;
+	background-size:contain;
+	background-position:center;
+}
+
+.holder {
+	opacity: 0;
+	height: 100%;
+	width: %;
+	background: rgba(0, 0, 0, 0.4);
+	transition: 0.2s all ease-out;
+}
+
+.user_photo:hover .holder {
+	opacity: 1;
+}
+
+.user_photo:hover .holder button {
+	opacity: 1;
+}
+
+.user_pick_photo:active, .user_pick_photo:active:focus, 
+.user_pick_photo:focus, .user_pick_photo {
+	box-shadow: none;
+	outline: none;
+}

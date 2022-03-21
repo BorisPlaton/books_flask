@@ -11,6 +11,7 @@ flask-bcrypt = "*"
 email-validator = "*"
 itsdangerous = "*"
 flask-mail = "*"
+flask-uploads = "*"
 
 [dev-packages]
 

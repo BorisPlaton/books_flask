@@ -14,7 +14,7 @@ def send_reset_message(user):
     token = s.dumps({"id": user.id})
     msg = Message(f'Изменение пароля', recipients=[user.email])
     msg.body = f"""Перейдите по ссылке, чтоб изменить пароль, если вы этого не делали, тогда просто проигнорируйте это письмо: 
-{url_for('routes.set_new_password', token=token, _external=True)}"""
+{url_for('authorization.set_new_password', token=token, _external=True)}"""
     mail.send(msg)
 
 
@@ -28,5 +28,5 @@ def send_confirm_message(user_info: dict):
     token = s.dumps(user_info)
     msg = Message(f'Подтверждение регистрации', recipients=[user_info["email"]])
     msg.body = f"""Перейдите по ссылке, чтоб зарегистрироваться, если вы этого не делали, тогда просто проигнорируйте это письмо:
-{url_for('routes.confirm_registration', token=token, _external=True)}"""
+{url_for('authorization.confirm_registration', token=token, _external=True)}"""
     mail.send(msg)

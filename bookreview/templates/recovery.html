@@ -15,10 +15,11 @@
     <div class="col-12">
         {{ form.email(class="form-control", placeholder=form.email.label.text)}}
         {% for error in form.email.errors %}
-        <small class="form-text text-danger">
-            {{ error }}
-        </small>
-        <br>
+        <p class="m-0" style="line-height: 1em;">
+            <small class="form-text text-danger">
+                {{ error }}
+            </small>
+        </p>
         {% endfor %}
     </div>
 

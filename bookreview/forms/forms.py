@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
 from flask_bcrypt import check_password_hash
-from wtforms.validators import InputRequired, EqualTo, Email, ValidationError, Length
-from wtforms.fields import StringField, PasswordField, SubmitField, BooleanField
-from bookreview.models.models import User
+from wtforms.validators import InputRequired, EqualTo, Email, ValidationError, Length, Regexp
+from wtforms.fields import StringField, PasswordField, SubmitField, BooleanField, FileField
+from bookreview.models import User
 
 
 class LoginForm(FlaskForm):
@@ -30,9 +30,16 @@ class RegisterForm(FlaskForm):
     Форма для регистрации пользователя.
     Проверяет уникальность логина и почты. В ином случае вызывает ошибку ValidationError.
     """
-    login = StringField("Логин", validators=[InputRequired("Введите логин"), Length(max=24)])
+    login = StringField("Логин", validators=[InputRequired("Введите логин"),
+                                             Length(max=24),
+                                             Regexp("^[A-Za-z1-9.]*$",
+                                                    message="Логин может содержать только буквы латиницы, цифры и точку")
+                                             ])
     email = StringField("Почта", validators=[InputRequired("Введите почту"), Email("Введите почту")])
-    password = PasswordField("Пароль", validators=[InputRequired("Введите пароль")])
+    password = PasswordField("Пароль", validators=[InputRequired("Введите пароль"),
+                                                   Regexp("^[A-Za-z1-9]*$",
+                                                          message="Логин может содержать только цифры и буквы латиницы")
+                                                   ])
     confirm_password = PasswordField("Повторите пароль", validators=[EqualTo('password', "Пароли должны совпадать")])
     submit = SubmitField("Зарегистрироваться")
 
@@ -66,6 +73,11 @@ class SetNewPassword(FlaskForm):
     Форма для изменения пароля
     """
     new_password = PasswordField("Пароль", validators=[InputRequired("Введите новый пароль")])
-    confirm_new_password = PasswordField("Повторите пароль", validators=[EqualTo('new_password',
-                                                                                 message="Пароли должны совпадать")])
+    confirm_new_password = PasswordField("Повторите пароль",
+                                         validators=[EqualTo('new_password', message="Пароли должны совпадать")])
+    submit = SubmitField("Сохранить")
+
+
+class LoadPhoto(FlaskForm):
+    photo = FileField("Загрузить фото", validators=[InputRequired("Выберите фото")])
     submit = SubmitField("Сохранить")

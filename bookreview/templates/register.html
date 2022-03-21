@@ -15,9 +15,11 @@
     <div class="col-12">
         {{ form.login(class='form-control', placeholder=form.login.label.text) }}
         {% for error in form.login.errors %}
-        <small class="form-text text-danger">
-            {{ error }}
-        </small>
+        <p class="m-0" style="line-height: 1em;">
+            <small class="form-text text-danger">
+                {{ error }}
+            </small>
+        </p>
         {% endfor %}
     </div>
 
@@ -25,9 +27,11 @@
     <div class="col-12">
         {{ form.email(class='form-control', placeholder=form.email.label.text) }}
         {% for error in form.email.errors %}
-        <small class="form-text text-danger">
-            {{ error }}
-        </small>
+        <p class="m-0" style="line-height: 1em;">
+            <small class="form-text text-danger">
+                {{ error }}
+            </small>
+        </p>
         {% endfor %}
     </div>
 
@@ -35,9 +39,11 @@
     <div class="col-12">
         {{ form.password(class='form-control', placeholder=form.password.label.text) }}
         {% for error in form.password.errors %}
-        <small class="form-text text-danger">
-            {{ error }}
-        </small>
+        <p class="m-0" style="line-height: 1em;">
+            <small class="form-text text-danger">
+                {{ error }}
+            </small>
+        </p>
         {% endfor %}
     </div>
 
@@ -45,9 +51,11 @@
     <div class="col-12">
         {{ form.confirm_password(class='form-control', placeholder=form.confirm_password.label.text) }}
         {% for error in form.confirm_password.errors %}
-        <small class="form-text text-danger">
-            {{ error }}
-        </small>
+        <p class="m-0" style="line-height: 1em;">
+            <small class="form-text text-danger">
+                {{ error }}
+            </small>
+        </p>
         {% endfor %}
     </div>
 

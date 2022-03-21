@@ -10,48 +10,87 @@
 </head>
 <body>
 
-<!-- SITE HEADER -->
 {% block header %}
+<!-- SITE HEADER -->
 <header class="container-fluid shadow-sm">
 	<div class="row">
-		<div class="col-12 p-4 d-flex justify-content-center justify-content-md-start">
-			<a href="{{ url_for('authorization.index') }}" id="top"><h1 class="fw-bold display-6 mb-0 text-dark">BOOK<span class="text-warning lead">VIEW</span></h1></a>
+		<div class="col-12 px-4 py-2 d-flex justify-content-center justify-content-lg-start">
+			<a href="{{ url_for('main.index') }}" id="top"><h1 class="fw-bold display-6 mb-0 text-dark">BOOK<span class="lead" style="color: #cc8d56;">VIEW</span></h1></a>
 		</div>
 	</div>
 </header>
 {% endblock %}
 
-<!-- NAVBAR -->
 {% block navbar %}
-<nav class="container-fluid shadow-sm" style="background-color: #ededed;">
-	<div class="container p-4">
+<!-- NAVBAR -->
+<nav class="container-fluid shadow-sm" style="background-color: #cc8d56;">
+	<div class="container p-3">
 		<div class="row justify-content-center">
-			<div class="col-md-6">
+
+			<!-- SEARCH INPUT -->
+			<div class="col-lg-6">
 				<form action="" method="post">
 					<div class="d-flex align-items-center form-outline form-white">
-						<input type="text" class="form-control" placeholder="Найти книгу">
-						<i class="bi bi-search ms-2 text-dark"></i>
+						<input type="text" class="form-control border-0" placeholder="Найти книгу">
+						<i class="bi bi-search ms-2 text-light"></i>
 					</div>
 				</form>
 			</div>
+
 		</div>
 	</div>
 </nav>
 {% endblock %}
 
 <!-- CONTENT -->
-<div class="content container p-5">
-{% block content %}
+<div class="content container-fluid p-5">
 
-{% endblock %}
+
+		{% block sidebar %}
+		<!-- SIDEBAR -->
+		<div class="row">
+		<div class="d-flex col-lg-3 justify-content-lg-end">
+			<div>
+				<div class="sticky-top">
+					<div class="d-flex flex-column justify-content-start px-4 border-end">
+
+						<!-- USERNAME AND PROFILE PIC -->
+						<div class="d-flex align-items-center justify-content-start mb-3">
+							<img class="rounded-circle" style="height: 30px;" src="{{ url_for('static', filename='profile_img/' + current_user.profile_photo) }}">
+							<a href="#" class="text-dark"><span class="ms-2 fs-5">{{ current_user.username }}</span></a>
+						</div>
+
+						<!-- SETTINGS -->
+						<div class="">
+							<a href="{{ url_for('main.settings') }}" class="sidebar_link"><i class="bi bi-gear me-1"></i>Настройки</a>
+						</div>
+
+						<!-- EXIT -->
+						<div>
+							<a href="{{ url_for('authorization.logout') }}" class="sidebar_link"><i class="bi bi-box-arrow-left me-1"></i>Выход</a>
+						</div>
+
+
+					</div>	
+				</div>
+			</div>
+		</div>
+		{% endblock %}
+
+		{% block content %}
+		<div class="col-lg-9">
+				
+
+		</div>
+		{% endblock %}
+
+	</div>
 </div>
 
-<!-- FOOTER -->
 {% block footer %}
-<footer class="container-fluid bg-secondary px-5 py-4 position-relative">
+<!-- FOOTER -->
+<footer class="container-fluid px-5 py-4 position-relative" style="background-color: #8f8477;">
 	<div class="row">
-
-		
 
 		<!-- CONTACTS -->
 		<div class="col-md-4">
@@ -72,8 +111,6 @@
 		<div class="col-md-4"></div>
 	</div>
 
-	<!-- GO TO THE TOP -->
-	<a href="#top"><div class="position-absolute text-light fs-2 bottom-0 end-0 m-3 px-1 rounded bg-success"><i class="bi bi-arrow-up-circle"></i></div></a>
 </footer>
 {% endblock %}
 

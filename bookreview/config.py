@@ -10,4 +10,4 @@ class BaseConfig:
     MAIL_SERVER = "smtp.gmail.com"
     MAIL_PORT = 587
     MAIL_USE_TLS = True
-    UPLOADED_PROFILEIMG_DEST = '/static/profile_img'
+    UPLOADED_PROFILEIMG_DEST = 'bookreview/static/profile_img'

@@ -1,8 +1,10 @@
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm, Form
+from flask_wtf.file import FileField, FileRequired, FileSize, FileAllowed
 from flask_bcrypt import check_password_hash
 from wtforms.validators import InputRequired, EqualTo, Email, ValidationError, Length, Regexp
-from wtforms.fields import StringField, PasswordField, SubmitField, BooleanField, FileField
+from wtforms.fields import StringField, PasswordField, SubmitField, BooleanField
 from bookreview.models import User
+from bookreview import profile_img
 
 
 class LoginForm(FlaskForm):
@@ -79,5 +81,13 @@ class SetNewPassword(FlaskForm):
 
 
 class LoadPhoto(FlaskForm):
-    photo = FileField("Загрузить фото", validators=[InputRequired("Выберите фото")])
+    photo = FileField("Загрузить фото", validators=[FileRequired("Загрузите фото"),
+                                                    FileSize(max_size=1000000,
+                                                             message="Файл должен весить меньше 1 Мб"),
+                                                    FileAllowed(profile_img, 'Только фото')])
     submit = SubmitField("Сохранить")
+
+
+class DeletePhoto(FlaskForm):
+    submit = SubmitField("Удалить фото")
+

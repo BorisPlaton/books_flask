@@ -12,7 +12,7 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 bcrypt = Bcrypt(app)
 mail = Mail(app)
-profile_img = UploadSet('profileimg', IMAGES)
+profile_img = UploadSet("profileimg", IMAGES)
 configure_uploads(app, profile_img)
 
 from bookreview.models.models import load_user

@@ -1,4 +1,5 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %}+
+
 
 {% block title %} Bookview | Настройки {% endblock %}
 
@@ -8,6 +9,32 @@
 
 {% block content %}
 
+<!-- BOOTSTRAP MODAL WINDOW
+LOAD USER PHOTO  
+DONT PUT THUS IN THE ANOTHER PLACE DUE IT WILL NOT WORK. 
+-->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Выберите фото</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <form action="{{ url_for('main.settings') }}" method="post" enctype="multipart/form-data" novalidate>
+			<div class="d-flex align-items-start justify-content-start">
+				{{ load_photo_form.csrf_token }}
+				{{ load_photo_form.photo(class='form-control form-control-sm', id="formFileSm") }}
+				{{ load_photo_form.submit(class='btn btn-outline-primary btn-sm ms-2', id="load_photo" )}}
+			</div>
+		</form>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 <div class="container">
 	
@@ -19,24 +46,30 @@
 			<div class="user_photo rounded-circle" style="background-image: url({{ url_for('static', filename='profile_img/' + current_user.profile_photo) }});">
 				<div class="holder rounded-circle d-flex justify-content-center align-items-center">
 
+					<!-- ACTIVATE MODAL WINDOW BUTTON -->
 					<button type="button" class="btn user_pick_photo p-5 border-none" data-bs-toggle="modal" data-bs-target="#exampleModal">
 					  <i class="bi bi-camera-fill text-light fs-5"></i>
 					</button>
-					<!-- <form action="{{ url_for('main.settings') }}" method="post" enctype="multipart/form-data" novalidate>
-						<div class="d-flex align-items-start justify-content-start">
-							{{ form.csrf_token }}
-							{{ form.photo(class='form-control form-control-sm', id="formFileSm") }}
-							{% for error in form.photo.errors %}
-						        <p class="m-0" style="line-height: 1em;">
-						            <small class="form-text text-danger">
-						                {{ error }}
-						            </small>
-						        </p>
-					        {% endfor %}
-							{{ form.submit(class='btn btn-outline-primary btn-sm')}}
-						</div>
-					</form> -->
+
 				</div>
+			</div>
+
+			<!-- LOAD PHOTO'S ERRORS -->
+			<div>
+				{% for error in load_photo_form.photo.errors %}
+			        <p class="mt-1 m-0" style="line-height: 1em;">
+			            <small class="form-text text-danger">
+			                {{ error }}
+			            </small>
+			        </p>
+		        {% endfor %}
+			</div>
+
+			<div class="d-flex mt-3">
+				<form action="{{ url_for('main.delete_user_img') }}" method="post" novalidate>
+					{{ delete_photo_form.csrf_token }}
+					{{ delete_photo_form.submit(class='btn btn-outline-danger btn-sm', id="delete_photo")}}
+				</form>
 			</div>
 
 		</div>
@@ -48,20 +81,20 @@
 
 				<!-- EMAIL -->
 				<div class="col-lg-6 d-flex flex-column ">
-					<h4 class="text-secondary mb-0">Почта:</h4>
-					<span class="fs-5">{{ current_user.email }}</span>
+					<h5 class="text-secondary mb-0">Почта:</h5>
+					<span>{{ current_user.email }}</span>
 				</div>
 
 				<!-- USERNAME -->
 				<div class="col-lg-6 d-flex flex-column">
-					<h4 class="text-secondary mb-0">Имя пользователя:</h4>
-					<span class="fs-5">{{ current_user.username }}</span>
+					<h5 class="text-secondary mb-0">Имя пользователя:</h5>
+					<span>{{ current_user.username }}</span>
 				</div>
 
 				<!-- LOGIN -->
 				<div class="col-lg-6 d-flex flex-column">
-					<h4 class="text-secondary mb-0">Логин:</h4>
-					<span class="fs-5">{{ current_user.login }}</span>
+					<h5 class="text-secondary mb-0">Логин:</h5>
+					<span>{{ current_user.login }}</span>
 				</div>
 
 			</div>

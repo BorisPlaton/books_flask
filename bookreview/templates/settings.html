@@ -23,7 +23,7 @@ DONT PUT THIS IN THE ANOTHER PLACE DUE IT WILL NOT WORK.
       </div>
 
       <div class="modal-body">
-        <form action="{{ url_for('main.settings') }}" method="post" enctype="multipart/form-data" novalidate>
+        <form action="{{ url_for('main.load_photo_def') }}" method="post" enctype="multipart/form-data" novalidate>
 					<div class="d-flex align-items-start justify-content-start">
 						{{ load_photo_form.csrf_token }}
 						{{ load_photo_form.photo(class='form-control form-control-sm') }}

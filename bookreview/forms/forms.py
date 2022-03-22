@@ -84,7 +84,9 @@ class ChangeUsername(FlaskForm):
     """
     Форма для изменения имя пользователя
     """
-    username = StringField("Имя пользователя", validators=[InputRequired("Введите новое имя")])
+    username = StringField("Имя пользователя", validators=[InputRequired("Введите новое имя"), Length(max=24),
+                                                           Regexp(regex="^(?:[\w]+\s?)+$",
+                                                                  message="Неверный ввод имя")])
     submit = SubmitField("Сохранить")
 
 

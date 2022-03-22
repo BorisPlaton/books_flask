@@ -27,15 +27,24 @@ def settings():
     delete_photo = DeletePhoto()
     change_username = ChangeUsername()
 
-    # Загрузка фотографии профиля
+    return render_template('settings.html',
+                           load_photo_form=load_photo,
+                           delete_photo_form=delete_photo,
+                           change_username_form=change_username)
+
+
+@main.route("/load_photo", methods=["POST"])
+def load_photo_def():
+    load_photo = LoadPhoto()
+    delete_photo = DeletePhoto()
+    change_username = ChangeUsername()
     if load_photo.validate_on_submit():
         if not current_user.profile_photo == "standard_user_pic.jpg":
             path = Path(Path.cwd(), "bookreview", "static", "profile_img", current_user.profile_photo)
             remove(path)
         current_user.profile_photo = profile_img.save(load_photo.photo.data)
         db.session.commit()
-        return redirect(url_for('main.settings'))
-
+        return redirect(url_for("main.settings"))
     return render_template('settings.html',
                            load_photo_form=load_photo,
                            delete_photo_form=delete_photo,
@@ -53,6 +62,7 @@ def change_username_def():
     if change_username.validate_on_submit():
         current_user.username = change_username.username.data
         db.session.commit()
+        return redirect(url_for("main.settings"))
     return render_template('settings.html',
                            load_photo_form=load_photo,
                            delete_photo_form=delete_photo,
@@ -73,6 +83,7 @@ def delete_user_img():
             remove(path)
             current_user.profile_photo = "standard_user_pic.jpg"
             db.session.commit()
+            return redirect(url_for("main.settings"))
     return render_template('settings.html',
                            load_photo_form=load_photo,
                            delete_photo_form=delete_photo,

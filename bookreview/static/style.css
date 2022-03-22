@@ -21,7 +21,8 @@ a:hover {
 }
 
 .sidebar_link {
-	color: #525252;
+	color: #a1a1a1;
+	transition: 0.1s all ease-in;
 }
 
 .sidebar_link:hover {
@@ -52,8 +53,7 @@ a:hover {
 	opacity: 1;
 }
 
-.user_pick_photo:active, .user_pick_photo:active:focus, 
-.user_pick_photo:focus, .user_pick_photo {
+.click-btn-icon:focus, .click-btn-icon {
 	box-shadow: none;
 	outline: none;
 }

@@ -11,25 +11,53 @@
 
 <!-- BOOTSTRAP MODAL WINDOW
 LOAD USER PHOTO  
-DONT PUT THUS IN THE ANOTHER PLACE DUE IT WILL NOT WORK. 
+DONT PUT THIS IN THE ANOTHER PLACE DUE IT WILL NOT WORK. 
 -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="loadUserPhotoModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
 
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Выберите фото</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Выбор фото</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
       <div class="modal-body">
         <form action="{{ url_for('main.settings') }}" method="post" enctype="multipart/form-data" novalidate>
-			<div class="d-flex align-items-start justify-content-start">
-				{{ load_photo_form.csrf_token }}
-				{{ load_photo_form.photo(class='form-control form-control-sm', id="formFileSm") }}
-				{{ load_photo_form.submit(class='btn btn-outline-primary btn-sm ms-2', id="load_photo" )}}
-			</div>
-		</form>
+					<div class="d-flex align-items-start justify-content-start">
+						{{ load_photo_form.csrf_token }}
+						{{ load_photo_form.photo(class='form-control form-control-sm') }}
+						{{ load_photo_form.submit(class='btn btn-outline-primary btn-sm ms-2') }}
+					</div>
+				</form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- BOOTSTRAP MODAL WINDOW
+CHANGE USERNAME
+DONT PUT THIS IN THE ANOTHER PLACE DUE IT WILL NOT WORK. 
+-->
+<div class="modal fade" id="changeUsernameModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Изменение имя пользователя</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <form action="{{ url_for('main.change_username_def') }}" method="post" novalidate>
+					<div class="d-flex align-items-start justify-content-start">
+						{{ change_username_form.csrf_token }}
+						{{ change_username_form.username(class='form-control form-control-sm', placeholder=change_username_form.username.label.text) }}
+						{{ change_username_form.submit(class='btn btn-outline-primary btn-sm ms-2') }}
+					</div>
+				</form>
       </div>
 
     </div>
@@ -47,28 +75,38 @@ DONT PUT THUS IN THE ANOTHER PLACE DUE IT WILL NOT WORK.
 				<div class="holder rounded-circle d-flex justify-content-center align-items-center">
 
 					<!-- ACTIVATE MODAL WINDOW BUTTON -->
-					<button type="button" class="btn user_pick_photo p-5 border-none" data-bs-toggle="modal" data-bs-target="#exampleModal">
+					<button type="button" class="btn click-btn-icon p-5 border-none" data-bs-toggle="modal" data-bs-target="#loadUserPhotoModal">
 					  <i class="bi bi-camera-fill text-light fs-5"></i>
 					</button>
 
 				</div>
 			</div>
 
-			<!-- LOAD PHOTO'S ERRORS -->
 			<div>
+				<!-- LOAD PHOTO FORM'S ERRORS -->
 				{% for error in load_photo_form.photo.errors %}
-			        <p class="mt-1 m-0" style="line-height: 1em;">
-			            <small class="form-text text-danger">
-			                {{ error }}
-			            </small>
-			        </p>
-		        {% endfor %}
+	        <p class="mt-1 m-0" style="line-height: 1em;">
+	            <small class="form-text text-danger">
+	                {{ error }}
+	            </small>
+	        </p>
+        {% endfor %}
+
+        <!-- CHANGE USERNAME FORM'S ERRORS -->
+        {% for error in change_username_form.username.errors %}
+	        <p class="mt-1 m-0" style="line-height: 1em;">
+	            <small class="form-text text-danger">
+	                {{ error }}
+	            </small>
+	        </p>
+        {% endfor %}
 			</div>
 
+			<!-- DELETE PHOTO BUTTON -->
 			<div class="d-flex mt-3">
 				<form action="{{ url_for('main.delete_user_img') }}" method="post" novalidate>
 					{{ delete_photo_form.csrf_token }}
-					{{ delete_photo_form.submit(class='btn btn-outline-danger btn-sm', id="delete_photo")}}
+					{{ delete_photo_form.submit(class='btn btn-outline-danger btn-sm')}}
 				</form>
 			</div>
 
@@ -76,7 +114,6 @@ DONT PUT THUS IN THE ANOTHER PLACE DUE IT WILL NOT WORK.
 
 		<!-- USER INFO -->
 		<div class="col-lg-8 p-0">
-
 			<div class="row g-3 lead">
 
 				<!-- EMAIL -->
@@ -88,13 +125,24 @@ DONT PUT THUS IN THE ANOTHER PLACE DUE IT WILL NOT WORK.
 				<!-- USERNAME -->
 				<div class="col-lg-6 d-flex flex-column">
 					<h5 class="text-secondary mb-0">Имя пользователя:</h5>
-					<span>{{ current_user.username }}</span>
+					<div class="d-flex  align-items-center">
+						<span>{{ current_user.username }}</span>
+						<!-- CHANGE USERNAME BUTTON -->
+						<button class="click-btn-icon btn p-0 ms-2 click-btn-icon" type="button" data-bs-toggle="modal" data-bs-target="#changeUsernameModal">
+						  <i class="bi bi-pencil-fill fs-6 sidebar_link"></i>
+						</button>
+					</div>
 				</div>
 
 				<!-- LOGIN -->
 				<div class="col-lg-6 d-flex flex-column">
 					<h5 class="text-secondary mb-0">Логин:</h5>
 					<span>{{ current_user.login }}</span>
+				</div>
+
+				<!-- HELP LINKS -->
+				<div class="col-lg-6 d-flex flex-column fs-6">
+					<a href="#" class="link-primary">Поменять пароль</a>
 				</div>
 
 			</div>

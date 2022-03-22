@@ -57,7 +57,9 @@
 						{% if current_user.is_authenticated %}
 							<!-- USERNAME AND PROFILE PIC -->
 							<div class="d-flex align-items-center justify-content-start mb-3">
-								<img class="rounded-circle" style="height: 30px;" src="{{ url_for('static', filename='profile_img/' + current_user.profile_photo) }}">
+								<div class="user_photo rounded-circle" 
+								style="background-image: url({{ url_for('static', filename='profile_img/' + current_user.profile_photo) }}); width: 30px; height:30px;">
+								</div>
 								<a href="#" class="text-dark"><span class="ms-2 fs-5">{{ current_user.username }}</span></a>
 							</div>
 

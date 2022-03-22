@@ -34,13 +34,13 @@ class RegisterForm(FlaskForm):
     """
     login = StringField("Логин", validators=[InputRequired("Введите логин"),
                                              Length(max=24),
-                                             Regexp("^[A-Za-z1-9.]*$",
-                                                    message="Логин может содержать только буквы латиницы, цифры и точку")
+                                             Regexp("^[A-Za-z1-9._]*$",
+                                                    message="Логин может содержать только буквы латиницы, цифры, точку и нижнее подчеркивание")
                                              ])
     email = StringField("Почта", validators=[InputRequired("Введите почту"), Email("Введите почту")])
     password = PasswordField("Пароль", validators=[InputRequired("Введите пароль"),
                                                    Regexp("^[A-Za-z1-9]*$",
-                                                          message="Логин может содержать только цифры и буквы латиницы")
+                                                          message="Пароль может содержать только цифры и буквы латиницы")
                                                    ])
     confirm_password = PasswordField("Повторите пароль", validators=[EqualTo('password', "Пароли должны совпадать")])
     submit = SubmitField("Зарегистрироваться")
@@ -80,6 +80,14 @@ class SetNewPassword(FlaskForm):
     submit = SubmitField("Сохранить")
 
 
+class ChangeUsername(FlaskForm):
+    """
+    Форма для изменения имя пользователя
+    """
+    username = StringField("Имя пользователя", validators=[InputRequired("Введите новое имя")])
+    submit = SubmitField("Сохранить")
+
+
 class LoadPhoto(FlaskForm):
     photo = FileField("Загрузить фото", validators=[FileRequired("Загрузите фото"),
                                                     FileSize(max_size=1000000,
@@ -90,4 +98,3 @@ class LoadPhoto(FlaskForm):
 
 class DeletePhoto(FlaskForm):
     submit = SubmitField("Удалить фото")
-

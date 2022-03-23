@@ -12,10 +12,12 @@
 
 {% block header %}
 <!-- SITE HEADER -->
-<header class="container-fluid shadow-sm">
-	<div class="row">
-		<div class="col-12 px-4 py-2 d-flex justify-content-center justify-content-lg-start">
-			<a href="{{ url_for('main.index') }}" id="top"><h1 class="fw-bold display-6 mb-0 text-dark">BOOK<span class="lead" style="color: #cc8d56;">VIEW</span></h1></a>
+<header class="container-fluid border-bottom">
+	<div class="container">
+		<div class="row">
+			<div class="col-12 py-3 d-flex justify-content-center justify-content-lg-start">
+				<a href="{{ url_for('main.index') }}" id="top"><h1 class="fw-bold display-6 mb-0 text-dark">BOOK<span class="lead text-warning">VIEW</span></h1></a>
+			</div>
 		</div>
 	</div>
 </header>
@@ -23,12 +25,29 @@
 
 {% block navbar %}
 <!-- NAVBAR -->
-<nav class="container-fluid shadow-sm" style="background-color: #cc8d56;">
-	<div class="container p-3">
-		<div class="row justify-content-center">
+<nav class="container-fluid bg-secondary">
+	<div class="container py-2">
+		<div class="d-flex justify-content-between">
+
+			{% if current_user.is_authenticated %}
+			<!-- USER'S PHOTO -->
+			<div class="d-flex align-items-center justify-content-start">
+				<div class="user_photo rounded-circle" 
+				style="background-image: url({{ url_for('static', filename='profile_img/' + current_user.profile_photo) }}); width: 30px; height:30px;">
+				</div>
+				<a href="#" class="text-light lead ms-2 fs-5">{{ current_user.username }}</a>
+			</div>
+			{% else %}
+			<div class="d-flex align-items-center justify-content-start">
+				<!-- LOG IN -->
+				<div>
+					<a href="{{ url_for('authorization.login') }}" class="lead"><i class="bi bi-box-arrow-in-right me-1"></i>Войти</a>
+				</div>
+			</div>
+			{% endif %}
 
 			<!-- SEARCH INPUT -->
-			<div class="col-lg-6">
+			<div class="d-flex">
 				<form action="" method="post">
 					<div class="d-flex align-items-center form-outline form-white">
 						<input type="text" class="form-control border-0" placeholder="Найти книгу">
@@ -43,88 +62,71 @@
 {% endblock %}
 
 <!-- CONTENT -->
-<div class="content container-fluid p-5">
+<div class="content container py-4">
 
 
-		{% block sidebar %}
 		<!-- SIDEBAR -->
+		{% block sidebar %}
 		<div class="row">
-		<div class="d-flex col-lg-3 justify-content-lg-end">
-			<div>
-				<div class="sticky-top">
-					<div class="d-flex flex-column align-items-end px-4 border-end">
 
-						{% if current_user.is_authenticated %}
-							<!-- USERNAME AND PROFILE PIC -->
-							<div class="d-flex align-items-center justify-content-start mb-3">
-								<div class="user_photo rounded-circle" 
-								style="background-image: url({{ url_for('static', filename='profile_img/' + current_user.profile_photo) }}); width: 30px; height:30px;">
-								</div>
-								<a href="#" class="text-dark"><span class="ms-2 fs-5">{{ current_user.username }}</span></a>
-							</div>
-
+			{% if current_user.is_authenticated %}
+			<div class="d-flex col-lg-2 justify-content-lg-start">
+				<div>
+					<div class="sticky-top">
+						<div class="d-flex flex-column align-items-end">
 							<div class="d-flex flex-column align-items-start">
+								<!-- PROFILE PAGE -->
+								<div>
+									<a href="#" class="sidebar_link"><i class="bi bi-person me-1"></i>Мой профиль</a>
+								</div>
 								<!-- SETTINGS -->
 								<div>
 									<a href="{{ url_for('main.settings') }}" class="sidebar_link"><i class="bi bi-gear me-1"></i>Настройки</a>
 								</div>
-
 								<!-- EXIT -->
 								<div>
 									<a href="{{ url_for('authorization.logout') }}" class="sidebar_link"><i class="bi bi-box-arrow-left me-1"></i>Выход</a>
 								</div>
-						{% else %}
-							<div class="d-flex flex-column align-items-start">
-								<!-- LOG IN -->
-								<div>
-									<a href="{{ url_for('authorization.login') }}" class="sidebar_link"><i class="bi bi-box-arrow-in-right me-1"></i>Вход</a>
-								</div>
 							</div>
-						{% endif %}
-							</div>
-
-
-
-					</div>	
+						</div>	
+					</div>
 				</div>
 			</div>
-		</div>
+			{% endif %}
 		{% endblock %}
 
 		{% block content %}
-		<div class="col-lg-9">
+		<div class="col-lg-{% if current_user.is_authenticated %} 10 {% else %} 12 {% endif %}">
 				
 
 		</div>
 		{% endblock %}
 
-	</div>
+		</div>
 </div>
 
 {% block footer %}
 <!-- FOOTER -->
-<footer class="container-fluid px-5 py-4 position-relative" style="background-color: #8f8477;">
-	<div class="row">
+<footer class="container-fluid py-4 position-relative bg-secondary">
+	<div class="container">
+		<div class="row">
 
-		<!-- CONTACTS -->
-		<div class="col-md-4">
-			<div class="d-md-flex flex-md-column flex-row text-light">
+			<!-- CONTACTS -->
+			<div class="col-md-4">
+				<div class="d-md-flex flex-md-column flex-row text-light">
 
-				<div class="mb-1">Как связаться с нами:</div>
+					<div class="mb-1">Как связаться с нами:</div>
 
-				<div class="d-flex">
-					<div class=""><a href="#"><i class="bi bi-instagram"></i></a></div>
-					<div class="ms-2"><a href="#"><i class="bi bi-facebook"></i></a></div>
-					<div class="ms-2"><a href="#"><i class="bi bi-telegram"></i></a></div>
+					<div class="d-flex">
+						<div class=""><a href="#"><i class="bi bi-instagram"></i></a></div>
+						<div class="ms-2"><a href="#"><i class="bi bi-facebook"></i></a></div>
+						<div class="ms-2"><a href="#"><i class="bi bi-telegram"></i></a></div>
+					</div>
+
 				</div>
-
 			</div>
 		</div>
-
-		<div class="col-md-4"></div>
-		<div class="col-md-4"></div>
 	</div>
-
 </footer>
 {% endblock %}
 

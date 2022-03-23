@@ -23,6 +23,12 @@ def index():
 
 @main.route('/settings', methods=["POST", "GET"])
 def settings():
+    """
+    Страница настроек. Обработчики форм вынесены в отдельные функции:
+    :func: load_photo_def - Загружает фото пользователя
+    :func: change_username_def - Меняет имя пользователя
+    :func: delete_photo_def - Удаляет фото пользователя
+    """
     load_photo = LoadPhoto()
     delete_photo = DeletePhoto()
     change_username = ChangeUsername()
@@ -33,8 +39,14 @@ def settings():
                            change_username_form=change_username)
 
 
-@main.route("/load_photo", methods=["POST"])
+@main.route("/load_photo", methods=["GET", "POST"])
 def load_photo_def():
+    """
+    Загружает фото пользователя
+    """
+    if request.method == "GET":
+        return redirect(url_for("main.settings"))
+
     load_photo = LoadPhoto()
     delete_photo = DeletePhoto()
     change_username = ChangeUsername()
@@ -51,11 +63,15 @@ def load_photo_def():
                            change_username_form=change_username)
 
 
-@main.route("/change_username", methods=["POST"])
+@main.route("/change_username", methods=["GET", "POST"])
 def change_username_def():
     """
     Меняет имя пользователя
     """
+
+    if request.method == "GET":
+        return redirect(url_for("main.settings"))
+
     load_photo = LoadPhoto()
     delete_photo = DeletePhoto()
     change_username = ChangeUsername()
@@ -69,11 +85,15 @@ def change_username_def():
                            change_username_form=change_username)
 
 
-@main.route("/delete_photo", methods=["POST"])
-def delete_user_img():
+@main.route("/delete_photo", methods=["GET", "POST"])
+def delete_photo_def():
     """
     Удаляет фото пользователя, если это не стандартное фото
     """
+
+    if request.method == "GET":
+        return redirect(url_for("main.settings"))
+
     load_photo = LoadPhoto()
     delete_photo = DeletePhoto()
     change_username = ChangeUsername()

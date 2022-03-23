@@ -66,7 +66,7 @@ DONT PUT THIS IN THE ANOTHER PLACE DUE IT WILL NOT WORK.
 
 <div class="container">
 	
-	<div class="row border-bottom pb-4 align-items-center">
+	<div class="row border-bottom pb-4 align-items-top">
 
 		<!-- PROFILE PIC -->
 		<div class="col-lg-4 p-0 d-flex flex-column align-items-center justify-content-center">
@@ -85,26 +85,15 @@ DONT PUT THIS IN THE ANOTHER PLACE DUE IT WILL NOT WORK.
 			<div>
 				<!-- LOAD PHOTO FORM'S ERRORS -->
 				{% for error in load_photo_form.photo.errors %}
-	        <p class="mt-1 m-0" style="line-height: 1em;">
-	            <small class="form-text text-danger">
-	                {{ error }}
-	            </small>
-	        </p>
-        {% endfor %}
-
-        <!-- CHANGE USERNAME FORM'S ERRORS -->
-        {% for error in change_username_form.username.errors %}
-	        <p class="mt-1 m-0" style="line-height: 1em;">
-	            <small class="form-text text-danger">
-	                {{ error }}
-	            </small>
-	        </p>
+            <small class="form-text text-danger m-0">
+                {{ error }}
+            </small>
         {% endfor %}
 			</div>
 
 			<!-- DELETE PHOTO BUTTON -->
-			<div class="d-flex mt-3">
-				<form action="{{ url_for('main.delete_user_img') }}" method="post" novalidate>
+			<div class="d-flex mt-2">
+				<form action="{{ url_for('main.delete_photo_def') }}" method="post" novalidate>
 					{{ delete_photo_form.csrf_token }}
 					{{ delete_photo_form.submit(class='btn btn-outline-danger btn-sm')}}
 				</form>
@@ -117,7 +106,7 @@ DONT PUT THIS IN THE ANOTHER PLACE DUE IT WILL NOT WORK.
 			<div class="row g-3 lead">
 
 				<!-- EMAIL -->
-				<div class="col-lg-6 d-flex flex-column ">
+				<div class="col-lg-6 d-flex flex-column">
 					<h5 class="text-secondary mb-0">Почта:</h5>
 					<span>{{ current_user.email }}</span>
 				</div>
@@ -132,6 +121,12 @@ DONT PUT THIS IN THE ANOTHER PLACE DUE IT WILL NOT WORK.
 						  <i class="bi bi-pencil-fill fs-6 sidebar_link"></i>
 						</button>
 					</div>
+					<!-- CHANGE USERNAME FORM'S ERRORS -->
+	        {% for error in change_username_form.username.errors %}
+	            <small class="form-text text-danger fs-6 m-0">
+	                {{ error }}
+	            </small>
+	        {% endfor %}
 				</div>
 
 				<!-- LOGIN -->

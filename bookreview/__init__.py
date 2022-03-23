@@ -16,7 +16,8 @@ profile_img = UploadSet("profileimg", IMAGES)
 configure_uploads(app, profile_img)
 
 from bookreview.models.models import load_user
-from bookreview.routes import authorization, main
+from bookreview.routes import authorization, main, settings
 
 app.register_blueprint(authorization)
 app.register_blueprint(main)
+app.register_blueprint(settings)

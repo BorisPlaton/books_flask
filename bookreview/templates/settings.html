@@ -23,7 +23,7 @@ DONT PUT THIS IN THE ANOTHER PLACE DUE IT WILL NOT WORK.
       </div>
 
       <div class="modal-body">
-        <form action="{{ url_for('main.load_photo_def') }}" method="post" enctype="multipart/form-data" novalidate>
+        <form action="{{ url_for('settings.load_photo_def') }}" method="post" enctype="multipart/form-data" novalidate>
 					<div class="d-flex align-items-start justify-content-start">
 						{{ load_photo_form.csrf_token }}
 						{{ load_photo_form.photo(class='form-control form-control-sm') }}
@@ -51,7 +51,7 @@ DONT PUT THIS IN THE ANOTHER PLACE DUE IT WILL NOT WORK.
       </div>
 
       <div class="modal-body">
-        <form action="{{ url_for('main.change_username_def') }}" method="post" novalidate>
+        <form action="{{ url_for('settings.change_username_def') }}" method="post" novalidate>
 					<div class="d-flex align-items-start justify-content-start">
 						{{ change_username_form.csrf_token }}
 						{{ change_username_form.username(class='form-control form-control-sm', placeholder=change_username_form.username.label.text) }}
@@ -93,7 +93,7 @@ DONT PUT THIS IN THE ANOTHER PLACE DUE IT WILL NOT WORK.
 
 			<!-- DELETE PHOTO BUTTON -->
 			<div class="mt-2">
-				<form action="{{ url_for('main.delete_photo_def') }}" method="post" novalidate>
+				<form action="{{ url_for('settings.delete_photo_def') }}" method="post" novalidate>
 					{{ delete_photo_form.csrf_token }}
 					{{ delete_photo_form.submit(class='btn btn-outline-danger btn-sm')}}
 				</form>
@@ -142,7 +142,7 @@ DONT PUT THIS IN THE ANOTHER PLACE DUE IT WILL NOT WORK.
 
 				<!-- HELP LINKS -->
 				<div class="col-lg-6 d-flex flex-column fs-6">
-					<a href="{{ url_for('main.change_password') }}" class="link-primary">Поменять пароль</a>
+					<a href="{{ url_for('settings.change_password') }}" class="link-primary">Поменять пароль</a>
 				</div>
 
 			</div>

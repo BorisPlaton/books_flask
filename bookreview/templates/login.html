@@ -13,26 +13,12 @@
 
     <!-- LOGIN INPUT -->
     <div class="col-12">
-        {{ form.login(class='form-control', placeholder=form.login.label.text) }}
-        {% for error in form.login.errors %}
-        <p class="m-0" style="line-height: 1em;">
-            <small class="form-text text-danger">
-                {{ error }}
-            </small>
-        </p>
-        {% endfor %}
+        {{ load_field(form.login, class='form-control', placeholder=form.login.label.text)}}
     </div>
 
     <!-- PASSWORD INPUT -->
     <div class="col-12">
-        {{ form.password(class='form-control', placeholder=form.password.label.text) }}
-        {% for error in form.password.errors %}
-        <p class="m-0" style="line-height: 1em;">
-            <small class="form-text text-danger">
-                {{ error }}
-            </small>
-        </p>
-        {% endfor %}
+        {{ load_field(form.password, class='form-control', placeholder=form.password.label.text)}}
     </div>
 
     <!-- RESSET PASSWORD LINK -->

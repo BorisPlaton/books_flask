@@ -66,7 +66,7 @@ DONT PUT THIS IN THE ANOTHER PLACE DUE IT WILL NOT WORK.
 
 <div class="container">
 	
-	<div class="row border-bottom pb-4 align-items-top">
+	<div class="row border-bottom pb-3 align-items-top">
 
 		<!-- PROFILE PIC -->
 		<div class="col-lg-4 p-0 d-flex flex-column align-items-center justify-content-center">
@@ -92,7 +92,7 @@ DONT PUT THIS IN THE ANOTHER PLACE DUE IT WILL NOT WORK.
 			</div>
 
 			<!-- DELETE PHOTO BUTTON -->
-			<div class="d-flex mt-2">
+			<div class="mt-2">
 				<form action="{{ url_for('main.delete_photo_def') }}" method="post" novalidate>
 					{{ delete_photo_form.csrf_token }}
 					{{ delete_photo_form.submit(class='btn btn-outline-danger btn-sm')}}
@@ -103,6 +103,11 @@ DONT PUT THIS IN THE ANOTHER PLACE DUE IT WILL NOT WORK.
 
 		<!-- USER INFO -->
 		<div class="col-lg-8 p-0">
+
+			{% for ctg, msg in get_flashed_messages(True) %}
+          <div class="col-12 alert alert-{{ ctg }}">{{ msg }}</div>
+			{% endfor %}
+
 			<div class="row g-3 lead">
 
 				<!-- EMAIL -->
@@ -114,11 +119,11 @@ DONT PUT THIS IN THE ANOTHER PLACE DUE IT WILL NOT WORK.
 				<!-- USERNAME -->
 				<div class="col-lg-6 d-flex flex-column">
 					<h5 class="text-secondary mb-0">Имя пользователя:</h5>
-					<div class="d-flex  align-items-center">
+					<div class="d-flex align-items-center">
 						<span>{{ current_user.username }}</span>
 						<!-- CHANGE USERNAME BUTTON -->
 						<button class="click-btn-icon btn p-0 ms-2 click-btn-icon" type="button" data-bs-toggle="modal" data-bs-target="#changeUsernameModal">
-						  <i class="bi bi-pencil-fill fs-6 sidebar_link"></i>
+						  <i class="bi bi-pencil fs-6 sidebar_link"></i>
 						</button>
 					</div>
 					<!-- CHANGE USERNAME FORM'S ERRORS -->
@@ -137,7 +142,7 @@ DONT PUT THIS IN THE ANOTHER PLACE DUE IT WILL NOT WORK.
 
 				<!-- HELP LINKS -->
 				<div class="col-lg-6 d-flex flex-column fs-6">
-					<a href="#" class="link-primary">Поменять пароль</a>
+					<a href="{{ url_for('main.change_password') }}" class="link-primary">Поменять пароль</a>
 				</div>
 
 			</div>

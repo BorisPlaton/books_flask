@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm, Form
 from flask_wtf.file import FileField, FileRequired, FileSize, FileAllowed
 from flask_bcrypt import check_password_hash
+from flask_login import current_user
 from wtforms.validators import InputRequired, EqualTo, Email, ValidationError, Length, Regexp
 from wtforms.fields import StringField, PasswordField, SubmitField, BooleanField
 from bookreview.models import User
@@ -9,7 +10,7 @@ from bookreview import profile_img
 
 class LoginForm(FlaskForm):
     """
-    Форма для авторизации пользователя при входе на сайт.
+    Авторизация пользователя при входе на сайт.
     Проверяет правильность ввода пароля и логина. В ином случае вызывает ошибку ValidationError.
     """
     login = StringField("Логин", validators=[InputRequired("Введите логин")])
@@ -29,7 +30,7 @@ class LoginForm(FlaskForm):
 
 class RegisterForm(FlaskForm):
     """
-    Форма для регистрации пользователя.
+    Регистрация пользователя.
     Проверяет уникальность логина и почты. В ином случае вызывает ошибку ValidationError.
     """
     login = StringField("Логин", validators=[InputRequired("Введите логин"),
@@ -56,7 +57,7 @@ class RegisterForm(FlaskForm):
 
 class EmailSendForm(FlaskForm):
     """
-    Форма для отправки письма пользователю.
+    Отправка письма пользователю при регистрации.
     Проверяет правильность существование почты. В ином случае вызывает ошибку ValidationError.
     """
     email = StringField("Почта", validators=[InputRequired("Введите почту"), Email("Введите почту")])
@@ -72,25 +73,39 @@ class EmailSendForm(FlaskForm):
 
 class SetNewPassword(FlaskForm):
     """
-    Форма для изменения пароля
+    Изменение пароля пользователя
     """
-    new_password = PasswordField("Пароль", validators=[InputRequired("Введите новый пароль")])
+    new_password = PasswordField("Новый пароль", validators=[InputRequired("Введите новый пароль")])
     confirm_new_password = PasswordField("Повторите пароль",
                                          validators=[EqualTo('new_password', message="Пароли должны совпадать")])
     submit = SubmitField("Сохранить")
 
 
+class ChangePassword(SetNewPassword):
+    """
+    Изменение пароля пользователя со странички настройки
+    """
+    old_password = PasswordField("Старый пароль", validators=[InputRequired("Введите старый пароль")])
+
+    def validate_old_password(self, old_password):
+        if not self.old_password.errors and not check_password_hash(current_user.password, old_password.data):
+            raise ValidationError("Неверный пароль")
+
+
 class ChangeUsername(FlaskForm):
     """
-    Форма для изменения имя пользователя
+    Изменения имя пользователя
     """
     username = StringField("Имя пользователя", validators=[InputRequired("Введите новое имя"), Length(max=24),
                                                            Regexp(regex="^(?:[\w]+\s?)+$",
-                                                                  message="Неверный ввод имя")])
+                                                                  message="Неверный ввод имени")])
     submit = SubmitField("Сохранить")
 
 
 class LoadPhoto(FlaskForm):
+    """
+    Загрузка фото пользователя
+    """
     photo = FileField("Загрузить фото", validators=[FileRequired("Загрузите фото"),
                                                     FileSize(max_size=1000000,
                                                              message="Файл должен весить меньше 1 Мб"),
@@ -99,4 +114,7 @@ class LoadPhoto(FlaskForm):
 
 
 class DeletePhoto(FlaskForm):
+    """
+    Удаление фото пользователя
+    """
     submit = SubmitField("Удалить фото")

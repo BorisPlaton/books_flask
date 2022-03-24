@@ -3,9 +3,6 @@
 
 {% block title %} Bookview | Настройки {% endblock %}
 
-{% block navbar %}{% endblock %}
-
-{% block sidebar %}{% endblock %}
 
 {% block content %}
 
@@ -64,12 +61,12 @@ DONT PUT THIS IN THE ANOTHER PLACE DUE IT WILL NOT WORK.
   </div>
 </div>
 
-<div class="container">
+<div class="col-lg-10">
 	
 	<div class="row border-bottom pb-3 align-items-top">
 
 		<!-- PROFILE PIC -->
-		<div class="col-lg-4 p-0 d-flex flex-column align-items-center justify-content-center">
+		<div class="col-lg-3 p-0 d-flex flex-column align-items-center justify-content-center">
 
 			<div class="user_photo rounded-circle" style="background-image: url({{ url_for('static', filename='profile_img/' + current_user.profile_photo) }});">
 				<div class="holder rounded-circle d-flex justify-content-center align-items-center">
@@ -102,7 +99,7 @@ DONT PUT THIS IN THE ANOTHER PLACE DUE IT WILL NOT WORK.
 		</div>
 
 		<!-- USER INFO -->
-		<div class="col-lg-8 p-0">
+		<div class="col-lg-9 p-0">
 
 			{% for ctg, msg in get_flashed_messages(True) %}
           <div class="col-12 alert alert-{{ ctg }}">{{ msg }}</div>
@@ -137,7 +134,7 @@ DONT PUT THIS IN THE ANOTHER PLACE DUE IT WILL NOT WORK.
 				<!-- LOGIN -->
 				<div class="col-lg-6 d-flex flex-column">
 					<h5 class="text-secondary mb-0">Логин:</h5>
-					<span>{{ current_user.login }}</span>
+					<span>@{{ current_user.login }}</span>
 				</div>
 
 				<!-- HELP LINKS -->

@@ -32,3 +32,9 @@ def settings():
                            load_photo_form=load_photo,
                            delete_photo_form=delete_photo,
                            change_username_form=change_username)
+
+
+@main.route('/my_profile', methods=["POST", "GET"])
+@login_required
+def my_profile():
+    return render_template("my_profile.html")

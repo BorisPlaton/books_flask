@@ -27,18 +27,18 @@
 <!-- NAVBAR -->
 <nav class="container-fluid bg-secondary">
 	<div class="container py-2">
-		<div class="d-flex justify-content-between">
+		<div class="d-flex flex-wrap justify-content-between">
 
 			{% if current_user.is_authenticated %}
 			<!-- USER'S PHOTO -->
-			<div class="d-flex align-items-center justify-content-start">
+			<div class="d-md-flex d-none align-items-center justify-content-start">
 				<div class="user_photo rounded-circle" 
 				style="background-image: url({{ url_for('static', filename='profile_img/' + current_user.profile_photo) }}); width: 30px; height:30px;">
 				</div>
-				<a href="#" class="text-light lead ms-2 fs-5">{{ current_user.username }}</a>
+				<a href="{{ url_for('main.my_profile') }}" class="text-light lead ms-2 fs-5">{{ current_user.username }}</a>
 			</div>
 			{% else %}
-			<div class="d-flex align-items-center justify-content-start">
+			<div class="d-md-flex d-none align-items-center justify-content-start">
 				<!-- LOG IN -->
 				<div>
 					<a href="{{ url_for('authorization.login') }}" class="lead"><i class="bi bi-box-arrow-in-right me-1"></i>Войти</a>
@@ -66,9 +66,9 @@
 
 
 		<!-- SIDEBAR -->
-		{% block sidebar %}
 		<div class="row">
 
+			{% block sidebar %}
 			{% if current_user.is_authenticated %}
 			<div class="d-flex col-lg-2 justify-content-lg-start">
 				<div>
@@ -77,7 +77,7 @@
 							<div class="d-flex flex-column align-items-start">
 								<!-- PROFILE PAGE -->
 								<div>
-									<a href="#" class="sidebar_link"><i class="bi bi-person me-1"></i>Мой профиль</a>
+									<a href=" {{ url_for('main.my_profile') }} " class="sidebar_link"><i class="bi bi-person me-1"></i>Мой профиль</a>
 								</div>
 								<!-- SETTINGS -->
 								<div>
@@ -93,14 +93,14 @@
 				</div>
 			</div>
 			{% endif %}
-		{% endblock %}
+			{% endblock %}
 
-		{% block content %}
-		<div class="col-lg-{% if current_user.is_authenticated %} 10 {% else %} 12 {% endif %}">
-				
+			{% block content %}
+			<div class="col-lg-{% if current_user.is_authenticated %}10{% else %}12{% endif %}">
+					
 
-		</div>
-		{% endblock %}
+			</div>
+			{% endblock %}
 
 		</div>
 </div>

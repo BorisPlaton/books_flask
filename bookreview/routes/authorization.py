@@ -1,3 +1,4 @@
+import os
 from flask import Blueprint, render_template, url_for, redirect, flash
 from flask_login import current_user, login_user, logout_user, login_required
 from flask_bcrypt import generate_password_hash
@@ -5,7 +6,8 @@ from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 from bookreview.forms import LoginForm, RegisterForm, EmailSendForm, SetNewPassword
 from bookreview.models import User
 from bookreview.func import send_reset_message, send_confirm_message
-from bookreview import db, app
+from bookreview import db
+
 
 authorization = Blueprint('authorization', __name__)
 
@@ -64,7 +66,7 @@ def set_new_password(token):
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
 
-    s = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+    s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
     password_resset_form = SetNewPassword()
 
     try:
@@ -95,7 +97,7 @@ def confirm_registration(token):
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
 
-    s = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+    s = URLSafeTimedSerializer(os.environ.get("SECRET_KEY"))
     try:
         user_info = s.loads(token, max_age=1800)
         user = User(**user_info)

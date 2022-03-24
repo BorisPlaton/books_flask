@@ -12,6 +12,7 @@ email-validator = "*"
 itsdangerous = "*"
 flask-mail = "*"
 flask-uploads = "*"
+flask-migrate = "*"
 
 [dev-packages]
 

@@ -1,7 +1,8 @@
 from flask import url_for
 from flask_mail import Message
 from itsdangerous import URLSafeTimedSerializer
-from bookreview import mail, app
+from bookreview import mail
+from os import environ
 
 
 def send_reset_message(user):
@@ -10,7 +11,7 @@ def send_reset_message(user):
 
     :param user: Пользователь, которому отправляется письмо
     """
-    s = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+    s = URLSafeTimedSerializer(environ.get("SECRET_KEY"))
     token = s.dumps({"id": user.id})
     msg = Message(f'Изменение пароля', recipients=[user.email])
     msg.body = f"""Перейдите по ссылке, чтоб изменить пароль, если вы этого не делали, тогда просто проигнорируйте это письмо: 
@@ -24,7 +25,7 @@ def send_confirm_message(user_info: dict):
 
     :param user_info: Информация о пользователе
     """
-    s = URLSafeTimedSerializer(app.config["SECRET_KEY"])
+    s = URLSafeTimedSerializer(environ.get("SECRET_KEY"))
     token = s.dumps(user_info)
     msg = Message(f'Подтверждение регистрации', recipients=[user_info["email"]])
     msg.body = f"""Перейдите по ссылке, чтоб зарегистрироваться, если вы этого не делали, тогда просто проигнорируйте это письмо:

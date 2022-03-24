@@ -1,4 +1,4 @@
-from flask_wtf import FlaskForm, Form
+from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileSize, FileAllowed
 from flask_bcrypt import check_password_hash
 from flask_login import current_user

@@ -1,8 +1,6 @@
-from flask import Blueprint, render_template, url_for, redirect, request, flash
-from flask_login import current_user, login_required
-from flask_bcrypt import generate_password_hash
-from bookreview.forms import LoadPhoto, DeletePhoto, ChangeUsername, ChangePassword
-from bookreview import db, profile_img
+from flask import Blueprint, render_template
+from flask_login import login_required
+from bookreview.forms import LoadPhoto, DeletePhoto, ChangeUsername
 
 main = Blueprint("main", __name__)
 

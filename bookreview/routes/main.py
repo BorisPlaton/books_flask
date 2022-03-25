@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template
 from flask_login import login_required
-from bookreview.forms import LoadPhoto, DeletePhoto, ChangeUsername
+from bookreview.forms import LoadPhoto, DeletePhoto, ChangeUsername, WriteReview
 
 main = Blueprint("main", __name__)
 
@@ -13,14 +13,11 @@ def index():
     return render_template('index.html')
 
 
-@main.route('/settings', methods=["POST", "GET"])
+@main.route('/settings')
 @login_required
 def settings():
     """
-    Страница настроек. Обработчики форм вынесены в отдельные функции:
-    :func: load_photo_def - Загружает фото пользователя
-    :func: change_username_def - Меняет имя пользователя
-    :func: delete_photo_def - Удаляет фото пользователя
+    Страница настроек. Обработчики форм вынесены в модуль bookreview.routes.settings
     """
     load_photo = LoadPhoto()
     delete_photo = DeletePhoto()
@@ -36,3 +33,11 @@ def settings():
 @login_required
 def my_profile():
     return render_template("my_profile.html")
+
+
+@main.route('/write_review', methods=["POST", "GET"])
+@login_required
+def write_review():
+    write_review_form = WriteReview()
+
+    return render_template("write_review.html", form=write_review_form)

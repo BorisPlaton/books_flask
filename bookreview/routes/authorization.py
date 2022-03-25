@@ -35,7 +35,8 @@ def login():
 @authorization.route("/resset_password", methods=["POST", "GET"])
 def resset_password():
     """
-    Изменение пароля.
+    Изменение пароля. Для восстановления пароля требуется ввести почту, на которую
+    будет отправлено письмо.
     Корректность ввода данных и почты проверяется в bookreview.forms.forms.LoginForm
     """
 

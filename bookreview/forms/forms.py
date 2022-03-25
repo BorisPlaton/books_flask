@@ -120,7 +120,11 @@ class DeletePhoto(FlaskForm):
     submit = SubmitField("Удалить фото")
 
 
-class CreateBook(FlaskForm):
+class WriteReview(FlaskForm):
+    """
+    Написание рецензии на книгу. Поля title, author, cover используются для создания записи в таблице book.
+    Поля description, text для записи в таблице review.
+    """
     title = StringField("Название", validators=[InputRequired("Введите название книги"),
                                                 Length(max=200)])
     author = StringField("Автор", validators=[InputRequired("Введите автора"),
@@ -128,3 +132,6 @@ class CreateBook(FlaskForm):
     cover = FileField("Обложка", validators=[FileSize(max_size=2000000,
                                                       message="Обложка должна весить не больше 2 Мб")])
     description = StringField("Описание книги", validators=[Length(max=500)])
+    text = StringField("Отзыв", validators=[InputRequired("Напишите что-то"),
+                                            Length(max=10000, message="Слишком большой текст")])
+    submit = SubmitField("Сохранить")

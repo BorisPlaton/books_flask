@@ -86,6 +86,10 @@ def delete_photo_def():
 @settings.route("/change_password", methods=["POST", "GET"])
 @login_required
 def change_password():
+    """
+    Меняет пароль пользователя. В отличие от bookreview.routes.authorization.resset_password
+    требует ввода старого пароля.
+    """
     change_password_form = ChangePassword()
     if change_password_form.validate_on_submit():
         current_user.password = generate_password_hash(change_password_form.new_password.data)

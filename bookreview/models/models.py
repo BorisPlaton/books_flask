@@ -29,6 +29,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(24), default=same_as('login'))
     reviews = db.relationship("Review", backref="author")
     comments = db.relationship("Comment", backref="author")
+    books = db.relationship("Book", backref="user")
 
     def __repr__(self):
         return f"id user {self.id} | Login {self.login} | Email {self.email} | password {self.password}"
@@ -39,7 +40,6 @@ class Review(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     book_id = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)
     text = db.Column(db.String(10000), nullable=False)
-    description = db.Column(db.String(500))
     date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     good_marks = db.Column(db.Integer, default=0)
     bad_marks = db.Column(db.Integer, default=0)
@@ -62,9 +62,12 @@ class Comment(db.Model):
 
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    # Пользователь, который добавил эту книгу
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     title = db.Column(db.String(200), nullable=False)
     author = db.Column(db.String(100), nullable=False)
     cover = db.Column(db.String(200), default="default_cover.jpg")
+    description = db.Column(db.String(350))
     review = db.relationship('Review', backref='book', uselist=False)
 
     def __repr__(self):

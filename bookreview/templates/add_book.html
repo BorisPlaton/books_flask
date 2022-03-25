@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %} Bookview | Новая книга {% endblock %}
+
+{% block content %}
+<div class="col-lg-9 bg-light p-4 rounded">
+	<form action="{{ url_for('main.add_book')}}" method="post" enctype="multipart/form-data" novalidate >
+		{{ form.csrf_token }}
+		<div class="row g-4">
+
+			<div class="col-lg-12 pb-4 border-bottom">
+				<h2 class="fw-light m-0">Новая книга</h2>
+			</div>
+
+			<div class="col-lg-5">
+				<h5>Автор</h5>
+				<div class="input-group mb-2">
+					{{ load_field(form.author, class="form-control form-control-sm") }}					
+				</div>
+
+				<h5>Название</h5>
+				<div class="input-group mb-2">
+					{{ load_field(form.title, class="form-control form-control-sm") }}					
+				</div>
+
+				<h5>Обложка</h5>
+				<div class="input-group">
+					{{ load_field(form.cover, class="form-control form-control-sm", placeholder=form.cover.label.text) }}					
+				</div>
+			</div>
+
+			<div class="col-lg-7">
+				<h5>Описание</h5>
+				<div class="input-group">
+					{{ load_field(form.description, class="form-control form-control-sm", style="height:172px; resize: none;", placeholder="Описание необязательное, но лучше написать, чтоб люди знали о чём эта книга")}}
+				</div>
+			</div>
+
+			<div class="col-lg-2">
+				{{ form.submit(class='btn btn-outline-primary btn-sm')}}
+			</div>
+
+			<div class="col-12 border-bottom"></div>
+
+			<div class="col-lg-12">
+				<h4 class="fw-light m-0">Ваши книги</h4>
+			</div>
+
+		</div>
+	</form>
+</div>
+{% endblock %}

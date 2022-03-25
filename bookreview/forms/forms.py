@@ -3,7 +3,7 @@ from flask_wtf.file import FileField, FileRequired, FileSize, FileAllowed
 from flask_bcrypt import check_password_hash
 from flask_login import current_user
 from wtforms.validators import InputRequired, EqualTo, Email, ValidationError, Length, Regexp
-from wtforms.fields import StringField, PasswordField, SubmitField, BooleanField
+from wtforms.fields import StringField, PasswordField, SubmitField, BooleanField, SelectField, TextAreaField
 from bookreview.models import User
 from bookreview import profile_img
 
@@ -125,13 +125,18 @@ class WriteReview(FlaskForm):
     Написание рецензии на книгу. Поля title, author, cover используются для создания записи в таблице book.
     Поля description, text для записи в таблице review.
     """
+    select_book = SelectField("Книга", validators=[InputRequired("Выберите книгу")])
+    text = StringField("Отзыв", validators=[InputRequired("Напишите что-то"),
+                                            Length(max=10000, message="Слишком большой текст")])
+    submit = SubmitField("Сохранить")
+
+
+class AddBook(FlaskForm):
     title = StringField("Название", validators=[InputRequired("Введите название книги"),
                                                 Length(max=200)])
     author = StringField("Автор", validators=[InputRequired("Введите автора"),
                                               Length(max=100)])
     cover = FileField("Обложка", validators=[FileSize(max_size=2000000,
                                                       message="Обложка должна весить не больше 2 Мб")])
-    description = StringField("Описание книги", validators=[Length(max=500)])
-    text = StringField("Отзыв", validators=[InputRequired("Напишите что-то"),
-                                            Length(max=10000, message="Слишком большой текст")])
+    description = TextAreaField("Описание книги", validators=[Length(max=350)])
     submit = SubmitField("Сохранить")

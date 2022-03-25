@@ -26,7 +26,7 @@ def login():
 
     if login_form.validate_on_submit():
         user = User.query.filter_by(login=login_form.login.data).first()
-        login_user(user)
+        login_user(user, remember=login_form.remember)
         return redirect(url_for('main.index'))
 
     return render_template('login.html', form=login_form)

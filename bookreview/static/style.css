@@ -63,3 +63,12 @@ a:hover {
 	background-size:cover;
 	background-position:center;
 }
+
+.hidden_link {
+	color: #bdbdbd;
+	transition: 0.1s all ease-in;
+}
+
+.hidden_link:hover {
+	color: white;
+}

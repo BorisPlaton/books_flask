@@ -118,3 +118,7 @@ class DeletePhoto(FlaskForm):
     Удаление фото пользователя
     """
     submit = SubmitField("Удалить фото")
+
+
+class WriteReview(FlaskForm):
+   title = StringField("Название", validators=[InputRequired("Введите название книги"), Length(max=50)])

@@ -13,6 +13,7 @@ itsdangerous = "*"
 flask-mail = "*"
 flask-uploads = "*"
 flask-migrate = "*"
+pymysql = "*"
 
 [dev-packages]
 

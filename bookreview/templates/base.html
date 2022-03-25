@@ -31,14 +31,22 @@
 
 			{% if current_user.is_authenticated %}
 			<!-- USER'S PHOTO -->
-			<div class="d-md-flex d-none align-items-center justify-content-start">
+			<div class="d-lg-flex d-none align-items-center justify-content-start">
 				<div class="user_photo rounded-circle" 
 				style="background-image: url({{ url_for('static', filename='profile_img/' + current_user.profile_photo) }}); width: 30px; height:30px;">
 				</div>
 				<a href="{{ url_for('main.my_profile') }}" class="text-light lead ms-2 fs-5">{{ current_user.username }}</a>
 			</div>
+
+			<!-- COLLAPSE BUTTON -->
+			<div class="d-lg-none d-flex align-items-center justify-content-start">
+			  <a class="btn btn-secondary border" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+			    <i class="bi bi-list"></i>
+			  </a>
+			</div>
+
 			{% else %}
-			<div class="d-md-flex d-none align-items-center justify-content-start">
+			<div class="d-lg-flex align-items-center justify-content-start">
 				<!-- LOG IN -->
 				<div>
 					<a href="{{ url_for('authorization.login') }}" class="lead"><i class="bi bi-box-arrow-in-right me-1"></i>Войти</a>
@@ -61,16 +69,32 @@
 </nav>
 {% endblock %}
 
+
+<div class="collapse p-3" id="collapseExample" style="background: #616161;">
+	<div class="d-flex flex-column">
+		<div>
+			<a href=" {{ url_for('main.my_profile') }} " class="hidden_link"><i class="bi bi-person me-1"></i>Мой профиль</a>
+		</div>
+		<!-- SETTINGS -->
+		<div>
+			<a href="{{ url_for('main.settings') }}" class="hidden_link"><i class="bi bi-gear me-1"></i>Настройки</a>
+		</div>
+		<!-- EXIT -->
+		<div>
+			<a href="{{ url_for('authorization.logout') }}" class="hidden_link"><i class="bi bi-box-arrow-left me-1"></i>Выход</a>
+		</div>
+	</div>
+</div>
+
 <!-- CONTENT -->
 <div class="content container py-4">
 
-
-		<!-- SIDEBAR -->
 		<div class="row">
 
+			<!-- SIDEBAR -->
 			{% block sidebar %}
 			{% if current_user.is_authenticated %}
-			<div class="d-flex col-lg-2 justify-content-lg-start">
+			<div class="d-lg-flex d-none col-lg-2 justify-content-lg-start">
 				<div>
 					<div class="sticky-top">
 						<div class="d-flex flex-column align-items-end">

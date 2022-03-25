@@ -10,6 +10,8 @@ from bookreview.config import BaseConfig
 db = SQLAlchemy()
 login_manager = LoginManager()
 login_manager.login_view = 'authorization.login'
+login_manager.login_message = 'Войдите в аккаунт'
+login_manager.login_message_category = 'warning'
 bcrypt = Bcrypt()
 mail = Mail()
 

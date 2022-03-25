@@ -56,12 +56,16 @@ class Comment(db.Model):
     date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     def __repr__(self):
-        return f"id comment{self.id} | Text {self.text} | Author {self.author}"
+        return f"id comment {self.id} | Text {self.text} | Author {self.author}"
 
 
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.String(500))
     author = db.Column(db.String(100), nullable=False)
     cover = db.Column(db.String(200), default="default_cover.jpg")
     review = db.relationship('Review', backref='book', uselist=False)
+
+    def __repr__(self):
+        return f"id book {self.id} | title {self.title} | Author {self.author}"

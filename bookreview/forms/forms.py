@@ -120,5 +120,11 @@ class DeletePhoto(FlaskForm):
     submit = SubmitField("Удалить фото")
 
 
-class WriteReview(FlaskForm):
-   title = StringField("Название", validators=[InputRequired("Введите название книги"), Length(max=50)])
+class CreateBook(FlaskForm):
+    title = StringField("Название", validators=[InputRequired("Введите название книги"),
+                                                Length(max=200)])
+    author = StringField("Автор", validators=[InputRequired("Введите автора"),
+                                              Length(max=100)])
+    cover = FileField("Обложка", validators=[FileSize(max_size=2000000,
+                                                      message="Обложка должна весить не больше 2 Мб")])
+    description = StringField("Описание книги", validators=[Length(max=500)])

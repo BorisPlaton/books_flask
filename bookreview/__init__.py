@@ -15,7 +15,8 @@ login_manager.login_message_category = 'warning'
 bcrypt = Bcrypt()
 mail = Mail()
 
-profile_img = UploadSet("profileimg", IMAGES)
+profile = UploadSet("profile", IMAGES)
+bookcover = UploadSet("bookcover", IMAGES)
 
 
 def create_app(config_class=BaseConfig):
@@ -30,8 +31,7 @@ def create_app(config_class=BaseConfig):
     Migrate(app, db)
     from bookreview.models import User, Review, Comment
 
-    from bookreview.routes import profile_img
-    configure_uploads(app, profile_img)
+    configure_uploads(app, (profile, bookcover))
 
     from bookreview.routes import authorization, main, settings
     app.register_blueprint(authorization)

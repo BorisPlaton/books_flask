@@ -3,7 +3,7 @@ from os import remove
 from flask import Blueprint, render_template, url_for, redirect, request, flash
 from flask_login import current_user, login_required
 from flask_bcrypt import generate_password_hash
-from bookreview import db, profile_img
+from bookreview import db, profile
 from bookreview.forms import LoadPhoto, DeletePhoto, ChangeUsername, ChangePassword
 
 settings = Blueprint("settings", __name__)
@@ -22,10 +22,10 @@ def load_photo_def():
     delete_photo = DeletePhoto()
     change_username = ChangeUsername()
     if load_photo.validate_on_submit():
-        if not current_user.profile_photo == "standard_user_pic.jpg":
+        if not current_user.profile_photo == "default_user_img.jpg":
             path = Path(Path.cwd(), "bookreview", "static", "profile_img", current_user.profile_photo)
             remove(path)
-        current_user.profile_photo = profile_img.save(load_photo.photo.data)
+        current_user.profile_photo = profile.save(load_photo.photo.data)
         db.session.commit()
         return redirect(url_for("main.settings"))
     return render_template('settings.html',
@@ -71,10 +71,11 @@ def delete_photo_def():
     delete_photo = DeletePhoto()
     change_username = ChangeUsername()
     if delete_photo.validate_on_submit():
-        if not current_user.profile_photo == "standard_user_pic.jpg":
+        if not current_user.profile_photo == "default_user_img.jpg":
             path = Path(Path.cwd(), "bookreview", "static", "profile_img", current_user.profile_photo)
             remove(path)
-            current_user.profile_photo = "standard_user_pic.jpg"
+            # Устанавливаем стандартное фото пользователя
+            current_user.profile_photo = "default_user_img.jpg"
             db.session.commit()
             return redirect(url_for("main.settings"))
     return render_template('settings.html',

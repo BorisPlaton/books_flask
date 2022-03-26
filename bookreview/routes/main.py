@@ -1,10 +1,9 @@
 from flask import Blueprint, render_template, flash, url_for
-from flask_login import login_required
+from flask_login import login_required, current_user
 from werkzeug.utils import redirect
-
 from bookreview.forms import LoadPhoto, DeletePhoto, ChangeUsername, WriteReview, AddBook
 from bookreview.models import Book
-from bookreview import db
+from bookreview import db, bookcover
 
 main = Blueprint("main", __name__)
 
@@ -38,18 +37,19 @@ def add_book():
     Добавление новой книги. Показывает уже добавленные книги.
     """
     add_book_form = AddBook()
-
+    books = current_user.books
     if add_book_form.validate_on_submit():
-        book = Book(title=add_book_form.title.data,
-                    author=add_book_form.author.data,
-                    cover=add_book_form.cover.data,
-                    desription=add_book_form.description.data)
-        db.session.add(book)
+        new_book = Book(user_id=current_user.id,
+                        title=add_book_form.title.data,
+                        author=add_book_form.author.data,
+                        cover=bookcover.save(add_book_form.cover.data) if add_book_form.cover.data else None,
+                        description=add_book_form.description.data)
+        db.session.add(new_book)
         db.session.commit()
-        flash("Книга успешно добавлена!", category="success")
+        flash("Книга добавлена", category="success")
         return redirect(url_for('main.add_book'))
 
-    return render_template('add_book.html', form=add_book_form)
+    return render_template('add_book.html', form=add_book_form, books=books)
 
 
 @main.route('/settings')

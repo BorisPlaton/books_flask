@@ -25,7 +25,7 @@ class User(db.Model, UserMixin):
     login = db.Column(db.String(24), unique=True, nullable=False)
     email = db.Column(db.String(200), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
-    profile_photo = db.Column(db.String(200), default='standard_user_pic.jpg')
+    profile_photo = db.Column(db.String(200), default='default_user_img.jpg')
     username = db.Column(db.String(24), default=same_as('login'))
     reviews = db.relationship("Review", backref="author")
     comments = db.relationship("Comment", backref="author")
@@ -62,11 +62,11 @@ class Comment(db.Model):
 
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    # Пользователь, который добавил эту книгу
+    # Пользователь, который создал эту книгу
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     title = db.Column(db.String(200), nullable=False)
     author = db.Column(db.String(100), nullable=False)
-    cover = db.Column(db.String(200), default="default_cover.jpg")
+    cover = db.Column(db.String(200), default="default_cover_img.jpg")
     description = db.Column(db.String(350))
     review = db.relationship('Review', backref='book', uselist=False)
 

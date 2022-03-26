@@ -5,7 +5,7 @@ from flask_login import current_user
 from wtforms.validators import InputRequired, EqualTo, Email, ValidationError, Length, Regexp
 from wtforms.fields import StringField, PasswordField, SubmitField, BooleanField, SelectField, TextAreaField
 from bookreview.models import User
-from bookreview import profile_img
+from bookreview import profile
 
 
 class LoginForm(FlaskForm):
@@ -109,7 +109,7 @@ class LoadPhoto(FlaskForm):
     photo = FileField("Загрузить фото", validators=[FileRequired("Загрузите фото"),
                                                     FileSize(max_size=1000000,
                                                              message="Файл должен весить меньше 1 Мб"),
-                                                    FileAllowed(profile_img, 'Только фото')])
+                                                    FileAllowed(profile, 'Только фото')])
     submit = SubmitField("Сохранить")
 
 

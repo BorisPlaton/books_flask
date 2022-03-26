@@ -6,6 +6,11 @@ html, body {
 	height: 100%;
 }
 
+p {
+	word-wrap: break-word;
+	line-height: 1.25em;
+}
+
 .content {
 	flex-grow: 1;
 }
@@ -71,4 +76,14 @@ a:hover {
 
 .hidden_link:hover {
 	color: white;
+}
+
+.delete_btn {
+	color: grey;
+	transition: 0.2s all ease-out;
+	cursor: pointer;
+}
+
+.delete_btn:hover {
+	color: black;
 }

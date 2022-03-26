@@ -33,7 +33,7 @@
 			<div class="col-lg-7">
 				<h5 class="fw-light">Описание</h5>
 				<div class="input-group">
-					{{ load_field(form.description, class="form-control form-control-sm", style="height:173px; resize: none;", placeholder="Описание писать необязательно, но лучше это сделать, чтоб люди знали о чём эта книга", autocomplete="off")}}
+					{{ load_field(form.description, class="form-control form-control-sm", style="height:173px; resize: none;", placeholder="Можно ничего не писать, но лучше это сделать, чтоб люди знали о чём эта книга", autocomplete="off")}}
 				</div>
 			</div>
 
@@ -54,13 +54,18 @@
 					{% for book in books %}
 						<div class="p-4 pb-0">
 							<div class="col">
-		 			 			<div class="row row-cols-1 shadow-sm rounded border">
+		 			 			<div class="row row-cols-1 shadow-sm rounded border position-relative">
+		 			 				<a class="delete_btn" href="#">
+			 			 				<div class="position-absolute bg-light p-1 rounded-circle d-flex align-items-center justify-content-center" style="width: 25px; height: 25px; top: 10px;">
+				 							<i class="bi bi-trash"></i>
+			 			 				</div>
+			 			 			</a>
 					 				<div class="col book_cover rounded-top" style="background-image: url({{ url_for('static', filename='book_covers/'+book.cover) }}); height:250px">
 			    					</div>
 
 		 			 				<div class="col p-3 bg-white rounded-bottom">
 		 			 					<h5 class="mb-1">{{ book.title }}</h5>
-		 			 					<small>{{ book.author }}</small>
+		 			 					<small class="text-secondary">{{ book.author }}</small>
 		 			 				</div>
 		 			 			</div>
 						    </div>

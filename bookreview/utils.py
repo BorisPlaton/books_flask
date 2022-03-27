@@ -2,7 +2,8 @@ from os import environ
 from flask import url_for
 from flask_mail import Message
 from itsdangerous import URLSafeTimedSerializer
-from . import mail
+
+from bookreview import mail
 
 
 def send_reset_message(user):

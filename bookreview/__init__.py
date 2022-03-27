@@ -33,9 +33,10 @@ def create_app(config_class=BaseConfig):
 
     configure_uploads(app, (profile, bookcover))
 
-    from .views import authorization, main, settings
+    from .views import authorization, main, settings, book
     app.register_blueprint(authorization)
     app.register_blueprint(main)
     app.register_blueprint(settings)
+    app.register_blueprint(book)
 
     return app

@@ -1,9 +1,7 @@
-from flask import Blueprint, render_template, flash, url_for
+from flask import Blueprint, render_template
 from flask_login import login_required, current_user
-from werkzeug.utils import redirect
-from bookreview.forms import LoadPhoto, DeletePhoto, ChangeUsername, WriteReview, AddBook
-from bookreview.models import Book
-from bookreview import db, bookcover
+from bookreview.forms import LoadPhoto, DeletePhoto, ChangeUsername, WriteReview
+
 
 main = Blueprint("main", __name__)
 
@@ -21,36 +19,6 @@ def index():
 def my_profile():
     books = current_user.books
     return render_template("my_profile.html", books=False)
-
-
-@main.route('/write_review', methods=["POST", "GET"])
-@login_required
-def write_review():
-    write_review_form = WriteReview()
-
-    return render_template("write_review.html", form=write_review_form)
-
-
-@main.route('/add_book', methods=["POST", "GET"])
-@login_required
-def add_book():
-    """
-    Добавление новой книги. Показывает уже добавленные книги.
-    """
-    add_book_form = AddBook()
-    books = current_user.books
-    if add_book_form.validate_on_submit():
-        new_book = Book(user_id=current_user.id,
-                        title=add_book_form.title.data,
-                        author=add_book_form.author.data,
-                        cover=bookcover.save(add_book_form.cover.data) if add_book_form.cover.data else None,
-                        description=add_book_form.description.data)
-        db.session.add(new_book)
-        db.session.commit()
-        flash("Книга добавлена", category="success")
-        return redirect(url_for('main.add_book'))
-
-    return render_template('add_book.html', form=add_book_form, books=books)
 
 
 @main.route('/settings')

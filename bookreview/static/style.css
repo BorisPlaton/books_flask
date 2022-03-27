@@ -11,6 +11,10 @@ p {
 	line-height: 1.25em;
 }
 
+textarea {
+	resize: none
+}
+
 .content {
 	flex-grow: 1;
 }

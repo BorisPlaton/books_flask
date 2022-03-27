@@ -4,8 +4,9 @@ from flask_bcrypt import check_password_hash
 from flask_login import current_user
 from wtforms.validators import InputRequired, EqualTo, Email, ValidationError, Length, Regexp
 from wtforms.fields import StringField, PasswordField, SubmitField, BooleanField, SelectField, TextAreaField
-from .models import User
-from . import profile
+from wtforms_sqlalchemy.fields import QuerySelectField
+from bookreview.models import User, Book
+from bookreview import profile
 
 
 class LoginForm(FlaskForm):
@@ -120,14 +121,19 @@ class DeletePhoto(FlaskForm):
     submit = SubmitField("Удалить фото")
 
 
+def choice_query():
+    return Book.query.filter_by(user_id=current_user.id)
+
+
 class WriteReview(FlaskForm):
     """
     Написание рецензии на книгу. Поля title, author, cover используются для создания записи в таблице book.
     Поля description, text для записи в таблице review.
     """
-    select_book = SelectField("Книга", validators=[InputRequired("Выберите книгу")])
-    text = StringField("Отзыв", validators=[InputRequired("Напишите что-то"),
-                                            Length(max=10000, message="Слишком большой текст")])
+    select_book = QuerySelectField("Книга", query_factory=choice_query,
+                                   validators=[InputRequired("Выберите книгу")])
+    text = TextAreaField("Отзыв", validators=[InputRequired("Это поле не может быть пустым"),
+                                              Length(max=10000, message="Слишком большой текст")])
     submit = SubmitField("Сохранить")
 
 

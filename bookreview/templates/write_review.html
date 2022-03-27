@@ -3,11 +3,36 @@
 {% block title %} Bookview | Написать рецензию {% endblock %}
 
 {% block content %}
+
 <div class="col bg-light p-4 rounded">
-	<div class="row">
-		
+	<div class="container p-0">
+		<div class="row g-4">
+			<div class="col-12 pb-4 border-bottom">
+				<h2 class="fw-light m-0">Новая рецензия</h2>
+			</div>
+
+			<div class="col">
+			{% if current_user.books %}
+			<form action="{{ url_for('book.write_review') }}" method='post' novalidate>
+				{{ form.csrf_token }}
+				<div class="col">
+					<h5 class="fw-light">Книга</h5>
+					{{ load_field(form.select_book, class="form-select")}}
+					{{ load_field(form.text, class="form-control", style="height: 450px;", placeholder="Расскажите, что думаете об этой книге")}}
+				</div>
+
+				<div class="col mt-3">
+					{{ form.submit(class="btn btn-outline-primary btn-sm")}}
+				</div>
+
+			</form>
+			{% else %}
+				<small class="text-secondary">У вас нет книг, чтоб написать рецензию. <a href="{{ url_for('book.add_book') }}" class="text-primary">Добавьте</a> их и возвращайтесь сюда.</small>
+			{% endif %}
+			</div>
 
 
+		</div>
 	</div>
 </div>
 {% endblock %}

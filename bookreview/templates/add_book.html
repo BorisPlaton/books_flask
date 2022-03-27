@@ -3,9 +3,10 @@
 {% block title %} Bookview | Новая книга {% endblock %}
 
 {% block content %}
+
 <div class="col bg-light p-4 rounded">
 	<div class="container p-0">
-	<form action="{{ url_for('main.add_book')}}" method="post" enctype="multipart/form-data" novalidate>
+	<form action="{{ url_for('book.add_book')}}" method="post" enctype="multipart/form-data" novalidate>
 		{{ form.csrf_token }}
 		<div class="row g-4">
 
@@ -25,8 +26,8 @@
 				</div>
 
 				<h5 class="fw-light">Обложка</h5>
-				<div class="input-group">
-					{{ load_field(form.cover, class="form-control form-control-sm", placeholder=form.cover.label.text, autocomplete="off") }}					
+				<div class="d-flex flex-column">
+					{{ load_field(form.cover, class="form-control form-control-sm", placeholder=form.cover.label.text, autocomplete="off") }}				
 				</div>
 			</div>
 
@@ -55,7 +56,7 @@
 						<div class="p-4 pb-0">
 							<div class="col">
 		 			 			<div class="row row-cols-1 shadow-sm rounded border position-relative">
-		 			 				<a class="delete_btn" href="#">
+		 			 				<a class="delete_btn" href="{{ url_for('book.delete_book', book_id=book.id) }}">
 			 			 				<div class="position-absolute bg-light p-1 rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 25px; height: 25px; top: 10px;">
 				 							<i class="bi bi-trash"></i>
 			 			 				</div>

@@ -1,6 +1,7 @@
 from datetime import datetime
 from flask_login import UserMixin
-from . import db, login_manager
+
+from bookreview import db, login_manager
 
 
 def same_as(column):
@@ -68,7 +69,7 @@ class Book(db.Model):
     author = db.Column(db.String(100), nullable=False)
     cover = db.Column(db.String(200), default="default_cover_img.jpg")
     description = db.Column(db.String(350))
-    review = db.relationship('Review', backref='book', uselist=False)
+    review = db.relationship('Review', backref='book', uselist=False, cascade="all,delete")
 
     def __repr__(self):
-        return f"id book {self.id} | title {self.title} | Author {self.author}"
+        return f"{self.author} - {self.title}"

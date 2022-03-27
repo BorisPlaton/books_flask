@@ -115,11 +115,11 @@
 									</div>
 									<!-- WRITE A NEW REVIEW -->
 									<div>
-										<a href="{{ url_for('main.write_review') }}" class="sidebar_link"><i class="bi bi-blockquote-right me-1"></i>Написать рецензию</a>
+										<a href="{{ url_for('book.write_review') }}" class="sidebar_link"><i class="bi bi-blockquote-right me-1"></i>Написать рецензию</a>
 									</div>
 									<!-- ADD NEW BOOK -->
 									<div>
-										<a href="{{ url_for('main.add_book') }}" class="sidebar_link"><i class="bi bi-plus-circle me-1"></i>Добавить книгу</a>
+										<a href="{{ url_for('book.add_book') }}" class="sidebar_link"><i class="bi bi-plus-circle me-1"></i>Добавить книгу</a>
 									</div>
 									<!-- SETTINGS -->
 									<div>
@@ -160,7 +160,7 @@
 
 {% block footer %}
 <!-- FOOTER -->
-<footer class="container-fluid py-4 position-relative bg-secondary mt-3">
+<footer class="container-fluid py-4 position-relative bg-secondary mt-4">
 	<div class="container">
 		<div class="row">
 

@@ -21,6 +21,15 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
+user_likes = db.Table('user_likes',
+                      db.Column('user_id', db.Integer, db.ForeignKey('user.id', ondelete='CASCADE')),
+                      db.Column('review_id', db.Integer, db.ForeignKey('review.id', ondelete='CASCADE')))
+
+user_dislikes = db.Table('user_dislikes',
+                         db.Column('user_id', db.Integer, db.ForeignKey('user.id', ondelete='CASCADE')),
+                         db.Column('review_id', db.Integer, db.ForeignKey('review.id', ondelete='CASCADE')))
+
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(24), unique=True, nullable=False)
@@ -28,9 +37,12 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(200), nullable=False)
     profile_photo = db.Column(db.String(200), default='default_user_img.jpg')
     username = db.Column(db.String(24), default=same_as('login'))
-    reviews = db.relationship("Review", backref="author")
+
+    reviews = db.relationship("Review", backref="author", passive_deletes=True)
+    likes = db.relationship("Review", backref="users_like", secondary=user_likes, passive_deletes=True)
+    dislikes = db.relationship("Review", backref="users_dislike", secondary=user_dislikes, passive_deletes=True)
     comments = db.relationship("Comment", backref="author")
-    books = db.relationship("Book", backref="user")
+    books = db.relationship("Book", backref="user", passive_deletes=True)
 
     def __repr__(self):
         return f"id user {self.id} | Login {self.login} | Email {self.email} | password {self.password}"
@@ -38,12 +50,10 @@ class User(db.Model, UserMixin):
 
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    book_id = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    book_id = db.Column(db.Integer, db.ForeignKey('book.id', ondelete='CASCADE'), nullable=False)
     text = db.Column(db.String(10000), nullable=False)
     date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    good_marks = db.Column(db.Integer, default=0)
-    bad_marks = db.Column(db.Integer, default=0)
     comments = db.relationship("Comment", backref="review")
 
     def __repr__(self):
@@ -52,8 +62,8 @@ class Review(db.Model):
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    review_id = db.Column(db.Integer, db.ForeignKey('review.id'), nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    review_id = db.Column(db.Integer, db.ForeignKey('review.id', ondelete='CASCADE'), nullable=False)
     text = db.Column(db.String(1000), nullable=False)
     date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
@@ -64,12 +74,13 @@ class Comment(db.Model):
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     # Пользователь, который создал эту книгу
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     title = db.Column(db.String(200), nullable=False)
     author = db.Column(db.String(100), nullable=False)
     cover = db.Column(db.String(200), default="default_cover_img.jpg")
     description = db.Column(db.String(350))
-    review = db.relationship('Review', backref='book', uselist=False, cascade="all,delete")
+
+    review = db.relationship('Review', backref='book', uselist=False, passive_deletes=True)
 
     def __repr__(self):
         return f"{self.author} - {self.title}"

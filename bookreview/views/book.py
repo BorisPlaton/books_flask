@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 
 from bookreview import bookcover, db
 from bookreview.forms import AddBook, WriteReview
-from bookreview.models import Book, Review
+from bookreview.models import Book, Review, User
 
 book = Blueprint('book', __name__)
 
@@ -46,7 +46,7 @@ def write_review():
 
     if write_review_form.validate_on_submit():
         review = Review(author_id=current_user.id,
-                        book_id=write_review_form.data.id,
+                        book_id=write_review_form.select_book.data.id,
                         text=write_review_form.text.data)
         db.session.add(review)
         db.session.commit()
@@ -54,3 +54,44 @@ def write_review():
         return redirect(url_for('main.my_profile'))
 
     return render_template("write_review.html", form=write_review_form)
+
+
+@book.route('/delete_review/<int:review_id>')
+@login_required
+def delete_review(review_id):
+    next_route = request.args.get("next")
+    Review.query.filter_by(id=review_id).delete()
+    db.session.commit()
+    return redirect(url_for(next_route))
+
+
+@book.route('/status_up/<int:user_id>/<int:review_id>')
+@login_required
+def status_up(user_id, review_id):
+    user = User.query.get(user_id)
+    review = Review.query.get(review_id)
+    next_page = request.args.get('next')
+    if review in user.likes:
+        user.likes.remove(review)
+    else:
+        user.likes.append(review)
+        if review in user.dislikes:
+            user.dislikes.remove(review)
+    db.session.commit()
+    return redirect(url_for(next_page))
+
+
+@book.route('/status_down/<int:user_id>/<int:review_id>')
+@login_required
+def status_down(user_id, review_id):
+    user = User.query.get(user_id)
+    review = Review.query.get(review_id)
+    next_page = request.args.get('next')
+    if review in user.dislikes:
+        user.dislikes.remove(review)
+    else:
+        user.dislikes.append(review)
+        if review in user.likes:
+            user.likes.remove(review)
+    db.session.commit()
+    return redirect(url_for(next_page))

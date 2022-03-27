@@ -29,7 +29,7 @@ a:hover {
 	color: white;
 }
 
-.sidebar_link {
+.sidebar_link, .up_button, .down_button, .disliked:hover, .liked:hover {
 	color: #a1a1a1;
 	transition: 0.1s all ease-in;
 }
@@ -91,3 +91,12 @@ a:hover {
 .delete_btn:hover {
 	color: black;
 }
+
+.up_button:hover, .liked  {
+	color: #55b56f;
+}
+
+.down_button:hover, .disliked {
+	color: #c94957;
+}
+

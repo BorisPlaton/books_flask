@@ -5,7 +5,7 @@ from flask_bcrypt import Bcrypt
 from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_uploads import configure_uploads, UploadSet, IMAGES
-from bookreview.config import BaseConfig
+from .config import BaseConfig
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -29,11 +29,11 @@ def create_app(config_class=BaseConfig):
     mail.init_app(app)
 
     Migrate(app, db)
-    from bookreview.models import User, Review, Comment
+    from .models import User, Review, Comment
 
     configure_uploads(app, (profile, bookcover))
 
-    from bookreview.routes import authorization, main, settings
+    from .views import authorization, main, settings
     app.register_blueprint(authorization)
     app.register_blueprint(main)
     app.register_blueprint(settings)

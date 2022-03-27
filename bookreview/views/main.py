@@ -57,7 +57,7 @@ def add_book():
 @login_required
 def settings():
     """
-    Страница настроек. Обработчики форм вынесены в модуль bookreview.routes.settings
+    Страница настроек. Обработчики форм вынесены в модуль bookreview.views.settings
     """
     load_photo = LoadPhoto()
     delete_photo = DeletePhoto()

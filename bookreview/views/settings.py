@@ -88,7 +88,7 @@ def delete_photo_def():
 @login_required
 def change_password():
     """
-    Меняет пароль пользователя. В отличие от bookreview.routes.authorization.resset_password
+    Меняет пароль пользователя. В отличие от bookreview.views.authorization.resset_password
     требует ввода старого пароля.
     """
     change_password_form = ChangePassword()

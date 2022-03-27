@@ -5,7 +5,7 @@ from flask_bcrypt import generate_password_hash
 from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 from bookreview.forms import LoginForm, RegisterForm, EmailSendForm, SetNewPassword
 from bookreview.models import User
-from bookreview.func import send_reset_message, send_confirm_message
+from bookreview.utils import send_reset_message, send_confirm_message
 from bookreview import db
 
 

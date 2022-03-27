@@ -4,8 +4,8 @@ from flask_bcrypt import check_password_hash
 from flask_login import current_user
 from wtforms.validators import InputRequired, EqualTo, Email, ValidationError, Length, Regexp
 from wtforms.fields import StringField, PasswordField, SubmitField, BooleanField, SelectField, TextAreaField
-from bookreview.models import User
-from bookreview import profile
+from .models import User
+from . import profile
 
 
 class LoginForm(FlaskForm):

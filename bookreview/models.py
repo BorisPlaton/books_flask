@@ -1,6 +1,6 @@
-from flask_login import UserMixin
-from bookreview import db, login_manager
 from datetime import datetime
+from flask_login import UserMixin
+from . import db, login_manager
 
 
 def same_as(column):

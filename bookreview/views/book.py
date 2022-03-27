@@ -1,4 +1,4 @@
-from flask import Blueprint, url_for, redirect, flash, render_template
+from flask import Blueprint, url_for, redirect, flash, render_template, request
 from flask_login import login_required, current_user
 
 from bookreview import bookcover, db
@@ -33,9 +33,10 @@ def add_book():
 @book.route('/delete_book/<int:book_id>')
 @login_required
 def delete_book(book_id):
+    next_route = request.args.get("next")
     Book.query.filter_by(id=book_id).delete()
     db.session.commit()
-    return redirect(url_for('book.add_book'))
+    return redirect(url_for(next_route))
 
 
 @book.route('/write_review', methods=["POST", "GET"])
@@ -44,6 +45,12 @@ def write_review():
     write_review_form = WriteReview()
 
     if write_review_form.validate_on_submit():
-        review = Review()
+        review = Review(author_id=current_user.id,
+                        book_id=write_review_form.data.id,
+                        text=write_review_form.text.data)
+        db.session.add(review)
+        db.session.commit()
+        flash("Рецензия сохранена", category="success")
+        return redirect(url_for('main.my_profile'))
 
     return render_template("write_review.html", form=write_review_form)

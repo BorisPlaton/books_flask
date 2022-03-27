@@ -17,8 +17,7 @@ def index():
 @main.route('/my_profile', methods=["POST", "GET"])
 @login_required
 def my_profile():
-    books = current_user.books
-    return render_template("my_profile.html", books=False)
+    return render_template("my_profile.html")
 
 
 @main.route('/settings')

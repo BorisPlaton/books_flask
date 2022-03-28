@@ -55,10 +55,10 @@
 <!-- LEAVE COMMENT FORM -->
 <div class="col bg-light p-3 rounded mt-3">
 	<form action="{{ url_for('book.review', review_id=review.id )}}" method="post" novalidate>
-		<div class="d-flex flex-column"></div>
+		<div class="d-flex flex-column">
 		{{ form.csrf_token }}
 		{{ load_field(form.text, class='form-control', placeholder=form.text.label.text, style="height: 125px;")}}
-		{{ form.submit(class='btn btn-outline-primary btn-sm mt-3 ms-auto')}}
+		{{ form.submit(class='btn btn-outline-primary btn-sm mt-3 me-auto')}}
 		</div>
 	</form>
 </div>
@@ -70,20 +70,27 @@
 <!-- COMMENTS -->
 {% if review.comments %}
 	{% for comment in review.comments %}
-	<div class="col rounded mt-3 p-3 bg-light">	
+	<div class="col rounded mt-3 p-3 pb-4 bg-light">	
 		<div class="d-flex flex-column">
 
-			<div class="d-flex align-items-center justify-content-start">
-				<div class="user_photo rounded-circle mt-1" 
-				style="background-image: url({{ url_for('static', filename='profile_img/' + comment.author.profile_photo) }}); width: 30px; height:30px;">
+			<div class="d-flex justify-content-between align-items-center">
+				<div class="d-flex align-items-center justify-content-start">
+					<div class="user_photo rounded-circle mt-1" 
+					style="background-image: url({{ url_for('static', filename='profile_img/' + comment.author.profile_photo) }}); width: 30px; height:30px;">
+					</div>
+					<div class="d-flex flex-column ms-2 ">
+						<a href="{{ url_for('main.profile', profile_id=comment.author.id) }}" class="text-dark lead fs-5">{{ comment.author.username }}</a>
+						<span class="text-secondary fw-light fs-6">{{ comment.date.strftime('%d %B, %Y') }}, {{ comment.date.strftime('%H:%M') }}</span>
+					</div>
 				</div>
-				<div class="d-flex flex-column ms-2 ">
-					<a href="{{ url_for('main.profile', profile_id=comment.author.id) }}" class="text-dark lead fs-5">{{ comment.author.username }}</a>
-					<span class="text-secondary fw-light fs-6">{{ review.date.strftime('%d %B, %Y') }}, {{ review.date.strftime('%H:%M') }}</span>
+				{% if current_user.id == author_id %}
+				<div class="d-flex">
+					<a href="{{ url_for('book.delete_comment', comment_id=comment.id, next='/review/'~review.id )}}" class='sidebar_link'><i class="bi bi-trash"></i></a>
 				</div>
+				{% endif %}
 			</div>
 
-			<div class="mt-2">
+			<div class="mt-3">
 				<p class="m-0">{{ comment.text }}</p>
 			</div>
 
@@ -91,7 +98,9 @@
 	</div>
 	{% endfor %}
 {% else %}
-	<small>Пока ещё никто не написал здесь свой комментарий. Сделайте это первыми!</small>
+	<div class="col mt-3 text-secondary p-3">	
+		<small>Здесь нет комментариев. Напишите его первым!</small>
+	</div>
 {% endif %}
 
 {% endblock %}

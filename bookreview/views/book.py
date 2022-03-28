@@ -33,11 +33,14 @@ def add_book():
 @book.route('/delete_book/<int:book_id>')
 @login_required
 def delete_book(book_id):
-    next_route = request.args.get("next")
-    Book.query.filter_by(id=book_id).delete()
-    db.session.commit()
-    flash("Книга удалена", category="warning")
-    return redirect(url_for(next_route))
+    book_ = Book.query.get(int(book_id))
+    if current_user.id == book_.user.id:
+        db.session.delete(book_)
+        db.session.commit()
+        next_route = request.args.get("next")
+        flash("Книга удалена", category="warning")
+        return redirect(url_for(next_route))
+    return redirect(url_for('main.index'))
 
 
 @book.route('/review/<int:review_id>', methods=["POST", "GET"])
@@ -45,6 +48,7 @@ def review(review_id):
     current_review = Review.query.get(review_id)
     write_comment = WriteComment()
     mark = len(current_review.users_like) - len(current_review.users_dislike)
+    author_review = current_review.author.id
     if write_comment.validate_on_submit():
         comment = Comment(author_id=current_user.id,
                           review_id=review_id,
@@ -52,19 +56,21 @@ def review(review_id):
         db.session.add(comment)
         db.session.commit()
         return redirect(url_for('book.review', review_id=review_id))
-    return render_template('review.html', review=current_review, form=write_comment, mark=mark)
+    return render_template('review.html', review=current_review,
+                           form=write_comment,
+                           mark=mark,
+                           author_id=author_review)
 
 
 @book.route('/write_review', methods=["POST", "GET"])
 @login_required
 def write_review():
     write_review_form = WriteReview()
-
     if write_review_form.validate_on_submit():
-        review = Review(author_id=current_user.id,
-                        book_id=write_review_form.select_book.data.id,
-                        text=write_review_form.text.data)
-        db.session.add(review)
+        review_ = Review(author_id=current_user.id,
+                         book_id=write_review_form.select_book.data.id,
+                         text=write_review_form.text.data)
+        db.session.add(review_)
         db.session.commit()
         flash("Запись сохранена", category="success")
         return redirect(url_for('main.profile', profile_id=current_user.id))
@@ -75,11 +81,26 @@ def write_review():
 @book.route('/delete_review/<int:review_id>')
 @login_required
 def delete_review(review_id):
-    next_route = request.args.get("next")
-    Review.query.filter_by(id=review_id).delete()
-    db.session.commit()
-    flash("Рецензия удалена", category="warning")
-    return redirect(next_route)
+    review_ = Review.query.get(int(review_id))
+    if current_user.id == review_.author.id:
+        db.session.delete(review_)
+        db.session.commit()
+        flash("Рецензия удалена", category="warning")
+        next_route = request.args.get("next")
+        return redirect(next_route)
+    return redirect(url_for('main.index'))
+
+
+@book.route('/delete_comment/<comment_id>')
+@login_required
+def delete_comment(comment_id):
+    comment = Comment.query.get(int(comment_id))
+    if current_user.id == comment.author.id:
+        db.session.delete(comment)
+        db.session.commit()
+        next_route = request.args.get("next")
+        return redirect(next_route)
+    return redirect(url_for('main.index'))
 
 
 @book.route('/status_up/<int:review_id>')

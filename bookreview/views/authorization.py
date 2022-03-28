@@ -125,21 +125,13 @@ def register():
 
     register_form = RegisterForm()
     if register_form.validate_on_submit():
-        user = User(login=register_form.login.data,
-                    email=register_form.email.data,
-                    password=generate_password_hash(register_form.password.data).decode('utf-8'))
-        db.session.add(user)
-        db.session.commit()
-        flash("Регистрация прошла успешно!", category="success")
-        return redirect(url_for("authorization.login"))
-
-        # send_confirm_message({
-        #     "login": register_form.login.data,
-        #     "email": register_form.email.data,
-        #     "password": generate_password_hash(register_form.password.data).decode('utf-8'),
-        # })
-        # flash("На вашу почту было отправлено письмо для подтверждения регистрации", category="primary")
-        # return redirect(url_for('authorization.login'))
+        send_confirm_message({
+            "login": register_form.login.data,
+            "email": register_form.email.data,
+            "password": generate_password_hash(register_form.password.data).decode('utf-8'),
+        })
+        flash("На вашу почту было отправлено письмо для подтверждения регистрации", category="primary")
+        return redirect(url_for('authorization.login'))
 
     return render_template('register.html', form=register_form)
 

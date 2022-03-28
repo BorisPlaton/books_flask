@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template
 from flask_login import login_required, current_user
 from bookreview.forms import LoadPhoto, DeletePhoto, ChangeUsername, WriteReview
-from bookreview.models import Review
+from bookreview.models import Review, User
 
 main = Blueprint("main", __name__)
 
@@ -14,14 +14,17 @@ def index():
     return render_template('index.html')
 
 
-@main.route('/my_profile', methods=["POST", "GET"])
+@main.route('/profile/<int:profile_id>', methods=["POST", "GET"])
 @login_required
-def my_profile():
-    reviews = Review.query.filter_by(author_id=current_user.id).order_by(Review.date.desc()).all()
-    likes = len(current_user.likes)
-    dislikes = len(current_user.dislikes)
+def profile(profile_id):
+    user = User.query.get(profile_id)
+    likes = 0
+    dislikes = 0
+    for review in user.reviews:
+        likes += len(review.users_like)
+        dislikes += len(review.users_dislike)
     return render_template("my_profile.html",
-                           reviews=reviews,
+                           user=user,
                            likes=likes,
                            dislikes=dislikes)
 

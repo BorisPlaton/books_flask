@@ -37,7 +37,7 @@
 				<div class="user_photo rounded-circle" 
 				style="background-image: url({{ url_for('static', filename='profile_img/' + current_user.profile_photo) }}); width: 30px; height:30px;">
 				</div>
-				<a href="{{ url_for('main.my_profile') }}" class="text-light lead ms-2 fs-5">{{ current_user.username }}</a>
+				<a href="{{ url_for('main.profile', profile_id=current_user.id) }}" class="text-light lead ms-2 fs-5">{{ current_user.username }}</a>
 			</div>
 
 			<!-- COLLAPSE BUTTON -->
@@ -76,7 +76,7 @@
 		<!-- USER PROFILE -->
 		<div class="d-flex py-3 flex-column fs-4">
 			<div class="mb-2">
-				<a href=" {{ url_for('main.my_profile') }} " class="sidebar_link"><i class="bi bi-person me-1"></i>Мой профиль</a>
+				<a href=" {{ url_for('main.profile', profile_id=current_user.id) }} " class="sidebar_link"><i class="bi bi-person me-1"></i>Мой профиль</a>
 			</div>
 			<!-- SETTINGS -->
 			<div class="mb-2">
@@ -107,7 +107,7 @@
 								<div class="d-flex flex-column align-items-start">
 									<!-- PROFILE PAGE -->
 									<div>
-										<a href=" {{ url_for('main.my_profile') }} " class="sidebar_link"><i class="bi bi-person me-1"></i>Мой профиль</a>
+										<a href=" {{ url_for('main.profile', profile_id=current_user.id) }} " class="sidebar_link"><i class="bi bi-person me-1"></i>Мой профиль</a>
 									</div>
 									<!-- PROFILE PAGE -->
 									<div>

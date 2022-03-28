@@ -36,6 +36,7 @@ def delete_book(book_id):
     next_route = request.args.get("next")
     Book.query.filter_by(id=book_id).delete()
     db.session.commit()
+    flash("Книга удалена", category="warning")
     return redirect(url_for(next_route))
 
 
@@ -56,7 +57,7 @@ def write_review():
                         text=write_review_form.text.data)
         db.session.add(review)
         db.session.commit()
-        flash("Рецензия сохранена", category="success")
+        flash("Запись сохранена", category="success")
         return redirect(url_for('main.my_profile'))
 
     return render_template("write_review.html", form=write_review_form)
@@ -68,54 +69,51 @@ def delete_review(review_id):
     next_route = request.args.get("next")
     Review.query.filter_by(id=review_id).delete()
     db.session.commit()
-    return redirect(url_for(next_route))
+    flash("Пост удален", category="warning")
+    return redirect(next_route)
 
 
-@book.route('/status_up/<int:user_id>/<int:review_id>')
+@book.route('/status_up/<int:review_id>')
 @login_required
-def status_up(user_id, review_id):
+def status_up(review_id):
     """
     Ставит лайк на пост
-    :param user_id: ID Пользователя, что ставит
-    :param review_id: ID Поста, на который ставят
+    :param review_id: ID Поста, на который ставят лайк
     """
-    user = User.query.get(user_id)
-    review = Review.query.get(review_id)
+    c_review = Review.query.get(review_id)
     next_page = request.args.get('next')
 
     # Делаем анализ. Если лайк уже стоял, то убираем его,
     # если нет, то наоборот ставим. Делаем изменения в
     # соответствующей таблице.
-    if review in user.likes:
-        user.likes.remove(review)
+    if c_review in current_user.likes:
+        current_user.likes.remove(c_review)
     else:
-        user.likes.append(review)
-        if review in user.dislikes:
-            user.dislikes.remove(review)
+        current_user.likes.append(c_review)
+        if c_review in current_user.dislikes:
+            current_user.dislikes.remove(c_review)
     db.session.commit()
     return redirect(next_page)
 
 
-@book.route('/status_down/<int:user_id>/<int:review_id>')
+@book.route('/status_down/<int:review_id>')
 @login_required
-def status_down(user_id, review_id):
+def status_down(review_id):
     """
     Ставит дизлайк на пост
-    :param user_id: ID Пользователя, что ставит
-    :param review_id: ID Поста, на который ставят
+    :param review_id: ID Пост, на который ставят дизлайк
     """
-    user = User.query.get(user_id)
-    review = Review.query.get(review_id)
+    c_review = Review.query.get(review_id)
     next_page = request.args.get('next')
 
     # Делаем анализ. Если дизлайк уже стоял, то убираем его,
     # если нет, то наоборот ставим. Делаем изменения в
     # соответствующей таблице.
-    if review in user.dislikes:
-        user.dislikes.remove(review)
+    if c_review in current_user.dislikes:
+        current_user.dislikes.remove(c_review)
     else:
-        user.dislikes.append(review)
-        if review in user.likes:
-            user.likes.remove(review)
+        current_user.dislikes.append(c_review)
+        if c_review in current_user.likes:
+            current_user.likes.remove(c_review)
     db.session.commit()
     return redirect(next_page)

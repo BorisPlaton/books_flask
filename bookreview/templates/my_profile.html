@@ -13,7 +13,7 @@
 
 				<div class="col-md-3 d-flex align-items-center justify-content-md-center">
 					<div class="col-12 rounded-circle user_photo" 
-					style="background-image: url({{ url_for('static', filename='profile_img/' + current_user.profile_photo) }});">
+					style="background-image: url({{ url_for('static', filename='profile_img/' + user.profile_photo) }});">
 					</div>
 				</div>
 
@@ -21,15 +21,15 @@
 					<div class="row justify-content-between">
 
 						<div class="col-lg-12 d-flex flex-column mb-4">
-								<span class="fs-2 fw-light mb-0">{{ current_user.username }}</span>
-								<span class="text-secondary lead">@{{ current_user.login }}</span>
+								<span class="fs-2 fw-light mb-0">{{ user.username }}</span>
+								<span class="text-secondary lead">@{{ user.login }}</span>
 						</div>
 
 						<div class="col-lg-12 d-flex">
 
 							<div class="d-flex flex-column align-items-center py-2 px-3 me-3 border rounded  bg-white">
 								<span class="">Рецензий</span>
-								<span>{{ reviews|count }}</span>
+								<span>{{ user.reviews|count }}</span>
 							</div>
 
 							<div class="d-flex flex-column align-items-center py-2 px-3 border me-3 rounded bg-white">
@@ -41,7 +41,7 @@
 
 							<div class="d-flex flex-column align-items-center py-2 px-4 border rounded bg-white">
 								<span class="">Книг</span>
-								<span>{{ current_user.books|count }}</span>
+								<span>{{ user.books|count }}</span>
 							</div>
 
 						</div>
@@ -60,8 +60,8 @@
 		<div class="col">
 			<div class="container p-0">
 
-				{% if current_user.reviews %}
-					{% for review in reviews %}
+				{% if user.reviews %}
+					{% for review in user.reviews %}
 						<div class="row row-cols-2 g-0 bg-white border rounded mb-3 shadow-sm">
 							<div class="col-md-4">
 								<div class="col book_cover rounded-start" style="background-image: url({{ url_for('static', filename='book_covers/'+review.book.cover) }}); height:100%">
@@ -73,7 +73,7 @@
 									<div class="d-flex align-items-center justify-content-between">
 				 						<h5 class="mb-0">{{ review.book.title }}</h5>
 				 						<div class="d-flex">
-				 							<a href="{{ url_for('book.delete_review', review_id=review.id, next='main.my_profile' )}}" class='sidebar_link'><i class="bi bi-trash"></i></a>
+				 							<a href="{{ url_for('book.delete_review', review_id=review.id, next='/profile/'~current_user.id )}}" class='sidebar_link'><i class="bi bi-trash"></i></a>
 				 						</div>
 				 					</div>
 				 					<small class="text-secondary">{{ review.book.author }}</small>
@@ -92,11 +92,11 @@
 
 				 				<div class="d-flex align-items-center justify-content-between">
 				 					<div class="d-flex fs-4 align-items-center">
-		 								<a href="{{ url_for('book.status_up', review_id=review.id, user_id=current_user.id, next='/my_profile') }}" 
+		 								<a href="{{ url_for('book.status_up', review_id=review.id, next='/profile/'~user.id) }}" 
 		 								class='{% if review in current_user.likes %}liked{% else %}up_button{% endif %} me-2'>
 		 									<i class="bi bi-chevron-up"></i>
 		 								</a>
-		 								<a href="{{ url_for('book.status_down', review_id=review.id, user_id=current_user.id, next='/my_profile') }}" 
+		 								<a href="{{ url_for('book.status_down', review_id=review.id, next='/profile/'~user.id) }}" 
 		 								class='{% if review in current_user.dislikes %}disliked{% else %}down_button{% endif %} me-2'>
 		 									<i class="bi bi-chevron-down"></i>
 		 								</a>

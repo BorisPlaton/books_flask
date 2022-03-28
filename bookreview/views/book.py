@@ -2,8 +2,8 @@ from flask import Blueprint, url_for, redirect, flash, render_template, request
 from flask_login import login_required, current_user
 
 from bookreview import bookcover, db
-from bookreview.forms import AddBook, WriteReview
-from bookreview.models import Book, Review, User
+from bookreview.forms import AddBook, WriteReview, WriteComment
+from bookreview.models import Book, Review, User, Comment
 
 book = Blueprint('book', __name__)
 
@@ -40,10 +40,19 @@ def delete_book(book_id):
     return redirect(url_for(next_route))
 
 
-@book.route('/review/<int:review_id>')
+@book.route('/review/<int:review_id>', methods=["POST", "GET"])
 def review(review_id):
     current_review = Review.query.get(review_id)
-    return render_template('review.html', review=current_review)
+    write_comment = WriteComment()
+    mark = len(current_review.users_like) - len(current_review.users_dislike)
+    if write_comment.validate_on_submit():
+        comment = Comment(author_id=current_user.id,
+                          review_id=review_id,
+                          text=write_comment.text.data)
+        db.session.add(comment)
+        db.session.commit()
+        return redirect(url_for('book.review', review_id=review_id))
+    return render_template('review.html', review=current_review, form=write_comment, mark=mark)
 
 
 @book.route('/write_review', methods=["POST", "GET"])
@@ -58,7 +67,7 @@ def write_review():
         db.session.add(review)
         db.session.commit()
         flash("Запись сохранена", category="success")
-        return redirect(url_for('main.my_profile'))
+        return redirect(url_for('main.profile', profile_id=current_user.id))
 
     return render_template("write_review.html", form=write_review_form)
 
@@ -69,7 +78,7 @@ def delete_review(review_id):
     next_route = request.args.get("next")
     Review.query.filter_by(id=review_id).delete()
     db.session.commit()
-    flash("Пост удален", category="warning")
+    flash("Рецензия удалена", category="warning")
     return redirect(next_route)
 
 

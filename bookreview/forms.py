@@ -121,19 +121,21 @@ class DeletePhoto(FlaskForm):
     submit = SubmitField("Удалить фото")
 
 
-def choice_query():
+def _choice_query():
+    """
+    Возвращает пользователю список книг
+    """
     return Book.query.filter_by(user_id=current_user.id)
 
 
 class WriteReview(FlaskForm):
     """
-    Написание рецензии на книгу. Поля title, author, cover используются для создания записи в таблице book.
-    Поля description, text для записи в таблице review.
+    Написание рецензии на книгу
     """
-    select_book = QuerySelectField("Книга", query_factory=choice_query,
+    select_book = QuerySelectField("Книга", query_factory=_choice_query,
                                    validators=[InputRequired("Выберите книгу")])
     text = TextAreaField("Отзыв", validators=[InputRequired("Это поле не может быть пустым"),
-                                              Length(max=10000, message="Слишком большой текст")])
+                                              Length(max=10000)])
     submit = SubmitField("Сохранить")
 
 
@@ -146,3 +148,9 @@ class AddBook(FlaskForm):
                                                       message="Обложка должна весить не больше 2 Мб")])
     description = TextAreaField("Описание книги", validators=[Length(max=350)])
     submit = SubmitField("Сохранить")
+
+
+class WriteComment(FlaskForm):
+    text = TextAreaField("Комментарий", validators=[InputRequired("Это поле не может быть пустым"),
+                                                    Length(max=1000)])
+    submit = SubmitField("Оставить комментарий")

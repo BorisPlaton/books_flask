@@ -1,5 +1,7 @@
+import os
 from datetime import datetime
 from flask_login import UserMixin
+from itsdangerous import Serializer, BadSignature, SignatureExpired
 
 from bookreview import db, login_manager
 
@@ -34,6 +36,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(24), unique=True, nullable=False)
     email = db.Column(db.String(200), unique=True, nullable=False)
+    confirmed = db.Column(db.Boolean, nullable=False, default=False)
     password = db.Column(db.String(200), nullable=False)
     profile_photo = db.Column(db.String(200), default='default_user_img.jpg')
     username = db.Column(db.String(24), default=same_as('login'))
@@ -43,6 +46,19 @@ class User(db.Model, UserMixin):
     dislikes = db.relationship("Review", backref="users_dislike", secondary=user_dislikes, passive_deletes=True)
     comments = db.relationship("Comment", backref="author")
     books = db.relationship("Book", backref="user", passive_deletes=True)
+
+    def confirm_token(self, token, expiration=3600):
+        s = Serializer(os.environ.get('SECRET_KEY'))
+        try:
+            user_id = s.loads(token, max_age=expiration)
+            if user_id.get("id") == self.id:
+                return self.id
+        except (BadSignature, SignatureExpired):
+            return False
+
+    def generate_token(self):
+        s = Serializer(os.environ.get('SECRET_KEY'))
+        return s.dumps({"id": self.id})
 
     def __repr__(self):
         return f"id user {self.id} | Login {self.login} | Email {self.email} | password {self.password}"

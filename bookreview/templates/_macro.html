@@ -1,8 +1,10 @@
 {% macro load_field(field) %}
 	{{ field(**kwargs) }}
-	{% for error in field.errors %}
-        <small class="form-text text-danger mt-1 m-0">
-            {{ error }}
-        </small>
-    {% endfor %}
+    {% if field.errors %}
+    	{% for error in field.errors %}
+            <small class="form-text text-danger mt-1 m-0">
+                {{ error }}
+            </small>
+        {% endfor %}
+    {% endif %}
 {% endmacro %}

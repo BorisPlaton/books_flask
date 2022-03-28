@@ -3,6 +3,7 @@
 {% block title %} Bookview | Мой профиль {% endblock %}
 
 {% block content %}
+
 <div class="col bg-light p-4 pb-2 rounded">
 	<div class="row">
 
@@ -20,13 +21,8 @@
 					<div class="row justify-content-between">
 
 						<div class="col-lg-12 d-flex flex-column mb-4">
-							<div>
-								<span class="fs-1 fw-light me-2">{{ current_user.username }}</span>
+								<span class="fs-2 fw-light mb-0">{{ current_user.username }}</span>
 								<span class="text-secondary lead">@{{ current_user.login }}</span>
-							</div>
-							<div>
-								<p class="m-0 fw-light">Очень важный и уникальный статус, который был написан всего за несколько секунд!</p>
-							</div>
 						</div>
 
 						<div class="col-lg-12 d-flex">
@@ -38,15 +34,9 @@
 
 							<div class="d-flex flex-column align-items-center py-2 px-3 border me-3 rounded bg-white">
 								<span class="">Рейтинг</span>
-									{% if (current_user.likes|count - current_user.dislikes|count) >= 0 %}
-										<span class="text-success">
-											{{ current_user.likes|count - current_user.dislikes|count }}
-										</span>
-									{% else %}
-										<span class="text-danger">
-											{{ current_user.likes|count - current_user.dislikes|count }}
-										</span>
-									{% endif %}
+								<span class="{% if likes - dislikes >= 0 %}text-success{% else %}text-danger{% endif %}">
+									{{ likes - dislikes }}
+								</span>
 							</div>
 
 							<div class="d-flex flex-column align-items-center py-2 px-4 border rounded bg-white">
@@ -79,7 +69,7 @@
 							</div>
 
 							<div class="col-md-8 p-3">
-								<div class="bg-white mb-2">
+								<div class="mb-3">
 									<div class="d-flex align-items-center justify-content-between">
 				 						<h5 class="mb-0">{{ review.book.title }}</h5>
 				 						<div class="d-flex">
@@ -88,34 +78,37 @@
 				 					</div>
 				 					<small class="text-secondary">{{ review.book.author }}</small>
 				 				</div>
-				 				<div>
+
+				 				<div class="mb-3">
 				 					<p>
 				 					{% if review.text|length < 350 %}
 				 						{{ review.text }}
 				 					{% else %}
 				 						{{ review.text[:350]}} <span class='text-secondary'>(...)</span>
 				 					{% endif %}
+				 					<a href="{{ url_for('book.review', review_id=review.id) }}" class="link-primary">Читать</a>
 				 					</p>
 				 				</div>
+
 				 				<div class="d-flex align-items-center justify-content-between">
-				 					<div class="d-flex fs-4">
-		 								<a href="{{ url_for('book.status_up', review_id=review.id, user_id=current_user.id, next='main.my_profile') }}" 
+				 					<div class="d-flex fs-4 align-items-center">
+		 								<a href="{{ url_for('book.status_up', review_id=review.id, user_id=current_user.id, next='/my_profile') }}" 
 		 								class='{% if review in current_user.likes %}liked{% else %}up_button{% endif %} me-2'>
 		 									<i class="bi bi-chevron-up"></i>
 		 								</a>
-		 								<a href="{{ url_for('book.status_down', review_id=review.id, user_id=current_user.id, next='main.my_profile') }}" 
-		 								class='{% if review in current_user.dislikes %}disliked{% else %}down_button{% endif %}'>
+		 								<a href="{{ url_for('book.status_down', review_id=review.id, user_id=current_user.id, next='/my_profile') }}" 
+		 								class='{% if review in current_user.dislikes %}disliked{% else %}down_button{% endif %} me-2'>
 		 									<i class="bi bi-chevron-down"></i>
 		 								</a>
+		 								<!-- <a href="#" class="link-primary fs-6">Читать</a> -->
 		 							</div>
 		 							<div class="d-flex flex-column">
 					 					<small class="text-secondary">{{ review.date.strftime('%d %B, %Y') }}</small>
 					 					<small class="text-secondary">{{ review.date.strftime('%H:%M') }}</small>
 				 					</div>
 				 				</div>
+
 							</div>
-
-
 						</div>
 					{% endfor %}
 				{% else %}

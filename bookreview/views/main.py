@@ -18,7 +18,12 @@ def index():
 @login_required
 def my_profile():
     reviews = Review.query.filter_by(author_id=current_user.id).order_by(Review.date.desc()).all()
-    return render_template("my_profile.html", reviews=reviews)
+    likes = len(current_user.likes)
+    dislikes = len(current_user.dislikes)
+    return render_template("my_profile.html",
+                           reviews=reviews,
+                           likes=likes,
+                           dislikes=dislikes)
 
 
 @main.route('/settings')

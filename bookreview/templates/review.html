@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %} Bookreview | {{ review.book.title }} {% endblock %}
+
+{% block content %}
+<div class="col bg-light p-4 pb-2 rounded">
+	<div class="row">
+		<div class="col-lg-12 pb-4 border-bottom">
+			<h2 class="fw-light mb-1">{{ review.book.title }}</h2>
+			<h5 class="lead m-0">{{ review.book.author }}</h5>
+			{% if review.book.description %}
+				<p class="text-secondary fs-6 m-0 mt-3"><i>{{ review.book.description}}</i></p>
+			{% endif %}
+		</div>
+
+		<div class="col-lg-12 mt-4">
+			<p>{{ review.text }}</p>
+		</div>
+	</div>	
+</div>
+
+<div class="col bg-light p-3 rounded mt-3">
+	<div class="d-flex align-items-center justify-content-between">
+			<div class="d-flex fs-4 align-items-center">
+				<a href="{{ url_for('book.status_up', review_id=review.id, user_id=current_user.id, next='/review/'~review.id) }}" 
+				class='{% if review in current_user.likes %}liked{% else %}up_button{% endif %} me-2'>
+					<i class="bi bi-chevron-up"></i>
+				</a>
+				<a href="{{ url_for('book.status_down', review_id=review.id, user_id=current_user.id, next='/review/'~review.id) }}" 
+				class='{% if review in current_user.dislikes %}disliked{% else %}down_button{% endif %} me-2'>
+					<i class="bi bi-chevron-down"></i>
+				</a>
+				<div class="d-lg-flex d-none align-items-center justify-content-start">
+					<div class="user_photo rounded-circle" 
+					style="background-image: url({{ url_for('static', filename='profile_img/' + current_user.profile_photo) }}); width: 30px; height:30px;">
+					</div>
+					<a href="{{ url_for('main.my_profile') }}" class="text-dark lead ms-2 fs-5">{{ review.author.username }}</a>
+				</div>
+			</div>
+			<div class="d-flex flex-column">
+				<small class="text-secondary">{{ review.date.strftime('%d %B, %Y') }}</small>
+				<small class="text-secondary">{{ review.date.strftime('%H:%M') }}</small>
+			</div>
+		</div>
+</div>
+{% endblock %}

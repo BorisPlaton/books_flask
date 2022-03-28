@@ -39,6 +39,12 @@ def delete_book(book_id):
     return redirect(url_for(next_route))
 
 
+@book.route('/review/<int:review_id>')
+def review(review_id):
+    current_review = Review.query.get(review_id)
+    return render_template('review.html', review=current_review)
+
+
 @book.route('/write_review', methods=["POST", "GET"])
 @login_required
 def write_review():
@@ -68,9 +74,18 @@ def delete_review(review_id):
 @book.route('/status_up/<int:user_id>/<int:review_id>')
 @login_required
 def status_up(user_id, review_id):
+    """
+    Ставит лайк на пост
+    :param user_id: ID Пользователя, что ставит
+    :param review_id: ID Поста, на который ставят
+    """
     user = User.query.get(user_id)
     review = Review.query.get(review_id)
     next_page = request.args.get('next')
+
+    # Делаем анализ. Если лайк уже стоял, то убираем его,
+    # если нет, то наоборот ставим. Делаем изменения в
+    # соответствующей таблице.
     if review in user.likes:
         user.likes.remove(review)
     else:
@@ -78,15 +93,24 @@ def status_up(user_id, review_id):
         if review in user.dislikes:
             user.dislikes.remove(review)
     db.session.commit()
-    return redirect(url_for(next_page))
+    return redirect(next_page)
 
 
 @book.route('/status_down/<int:user_id>/<int:review_id>')
 @login_required
 def status_down(user_id, review_id):
+    """
+    Ставит дизлайк на пост
+    :param user_id: ID Пользователя, что ставит
+    :param review_id: ID Поста, на который ставят
+    """
     user = User.query.get(user_id)
     review = Review.query.get(review_id)
     next_page = request.args.get('next')
+
+    # Делаем анализ. Если дизлайк уже стоял, то убираем его,
+    # если нет, то наоборот ставим. Делаем изменения в
+    # соответствующей таблице.
     if review in user.dislikes:
         user.dislikes.remove(review)
     else:
@@ -94,4 +118,4 @@ def status_down(user_id, review_id):
         if review in user.likes:
             user.likes.remove(review)
     db.session.commit()
-    return redirect(url_for(next_page))
+    return redirect(next_page)

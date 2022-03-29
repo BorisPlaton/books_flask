@@ -11,7 +11,8 @@ def index():
     """
     Домашняя страница.
     """
-    return render_template('index.html')
+    reviews = Review.query.order_by(Review.date.desc()).all()
+    return render_template('index.html', reviews=reviews)
 
 
 @main.route('/profile/<int:profile_id>', methods=["POST", "GET"])

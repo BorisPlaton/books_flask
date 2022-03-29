@@ -1,1 +1,77 @@
 {% extends 'base.html' %}
+
+{% block title %} Bookreview | Главная страница {% endblock %}
+
+{% block content %}
+<div class="col bg-light p-4 pb-2 rounded">
+	<div class="row row-cols-md-2 row-cols-1">
+
+		<div class="col-12 pb-4 border-bottom mb-3">
+			<h2 class="fw-light m-0">Свежие записи</h2>
+		</div>
+
+		{% if reviews %}
+			{% for review in reviews %}
+			<div class="col">
+				<div class="p-3">
+					<div class="container p-0">
+			 			<div class="row row-cols-1 shadow-sm rounded border position-relative">
+
+			 				<div class="col book_cover rounded-top" style="background-image: url({{ url_for('static', filename='book_covers/'+review.book.cover) }}); height:250px">
+	    					</div>
+
+			 				<div class="col p-3 bg-white">
+			 					<h5 class="mb-1">{{ review.book.title }}</h5>
+			 					<small class="text-secondary">{{ review.book.author }}</small>
+			 				</div>
+
+			 				<div class="col p-3 bg-light rounded-bottom">
+			 					<div>
+					 					<p class="mb-2">
+						 					{% if review.text|length < 100 %}
+						 						{{ review.text }}
+						 					{% else %}
+						 						{{ review.text[:100]}} <span class='text-secondary'>(...)</span>
+						 					{% endif %}
+					 					</p>
+				 					<small><a href="{{ url_for('book.review', review_id=review.id) }}" class="link-primary">Читать полностью</a></small>
+			 					</div>
+			 				</div>
+
+			 				<div class="d-flex fs-4 align-items-center border-top px-3 py-2">
+		 						<div class="{% if review.users_like|length - review.users_dislike|length >= 0 %}text-success {% else %} text-danger {% endif %} fw-light me-3 fs-6">
+									{{ review.users_like|length - review.users_dislike|length }}
+								</div>
+ 								<a href="{{ url_for('book.status_up', review_id=review.id, next='/') }}" 
+ 								class='{% if review in current_user.likes %}liked{% else %}up_button{% endif %} me-2'>
+ 									<i class="bi bi-chevron-up"></i>
+ 								</a>
+ 								<a href="{{ url_for('book.status_down', review_id=review.id, next='/') }}" 
+ 								class='{% if review in current_user.dislikes %}disliked{% else %}down_button{% endif %} me-3'>
+ 									<i class="bi bi-chevron-down"></i>
+ 								</a>
+		 						<div class="d-flex fs-6">
+		 							<a href="{{ url_for('book.delete_review', review_id=review.id, next='/profile/'~current_user.id )}}" class='sidebar_link'><i class="bi bi-trash"></i></a>
+		 						</div>
+		 						<div class="d-lg-flex d-none align-items-center justify-content-start ms-2">
+									<div class="user_photo rounded-circle" 
+									style="background-image: url({{ url_for('static', filename='profile_img/' + current_user.profile_photo) }}); width: 30px; height:30px;">
+									</div>
+									<a href="{{ url_for('main.profile', profile_id=review.author.id) }}" class="text-dark lead ms-2 fs-5">{{ review.author.username }}</a>
+								</div>
+ 							</div>
+
+			 			</div>
+				    </div>
+				</div>
+			</div>
+			{% endfor %}
+		{% else %}
+			<div class="col-lg-12">
+				<p class="text-secondary"><small>Здесь пока ничего нет</small></p>
+			</div>
+		{% endif %}
+
+	</div>
+</div>
+{% endblock %}

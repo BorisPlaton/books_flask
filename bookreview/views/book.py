@@ -4,7 +4,6 @@ from flask_login import login_required, current_user
 from bookreview import bookcover, db
 from bookreview.forms import AddBook, WriteReview, WriteComment
 from bookreview.models import Book, Review, User, Comment
-from bookreview.utils import delete_gaps
 
 book = Blueprint('book', __name__)
 
@@ -73,7 +72,7 @@ def write_review():
     if write_review_form.validate_on_submit():
         review_ = Review(author_id=current_user.id,
                          book_id=write_review_form.select_book.data.id,
-                         text=delete_gaps(write_review_form.text.data))
+                         text=write_review_form.text.data)
         db.session.add(review_)
         db.session.commit()
         flash("Запись сохранена", category="success")

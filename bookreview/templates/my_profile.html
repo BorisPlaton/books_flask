@@ -69,43 +69,44 @@
 							</div>
 
 							<div class="col-md-8 p-3">
-								<div class="mb-3">
-									<div class="d-flex align-items-center justify-content-between">
+								<div class="mb-3 d-flex justify-content-between align-items-center">
+									<div class="d-flex flex-column justify-content-between">
 				 						<h5 class="mb-0">{{ review.book.title }}</h5>
-				 						<div class="d-flex">
-				 							<a href="{{ url_for('book.delete_review', review_id=review.id, next='/profile/'~current_user.id )}}" class='sidebar_link'><i class="bi bi-trash"></i></a>
-				 						</div>
+				 						<small class="text-secondary">{{ review.book.author }}</small>
 				 					</div>
-				 					<small class="text-secondary">{{ review.book.author }}</small>
-				 				</div>
 
-				 				<div class="mb-3">
-				 					<p>
-				 					{% if review.text|length < 350 %}
-				 						{{ review.text }}
-				 					{% else %}
-				 						{{ review.text[:350]}} <span class='text-secondary'>(...)</span>
-				 					{% endif %}
-				 					<a href="{{ url_for('book.review', review_id=review.id) }}" class="link-primary">Читать</a>
-				 					</p>
-				 				</div>
-
-				 				<div class="d-flex align-items-center justify-content-between">
-				 					<div class="d-flex fs-4 align-items-center">
+				 					<div class="d-flex fs-4 align-items-center shadow-sm rounded px-3 py-1">
+				 						<div class="{% if review.users_like|length - review.users_dislike|length >= 0 %}text-success {% else %} text-danger {% endif %} fw-light me-3 fs-6">
+											{{ review.users_like|length - review.users_dislike|length }}
+										</div>
 		 								<a href="{{ url_for('book.status_up', review_id=review.id, next='/profile/'~user.id) }}" 
 		 								class='{% if review in current_user.likes %}liked{% else %}up_button{% endif %} me-2'>
 		 									<i class="bi bi-chevron-up"></i>
 		 								</a>
 		 								<a href="{{ url_for('book.status_down', review_id=review.id, next='/profile/'~user.id) }}" 
-		 								class='{% if review in current_user.dislikes %}disliked{% else %}down_button{% endif %} me-2'>
+		 								class='{% if review in current_user.dislikes %}disliked{% else %}down_button{% endif %} me-3'>
 		 									<i class="bi bi-chevron-down"></i>
 		 								</a>
-		 								<!-- <a href="#" class="link-primary fs-6">Читать</a> -->
+				 						<div class="d-flex fs-6">
+				 							<a href="{{ url_for('book.delete_review', review_id=review.id, next='/profile/'~current_user.id )}}" class='sidebar_link'><i class="bi bi-trash"></i></a>
+				 						</div>
 		 							</div>
-		 							<div class="d-flex flex-column">
-					 					<small class="text-secondary">{{ month_translate(review.date.strftime('%d %B, %Y')) }}</small>
-					 					<small class="text-secondary">{{ review.date.strftime('%H:%M') }}</small>
-				 					</div>
+
+				 				</div>
+
+				 				<div class="mb-3">
+				 					<p class="mb-1">
+				 					{% if review.text|length < 350 %}
+				 						{{ review.text }}
+				 					{% else %}
+				 						{{ review.text[:350]}} <span class='text-secondary'>(...)</span>
+				 					{% endif %}
+				 					</p>
+				 					<a href="{{ url_for('book.review', review_id=review.id) }}" class="link-primary">Читать полностью</a>
+				 				</div>
+
+				 				<div class="d-flex align-items-center justify-content-end">
+				 					<small class="text-secondary">{{ month_translate(review.date.strftime('%d %B, %Y')) }}</small>
 				 				</div>
 
 							</div>

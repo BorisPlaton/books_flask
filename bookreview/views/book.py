@@ -4,12 +4,14 @@ from flask_login import login_required, current_user
 from bookreview import bookcover, db
 from bookreview.forms import AddBook, WriteReview, WriteComment
 from bookreview.models import Book, Review, User, Comment
+from bookreview.utils import confirmed_required
 
 book = Blueprint('book', __name__)
 
 
 @book.route('/add_book', methods=["POST", "GET"])
 @login_required
+@confirmed_required
 def add_book():
     """
     Добавление новой книги. Показывает уже добавленные книги.
@@ -44,6 +46,7 @@ def delete_book(book_id):
 
 
 @book.route('/review/<int:review_id>', methods=["POST", "GET"])
+@confirmed_required
 def review(review_id):
     current_review = Review.query.get(review_id)
     author_review = current_review.author.id
@@ -65,6 +68,7 @@ def review(review_id):
 
 @book.route('/write_review', methods=["POST", "GET"])
 @login_required
+@confirmed_required
 def write_review():
     write_review_form = WriteReview()
     if write_review_form.validate_on_submit():
@@ -96,7 +100,7 @@ def delete_review(review_id):
 @login_required
 def delete_comment(comment_id):
     comment = Comment.query.get(int(comment_id))
-    if current_user.id == comment.author.id:
+    if current_user.id == comment.review.author.id:
         db.session.delete(comment)
         db.session.commit()
         next_route = request.args.get("next")

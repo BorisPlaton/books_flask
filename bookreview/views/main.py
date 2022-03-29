@@ -16,7 +16,6 @@ def index():
 
 
 @main.route('/profile/<int:profile_id>', methods=["POST", "GET"])
-@login_required
 def profile(profile_id):
     user = User.query.get(profile_id)
     user_reviews = Review.query.filter_by(author_id=profile_id).order_by(Review.date.desc())

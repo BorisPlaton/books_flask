@@ -1,7 +1,10 @@
 import re
+from functools import wraps
 
-from flask import url_for
+from flask import url_for, request, flash
+from flask_login import current_user
 from flask_mail import Message
+from werkzeug.utils import redirect
 
 from bookreview import mail
 
@@ -70,4 +73,17 @@ def month_translate(data: str, lang='rus') -> str:
 #     pattern = "(?:\\r\\n\\r\\n)(?=(?:\\n|\\r))"
 #     new_text = re.sub(pattern, "", text)
 #     return new_text
+
+def confirmed_required(func):
+    """
+    Декоратор. Проверяет подтвержденный ли аккаунт пользователя.
+    """
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if request.method == "POST" and not current_user.confirmed:
+            flash("Сперва подтвердите аккаунт", category='warning')
+            return redirect(request.referrer)
+        return func(*args, **kwargs)
+
+    return wrapper
 

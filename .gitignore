@@ -1,0 +1,5 @@
+bookreview/static/book_covers/*
+bookreview/static/profile_img/*
+
+!bookreview/static/book_covers/default_cover_img.jpg
+!bookreview/static/profile_img/default_user_img.jpg

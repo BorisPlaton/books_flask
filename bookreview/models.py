@@ -71,7 +71,7 @@ class Review(db.Model):
     popularity = db.Column(db.Integer, nullable=False, default=0)
     text = db.Column(db.String(10000), nullable=False)
     date = db.Column(db.Date, nullable=False, default=date.today)
-    time = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    post_time = db.Column(db.DateTime, nullable=False, default=datetime.now)
     comments = db.relationship("Comment", backref="review", passive_deletes=True)
 
     def __repr__(self):

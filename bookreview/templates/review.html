@@ -8,7 +8,7 @@
 <div class="col bg-light p-3 rounded mb-3">
 	<div class="d-flex align-items-center justify-content-between">
 			<div class="d-flex fs-4 align-items-center">
-				<div class="{% if mark >= 0 %}text-success {% else %} text-danger {% endif %} bg-white py-2 px-3 rounded lead me-2">
+				<div class="{% if mark >= 0 %}text-success {% else %} text-danger {% endif %} bg-white py-2 px-3 rounded lead me-3 border">
 					{{ mark }}
 				</div>
 				<a href="{{ url_for('book.status_up', review_id=review.id, next='/review/'~review.id) }}" 
@@ -27,7 +27,7 @@
 				</div>
 			</div>
 			<div class="d-flex flex-column">
-				<small class="text-secondary">{{ review.date.strftime('%d %B, %Y') }}</small>
+				<small class="text-secondary">{{ month_translate(review.date.strftime('%d %B, %Y')) }}</small>
 				<small class="text-secondary">{{ review.date.strftime('%H:%M') }}</small>
 			</div>
 		</div>
@@ -38,40 +38,52 @@
 <!-- POST -->
 <div class="col bg-light p-4 pb-2 rounded">
 	<div class="row">
+
+		<!-- BOOK INFO -->
 		<div class="col-lg-12 pb-4 border-bottom">
-			<h2 class="fw-light mb-1">{{ review.book.title }}</h2>
-			<h5 class="lead m-0">{{ review.book.author }}</h5>
-			{% if review.book.description %}
-				<p class="text-secondary fs-6 m-0 mt-3"><i>{{ review.book.description}}</i></p>
-			{% endif %}
+			<div class="row g-3">
+				<div class="col-lg-3">
+					<div class="book_cover rounded" style="background-image: url({{ url_for('static', filename='book_covers/'+review.book.cover) }}); height:300px;">
+					</div>
+				</div>
+				<div class="col-lg-9">
+					<h2 class="fw-light mb-1">{{ review.book.title }}</h2>
+					<h5 class="lead m-0">{{ review.book.author }}</h5>
+					{% if review.book.description %}
+						<p class="text-secondary fs-6 m-0 mt-3"><i>{{ review.book.description}}</i></p>
+					{% endif %}
+				</div>
+			</div>
 		</div>
 
-		<div class="col-lg-12 mt-4">
-			<p>{{ review.text }}</p>
+		<!-- REVIEW TEXT -->
+		<div class="col-lg-12" style="white-space: pre-line;">
+			<p class="m-0">{{ review.text }}</p>
 		</div>
+
 	</div>	
 </div>
 
+<div class="col mt-3 border-bottom pb-2">
+	<h4 class="fw-light">Комментарии</h4>
+</div>
+
 <!-- LEAVE COMMENT FORM -->
-<div class="col bg-light p-3 rounded mt-3">
+<div class="col p-3 rounded mt-3">
 	<form action="{{ url_for('book.review', review_id=review.id )}}" method="post" novalidate>
 		<div class="d-flex flex-column">
 		{{ form.csrf_token }}
-		{{ load_field(form.text, class='form-control', placeholder=form.text.label.text, style="height: 125px;")}}
+		{{ load_field(form.text, class='form-control', placeholder="Введите текст комментария", style="height: 125px;")}}
 		{{ form.submit(class='btn btn-outline-primary btn-sm mt-3 me-auto')}}
 		</div>
 	</form>
 </div>
 
-<div class="col mt-4 border-bottom pb-2">
-	<h4 class="fw-light">Комментарии</h4>
-</div>
-
 <!-- COMMENTS -->
-{% if review.comments %}
-	{% for comment in review.comments %}
-	<div class="col rounded mt-3 p-3 pb-4 bg-light">	
-		<div class="d-flex flex-column">
+{% if comments %}
+	{% for comment in comments %}
+	<div class="col rounded mt-3">	
+		<div class="d-flex flex-column bg-light rounded border p-3 pb-4">
 
 			<div class="d-flex justify-content-between align-items-center">
 				<div class="d-flex align-items-center justify-content-start">
@@ -80,7 +92,7 @@
 					</div>
 					<div class="d-flex flex-column ms-2 ">
 						<a href="{{ url_for('main.profile', profile_id=comment.author.id) }}" class="text-dark lead fs-5">{{ comment.author.username }}</a>
-						<span class="text-secondary fw-light fs-6">{{ comment.date.strftime('%d %B, %Y') }}, {{ comment.date.strftime('%H:%M') }}</span>
+						<span class="text-secondary fw-light fs-6">{{ month_translate(comment.date.strftime('%d %B, %Y')) }}, {{ comment.date.strftime('%H:%M') }}</span>
 					</div>
 				</div>
 				{% if current_user.id == author_id %}
@@ -98,8 +110,8 @@
 	</div>
 	{% endfor %}
 {% else %}
-	<div class="col mt-3 text-secondary p-3">	
-		<small>Здесь нет комментариев. Напишите его первым!</small>
+	<div class="col text-secondary p-3">	
+		<small>Ещё никто не оставил свой комментарий. Сделайте это первым!</small>
 	</div>
 {% endif %}
 

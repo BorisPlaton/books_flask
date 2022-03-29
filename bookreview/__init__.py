@@ -5,7 +5,8 @@ from flask_bcrypt import Bcrypt
 from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_uploads import configure_uploads, UploadSet, IMAGES
-from .config import BaseConfig
+
+from bookreview.config import BaseConfig
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -22,7 +23,6 @@ bookcover = UploadSet("bookcover", IMAGES)
 def create_app(config_class=BaseConfig):
     app = Flask(__name__)
     app.config.from_object(config_class)
-
     db.init_app(app)
     login_manager.init_app(app)
     bcrypt.init_app(app)
@@ -32,6 +32,9 @@ def create_app(config_class=BaseConfig):
     from .models import User, Review, Comment
 
     configure_uploads(app, (profile, bookcover))
+
+    from bookreview.utils import month_translate
+    app.jinja_env.globals['month_translate'] = month_translate
 
     from .views import authorization, main, settings, book
     app.register_blueprint(authorization)

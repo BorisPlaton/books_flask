@@ -69,8 +69,9 @@ class Review(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     book_id = db.Column(db.Integer, db.ForeignKey('book.id', ondelete='CASCADE'), nullable=False)
     text = db.Column(db.String(10000), nullable=False)
-    date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    comments = db.relationship("Comment", backref="review")
+    date = db.Column(db.DateTime, nullable=False, default=datetime.now)
+
+    comments = db.relationship("Comment", backref="review", passive_deletes=True)
 
     def __repr__(self):
         return f"id review {self.id} | Title {self.title}"
@@ -81,7 +82,7 @@ class Comment(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     review_id = db.Column(db.Integer, db.ForeignKey('review.id', ondelete='CASCADE'), nullable=False)
     text = db.Column(db.String(1000), nullable=False)
-    date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
     def __repr__(self):
         return f"id comment {self.id} | Text {self.text} | Author {self.author}"

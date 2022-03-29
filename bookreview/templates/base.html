@@ -60,7 +60,7 @@
 			<div class="d-flex">
 				<form action="" method="post">
 					<div class="d-flex align-items-center form-outline form-white">
-						<input type="text" class="form-control border-0" placeholder="Найти отзыв">
+						<input type="text" class="form-control border-0" placeholder="Введите запрос">
 						<i class="bi bi-search ms-2 text-light"></i>
 					</div>
 				</form>
@@ -83,10 +83,30 @@
 				<div class="mb-2">
 					<a href="{{ url_for('main.settings') }}" class="sidebar_link"><i class="bi bi-gear me-1"></i>Настройки</a>
 				</div>
-			{% else %}
+				<!-- MAIN PAGE -->
+				<div class="mb-2">
+					<a href="{{ url_for('main.index') }}" class="sidebar_link"><i class="bi bi-house me-1"></i>Главная страница</a>
+				</div>
+				<!-- WRITE A NEW REVIEW -->
+				<div class="mb-2">
+					<a href="{{ url_for('book.write_review') }}" class="sidebar_link"><i class="bi bi-blockquote-right me-1"></i>Сделать запись</a>
+				</div>
+				<!-- ADD NEW BOOK -->
+				<div class="mb-2">
+					<a href="{{ url_for('book.add_book') }}" class="sidebar_link"><i class="bi bi-plus-circle me-1"></i>Добавить книгу</a>
+				</div>
 				<!-- EXIT -->
-				<div class="">
+				<div>
 					<a href="{{ url_for('authorization.logout') }}" class="sidebar_link"><i class="bi bi-box-arrow-left me-1"></i>Выход</a>
+				</div>
+			{% else %}
+				<!-- MAIN PAGE -->
+				<div class="mb-2">
+					<a href="{{ url_for('main.index') }}" class="sidebar_link"><i class="bi bi-house me-1"></i>Главная страница</a>
+				</div>
+				<!-- LOG IN -->
+				<div>
+					<a href="{{ url_for('authorization.login') }}" class="lead"><i class="bi bi-box-arrow-in-right me-1"></i>Войти</a>
 				</div>
 			{% endif %}
 		</div>

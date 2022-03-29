@@ -46,9 +46,11 @@ def delete_book(book_id):
 @book.route('/review/<int:review_id>', methods=["POST", "GET"])
 def review(review_id):
     current_review = Review.query.get(review_id)
-    write_comment = WriteComment()
-    mark = len(current_review.users_like) - len(current_review.users_dislike)
     author_review = current_review.author.id
+    comments = current_review.comments[::-1]
+    mark = len(current_review.users_like) - len(current_review.users_dislike)
+
+    write_comment = WriteComment()
     if write_comment.validate_on_submit():
         comment = Comment(author_id=current_user.id,
                           review_id=review_id,
@@ -59,7 +61,8 @@ def review(review_id):
     return render_template('review.html', review=current_review,
                            form=write_comment,
                            mark=mark,
-                           author_id=author_review)
+                           author_id=author_review,
+                           comments=comments)
 
 
 @book.route('/write_review', methods=["POST", "GET"])

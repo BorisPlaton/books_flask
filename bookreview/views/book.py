@@ -48,7 +48,6 @@ def review(review_id):
     current_review = Review.query.get(review_id)
     author_review = current_review.author.id
     comments = current_review.comments[::-1]
-    mark = len(current_review.users_like) - len(current_review.users_dislike)
 
     write_comment = WriteComment()
     if write_comment.validate_on_submit():
@@ -60,7 +59,6 @@ def review(review_id):
         return redirect(url_for('book.review', review_id=review_id))
     return render_template('review.html', review=current_review,
                            form=write_comment,
-                           mark=mark,
                            author_id=author_review,
                            comments=comments)
 
@@ -121,10 +119,12 @@ def status_up(review_id):
     # соответствующей таблице.
     if c_review in current_user.likes:
         current_user.likes.remove(c_review)
+        c_review.popularity -= 1
     else:
         current_user.likes.append(c_review)
         if c_review in current_user.dislikes:
             current_user.dislikes.remove(c_review)
+        c_review.popularity += 1
     db.session.commit()
     return redirect(next_page)
 
@@ -144,8 +144,10 @@ def status_down(review_id):
     # соответствующей таблице.
     if c_review in current_user.dislikes:
         current_user.dislikes.remove(c_review)
+        c_review.popularity += 1
     else:
         current_user.dislikes.append(c_review)
+        c_review.popularity -= 1
         if c_review in current_user.likes:
             current_user.likes.remove(c_review)
     db.session.commit()

@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import datetime, date
 from flask_login import UserMixin
 from itsdangerous import Serializer, BadSignature, SignatureExpired
 
@@ -68,9 +68,10 @@ class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     book_id = db.Column(db.Integer, db.ForeignKey('book.id', ondelete='CASCADE'), nullable=False)
+    popularity = db.Column(db.Integer, nullable=False, default=0)
     text = db.Column(db.String(10000), nullable=False)
-    date = db.Column(db.DateTime, nullable=False, default=datetime.now)
-
+    date = db.Column(db.Date, nullable=False, default=date.today)
+    time = db.Column(db.DateTime, nullable=False, default=datetime.now)
     comments = db.relationship("Comment", backref="review", passive_deletes=True)
 
     def __repr__(self):

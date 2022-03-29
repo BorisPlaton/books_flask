@@ -122,9 +122,10 @@ def register():
                     password=generate_password_hash(register_form.password.data).decode('utf-8'))
         db.session.add(user)
         db.session.commit()
-        send_confirm_message(user)
         login_user(user)
-        flash("На вашу почту отправлено письмо для подтверждения регистрации аккаунта", category="primary")
+
+        # send_confirm_message(user)
+        # flash("На вашу почту отправлено письмо для подтверждения регистрации аккаунта", category="primary")
         return redirect(url_for("main.index"))
 
     return render_template('register.html', form=register_form)

@@ -34,8 +34,8 @@
 
 							<div class="d-flex flex-column align-items-center py-2 px-3 border me-3 rounded bg-white">
 								<span class="">Рейтинг</span>
-								<span class="{% if likes - dislikes >= 0 %}text-success{% else %}text-danger{% endif %}">
-									{{ likes - dislikes }}
+								<span class="{% if popularity >= 0 %}text-success{% else %}text-danger{% endif %}">
+									{{ popularity }}
 								</span>
 							</div>
 
@@ -61,7 +61,7 @@
 			<div class="container p-0">
 
 				{% if user.reviews %}
-					{% for review in user.reviews %}
+					{% for review in reviews %}
 						<div class="row row-cols-2 g-0 bg-white border rounded mb-3 shadow-sm">
 							<div class="col-md-4">
 								<div class="col book_cover rounded-start" style="background-image: url({{ url_for('static', filename='book_covers/'+review.book.cover) }}); height:100%">
@@ -95,7 +95,7 @@
 				 				</div>
 
 				 				<div class="mb-3">
-				 					<p class="mb-1">
+				 					<p class="mb-2">
 				 					{% if review.text|length < 350 %}
 				 						{{ review.text }}
 				 					{% else %}

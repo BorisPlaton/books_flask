@@ -46,6 +46,10 @@ a:hover {
 	background-position:center;
 }
 
+br+br{
+	display:none
+}
+
 .holder {
 	opacity: 0;
 	height: 100%;

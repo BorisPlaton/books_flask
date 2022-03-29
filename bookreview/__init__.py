@@ -33,8 +33,9 @@ def create_app(config_class=BaseConfig):
 
     configure_uploads(app, (profile, bookcover))
 
-    from bookreview.utils import month_translate
+    from bookreview.utils import month_translate, delete_gaps
     app.jinja_env.globals['month_translate'] = month_translate
+    app.jinja_env.globals['delete_gaps'] = delete_gaps
 
     from .views import authorization, main, settings, book
     app.register_blueprint(authorization)

@@ -29,7 +29,7 @@
 
 							<div class="d-flex flex-column align-items-center py-2 px-3 me-3 border rounded  bg-white">
 								<span class="">Рецензий</span>
-								<span>{{ reviews|count }}</span>
+								<span>{{ user.reviews.all()|count }}</span>
 							</div>
 
 							<div class="d-flex flex-column align-items-center py-2 px-3 border me-3 rounded bg-white">
@@ -41,7 +41,7 @@
 
 							<div class="d-flex flex-column align-items-center py-2 px-4 border rounded bg-white">
 								<span class="">Книг</span>
-								<span>{{ user.books|count }}</span>
+								<span>{{ user.books.all()|count }}</span>
 							</div>
 
 						</div>
@@ -61,7 +61,7 @@
 			<div class="container p-0">
 
 				{% if reviews %}
-					{% for review in reviews %}
+					{% for review in reviews.items %}
 						<div class="row row-cols-2 g-0 bg-white border rounded mb-3 shadow-sm">
 							<div class="col-md-4">
 								<div class="col book_cover rounded-start" style="background-image: url({{ url_for('static', filename='book_covers/'+review.book.cover) }}); height:100%">
@@ -123,8 +123,19 @@
 			</div>
 		</div>
 
-		
-
 	</div>
 </div>
+
+{% if reviews and reviews.pages > 1 %}
+	<div class="col my-3 bg-light rounded p-3 mt-4 mb-0">
+	{% for page in reviews.iter_pages(left_edge=2, right_edge=2, left_current=3, right_current=3) %}
+		{% if reviews.page == page %}
+			<a href="{{ url_for('main.profile', profile_id=user.id, page=page) }}" class="link-dark me-1">{{ page }}</a>
+		{% elif page %}
+			<a href="{{ url_for('main.profile', profile_id=user.id, page=page) }}" class="link-primary me-1">{{ page }}</a>
+		{% endif %}
+	{% endfor %}
+	</div>
+{% endif %}
+
 {% endblock %}

@@ -81,7 +81,7 @@
 
 <!-- COMMENTS -->
 {% if comments %}
-	{% for comment in comments %}
+	{% for comment in comments.items %}
 	<div class="col rounded mt-3">	
 		<div class="d-flex flex-column shadow-sm rounded p-3 pb-4">
 
@@ -109,6 +109,19 @@
 		</div>
 	</div>
 	{% endfor %}
+
+	{% if comments.pages > 1 %}
+		<div class="col my-3 p-3 mt-5 mb-0 border-top">
+		{% for page in comments.iter_pages(left_edge=2, right_edge=2, left_current=3, right_current=3) %}
+			{% if comments.page == page %}
+				<a href="{{ url_for('book.review', review_id=review.id, page=page) }}" class="link-dark me-1">{{ page }}</a>
+			{% elif page %}
+				<a href="{{ url_for('book.review', review_id=review.id, page=page) }}" class="link-primary me-1">{{ page }}</a>
+			{% endif %}
+		{% endfor %}
+		</div>
+	{% endif %}
+
 {% else %}
 	<div class="col text-secondary p-3">	
 		<small>Ещё никто не оставил свой комментарий. Сделайте это первым!</small>

@@ -17,7 +17,8 @@ def add_book():
     Добавление новой книги. Показывает уже добавленные книги.
     """
     add_book_form = AddBook()
-    books = current_user.books
+    page = request.args.get('page', 1, type=int)
+    books = current_user.books.paginate(per_page=9, page=page)
     if add_book_form.validate_on_submit():
         new_book = Book(user_id=current_user.id,
                         title=add_book_form.title.data,
@@ -48,8 +49,9 @@ def delete_book(book_id):
 @book.route('/review/<int:review_id>', methods=["POST", "GET"])
 @confirmed_required
 def review(review_id):
+    page = request.args.get('page', 1, type=int)
     current_review = Review.query.get_or_404(review_id)
-    comments = current_review.comments.order_by(Comment.date.desc()).all()
+    comments = current_review.comments.order_by(Comment.date.desc()).paginate(per_page=25, page=page)
     author_review = current_review.author.id
 
     write_comment = WriteComment()
@@ -59,7 +61,8 @@ def review(review_id):
                           text=write_comment.text.data)
         db.session.add(comment)
         db.session.commit()
-        return redirect(url_for('book.review', review_id=review_id))
+        return redirect(url_for('book.review', review_id=review_id, page=page))
+
     return render_template('review.html', review=current_review,
                            form=write_comment,
                            author_id=author_review,

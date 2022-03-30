@@ -47,7 +47,7 @@ class User(db.Model, UserMixin):
     likes = db.relationship("Review", backref="users_like", secondary=user_likes, passive_deletes=True)
     dislikes = db.relationship("Review", backref="users_dislike", secondary=user_dislikes, passive_deletes=True)
     comments = db.relationship("Comment", backref="author")
-    books = db.relationship("Book", backref="user", passive_deletes=True)
+    books = db.relationship("Book", backref="user", passive_deletes=True, lazy='dynamic')
 
     @staticmethod
     def create_fake(count=10):

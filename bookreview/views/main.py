@@ -1,6 +1,5 @@
-from flask import Blueprint, render_template, url_for
+from flask import Blueprint, render_template, url_for, request, redirect
 from flask_login import login_required, current_user
-from werkzeug.utils import redirect
 
 from bookreview.forms import LoadPhoto, DeletePhoto, ChangeUsername, WriteReview
 from bookreview.models import Review, User, Book
@@ -13,14 +12,17 @@ def index():
     """
     Домашняя страница.
     """
-    reviews = Review.query.order_by(Review.date.desc(), Review.popularity.desc()).all()
+    page = request.args.get("page", 1, type=int)
+    reviews = Review.query.order_by(Review.date.desc(), Review.popularity.desc()).paginate(per_page=10,
+                                                                                           page=page)
     return render_template('index.html', reviews=reviews)
 
 
 @main.route('/profile/<int:profile_id>', methods=["POST", "GET"])
 def profile(profile_id):
+    page = request.args.get("page", 1, type=int)
     user = User.query.get_or_404(profile_id)
-    user_reviews = user.reviews.order_by(Review.post_time.desc()).all()
+    user_reviews = user.reviews.order_by(Review.post_time.desc()).paginate(per_page=7, page=page)
     return render_template("my_profile.html", user=user, reviews=user_reviews)
 
 

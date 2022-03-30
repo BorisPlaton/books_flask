@@ -30,7 +30,11 @@
 
 			</form>
 			{% else %}
-				<small class="text-secondary">У вас нет книг, чтобы написать рецензию. <a href="{{ url_for('book.add_book') }}" class="text-primary">Добавьте</a> какую-то и возвращайтесь сюда.</small>
+				<p class="mb-2">
+					<small class="text-secondary">
+						У вас нет книг, чтобы написать рецензию. <a href="{{ url_for('book.add_book') }}" class="text-primary">Добавьте</a> какую-то и возвращайтесь сюда.
+					</small>
+				</p>
 			{% endif %}
 			</div>
 

@@ -47,7 +47,6 @@ class User(db.Model, UserMixin):
     dislikes = db.relationship("Review", backref="users_dislike", secondary=user_dislikes, passive_deletes=True)
     comments = db.relationship("Comment", backref="author")
     books = db.relationship("Book", backref="user", passive_deletes=True)
-    yes = db.Column(db.String(32))
 
     @property
     def popularity(self):

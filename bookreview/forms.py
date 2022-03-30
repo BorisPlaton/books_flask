@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired, FileSize, FileAllowed
-from flask_bcrypt import check_password_hash
 from flask_login import current_user
+from werkzeug.security import check_password_hash
 from wtforms.validators import InputRequired, EqualTo, Email, ValidationError, Length, Regexp
 from wtforms.fields import StringField, PasswordField, SubmitField, BooleanField, SelectField, TextAreaField
 from wtforms_sqlalchemy.fields import QuerySelectField

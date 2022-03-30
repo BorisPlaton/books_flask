@@ -3,6 +3,7 @@ from datetime import datetime, date
 
 from flask_login import UserMixin
 from itsdangerous import Serializer, BadSignature, SignatureExpired
+from werkzeug.security import generate_password_hash
 
 from bookreview import db, login_manager
 
@@ -48,6 +49,32 @@ class User(db.Model, UserMixin):
     comments = db.relationship("Comment", backref="author")
     books = db.relationship("Book", backref="user", passive_deletes=True)
 
+    @staticmethod
+    def create_fake(count=10):
+        """
+        Случайно созданные пользователи для тестовых данных.
+        Может получиться меньше пользователей чем в параметре count,
+        если будет вызываться ошибка IntegrityError.
+
+        :param count: Количество новых пользователей
+        :return:
+        """
+        from sqlalchemy.exc import IntegrityError
+        import forgery_py
+
+        for i in range(count):
+            u = User(
+                login=forgery_py.internet.user_name(),
+                email=forgery_py.internet.email_address(),
+                confirmed=True,
+                password=generate_password_hash("1")
+            )
+            db.session.add(u)
+            try:
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
+
     @property
     def popularity(self):
         return sum([review.popularity for review in self.reviews])
@@ -80,6 +107,35 @@ class Review(db.Model):
 
     comments = db.relationship("Comment", backref="review", passive_deletes=True, lazy='dynamic')
 
+    @staticmethod
+    def create_fake(count=25):
+        """
+        Случайно созданные рецензии для тестовых данных.
+        Может получиться меньше пользователей чем в параметре count,
+        если будет вызываться ошибка IntegrityError.
+
+        :param count: Количество новых записей
+        :return:
+        """
+        from sqlalchemy.exc import IntegrityError
+        import random
+        import forgery_py
+
+        users = User.query.filter(User.id == Book.user_id).all()
+
+        for i in range(count):
+            user_id = random.choice(users).id
+            r = Review(
+                author_id=user_id,
+                book_id=random.choice(Book.query.filter_by(user_id=user_id).all()).id,
+                text=forgery_py.lorem_ipsum.sentences()
+            )
+            db.session.add(r)
+            try:
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
+
     def __repr__(self):
         return f"id review {self.id} | {self.text}"
 
@@ -105,6 +161,34 @@ class Book(db.Model):
     description = db.Column(db.String(350))
 
     review = db.relationship('Review', backref='book', uselist=False, passive_deletes=True, lazy=True)
+
+    @staticmethod
+    def create_fake(count=25):
+        """
+        Случайно созданные книги для тестовых данных.
+        Может получиться меньше книг чем в параметре count,
+        если будет вызываться ошибка IntegrityError.
+
+        :param count: Количество новых книг
+        """
+        from sqlalchemy.exc import IntegrityError
+        import random
+        import forgery_py
+
+        users = User.query.all()
+
+        for i in range(count):
+            b = Book(
+                user_id=random.choice(users).id,
+                title=forgery_py.lorem_ipsum.title(),
+                author=forgery_py.name.full_name(),
+                description=forgery_py.lorem_ipsum.sentence()
+            )
+            db.session.add(b)
+            try:
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
 
     def __repr__(self):
         return f"{self.author} - {self.title}"

@@ -1,5 +1,7 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, url_for
 from flask_login import login_required, current_user
+from werkzeug.utils import redirect
+
 from bookreview.forms import LoadPhoto, DeletePhoto, ChangeUsername, WriteReview
 from bookreview.models import Review, User, Book
 

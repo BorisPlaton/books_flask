@@ -2,7 +2,8 @@ from pathlib import Path
 from os import remove
 from flask import Blueprint, render_template, url_for, redirect, request, flash
 from flask_login import current_user, login_required
-from flask_bcrypt import generate_password_hash
+from werkzeug.security import generate_password_hash
+
 from bookreview import db, profile
 from bookreview.forms import LoadPhoto, DeletePhoto, ChangeUsername, ChangePassword
 

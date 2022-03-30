@@ -92,7 +92,7 @@
 					</div>
 					<div class="d-flex flex-column ms-2 ">
 						<a href="{{ url_for('main.profile', profile_id=comment.author.id) }}" class="text-dark lead fs-5">{{ comment.author.username }}</a>
-						<span class="text-secondary fw-light fs-6">{{ month_translate(comment.post_time.strftime('%d %B, %Y')) }}, {{ comment.post_time.strftime('%H:%M') }}</span>
+						<span class="text-secondary fw-light fs-6">{{ month_translate(comment.date.strftime('%d %B, %Y')) }}, {{ comment.date.strftime('%H:%M') }}</span>
 					</div>
 				</div>
 				{% if current_user.id == author_id %}

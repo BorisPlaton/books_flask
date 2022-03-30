@@ -9,7 +9,11 @@
 <div class="col alert alert-danger p-4 rounded">
 	<div class="">
 		<h2 class="fw-light">{{ e.code }} {{ e.name }}</h2>
-		<p class="lead mt-3 mb-2">{{ e.description }}</p>
+		{% if e.code == 404 %}
+			<p class="lead mt-3 mb-2">Такого URL адреса не существует. Если вы вводили данные вручную, проверьте корректность написания и попробуйте ещё раз.</p>
+		{% else %}
+			<p class="lead mt-3 mb-2">{{ e.description }}</p>
+		{% endif %}
 	</div>
 </div>
 {% endblock %}

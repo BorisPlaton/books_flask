@@ -49,8 +49,8 @@ def delete_book(book_id):
 @confirmed_required
 def review(review_id):
     current_review = Review.query.get_or_404(review_id)
+    comments = current_review.comments.order_by(Comment.date.desc()).all()
     author_review = current_review.author.id
-    comments = current_review.comments[::-1]
 
     write_comment = WriteComment()
     if write_comment.validate_on_submit():
@@ -121,7 +121,7 @@ def status_up(review_id):
     # Делаем анализ. Если лайк уже стоял, то убираем его,
     # если нет, то наоборот ставим. Делаем изменения в
     # соответствующей таблице.
-    if c_review in current_user.likes:
+    if current_user in c_review.users_like:
         current_user.likes.remove(c_review)
         c_review.popularity -= 1
     else:

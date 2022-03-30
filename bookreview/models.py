@@ -1,5 +1,6 @@
 import os
 from datetime import datetime, date
+
 from flask_login import UserMixin
 from itsdangerous import Serializer, BadSignature, SignatureExpired
 
@@ -41,11 +42,16 @@ class User(db.Model, UserMixin):
     profile_photo = db.Column(db.String(200), default='default_user_img.jpg')
     username = db.Column(db.String(24), default=same_as('login'))
 
-    reviews = db.relationship("Review", backref="author", passive_deletes=True)
+    reviews = db.relationship("Review", backref="author", passive_deletes=True, lazy='dynamic')
     likes = db.relationship("Review", backref="users_like", secondary=user_likes, passive_deletes=True)
     dislikes = db.relationship("Review", backref="users_dislike", secondary=user_dislikes, passive_deletes=True)
     comments = db.relationship("Comment", backref="author")
     books = db.relationship("Book", backref="user", passive_deletes=True)
+    yes = db.Column(db.String(32))
+
+    @property
+    def popularity(self):
+        return sum([review.popularity for review in self.reviews])
 
     def confirm_token(self, token, expiration=3600):
         s = Serializer(os.environ.get('SECRET_KEY'))
@@ -72,10 +78,11 @@ class Review(db.Model):
     text = db.Column(db.String(10000), nullable=False)
     date = db.Column(db.Date, nullable=False, default=date.today)
     post_time = db.Column(db.DateTime, nullable=False, default=datetime.now)
-    comments = db.relationship("Comment", backref="review", passive_deletes=True)
+
+    comments = db.relationship("Comment", backref="review", passive_deletes=True, lazy='dynamic')
 
     def __repr__(self):
-        return f"id review {self.id} | Title {self.title}"
+        return f"id review {self.id} | {self.text}"
 
 
 class Comment(db.Model):
@@ -86,7 +93,7 @@ class Comment(db.Model):
     date = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
     def __repr__(self):
-        return f"id comment {self.id} | Text {self.text} | Author {self.author}"
+        return f"id comment {self.id} | Text {self.text}"
 
 
 class Book(db.Model):
@@ -98,7 +105,7 @@ class Book(db.Model):
     cover = db.Column(db.String(200), default="default_cover_img.jpg")
     description = db.Column(db.String(350))
 
-    review = db.relationship('Review', backref='book', uselist=False, passive_deletes=True)
+    review = db.relationship('Review', backref='book', uselist=False, passive_deletes=True, lazy=True)
 
     def __repr__(self):
         return f"{self.author} - {self.title}"

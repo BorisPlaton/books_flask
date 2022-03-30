@@ -36,7 +36,7 @@
 
 
 <!-- POST -->
-<div class="col bg-light p-4 pb-2 rounded">
+<div class="col bg-light p-4 pb-2 rounded mb-1">
 	<div class="row">
 
 		<!-- BOOK INFO -->
@@ -80,7 +80,7 @@
 </div>
 
 <!-- COMMENTS -->
-{% if comments %}
+{% if comments.items %}
 	{% for comment in comments.items %}
 	<div class="col rounded mt-3">	
 		<div class="d-flex flex-column shadow-sm rounded p-3 pb-4">

@@ -36,10 +36,11 @@ def create_app(config_class=BaseConfig):
     from bookreview.utils import month_translate
     app.jinja_env.globals['month_translate'] = month_translate
 
-    from .views import authorization, main, settings, book
+    from .views import authorization, main, settings, book, errors
     app.register_blueprint(authorization)
     app.register_blueprint(main)
     app.register_blueprint(settings)
     app.register_blueprint(book)
+    app.register_blueprint(errors)
 
     return app

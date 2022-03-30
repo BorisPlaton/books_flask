@@ -35,7 +35,7 @@ def add_book():
 @book.route('/delete_book/<int:book_id>')
 @login_required
 def delete_book(book_id):
-    book_ = Book.query.get(int(book_id))
+    book_ = Book.query.get_or_404(int(book_id))
     if current_user.id == book_.user.id:
         db.session.delete(book_)
         db.session.commit()
@@ -48,7 +48,7 @@ def delete_book(book_id):
 @book.route('/review/<int:review_id>', methods=["POST", "GET"])
 @confirmed_required
 def review(review_id):
-    current_review = Review.query.get(review_id)
+    current_review = Review.query.get_or_404(review_id)
     author_review = current_review.author.id
     comments = current_review.comments[::-1]
 
@@ -86,7 +86,7 @@ def write_review():
 @book.route('/delete_review/<int:review_id>')
 @login_required
 def delete_review(review_id):
-    review_ = Review.query.get(int(review_id))
+    review_ = Review.query.get_or_404(int(review_id))
     if current_user.id == review_.author.id:
         db.session.delete(review_)
         db.session.commit()
@@ -99,7 +99,7 @@ def delete_review(review_id):
 @book.route('/delete_comment/<comment_id>')
 @login_required
 def delete_comment(comment_id):
-    comment = Comment.query.get(int(comment_id))
+    comment = Comment.query.get_or_404(int(comment_id))
     if current_user.id == comment.review.author.id:
         db.session.delete(comment)
         db.session.commit()

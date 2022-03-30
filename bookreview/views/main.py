@@ -17,7 +17,7 @@ def index():
 
 @main.route('/profile/<int:profile_id>', methods=["POST", "GET"])
 def profile(profile_id):
-    user = User.query.get(profile_id)
+    user = User.query.get_or_404(profile_id)
     user_reviews = Review.query.filter_by(author_id=profile_id).order_by(Review.date.desc())
     popularity = sum([review.popularity for review in user_reviews])
     return render_template("my_profile.html", user=user, popularity=popularity, reviews=user_reviews)

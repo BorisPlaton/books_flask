@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %} Bookreview | {% endblock %}
+
+{% block sidebar %} {% endblock %}
+
+
+{% block content %}
+<div class="col alert alert-danger p-4 rounded">
+	<div class="">
+		<h2 class="fw-light">{{ e.code }} {{ e.name }}</h2>
+		<p class="lead mt-3 mb-2">{{ e.description }}</p>
+	</div>
+</div>
+{% endblock %}

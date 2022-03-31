@@ -101,7 +101,7 @@ def confirm_registration(token):
         db.session.commit()
         flash("Вы подтвердили аккаунт", category="success")
     else:
-        flash("Ссылка для подтверждения аккаунта недействительна")
+        flash("Ссылка для подтверждения аккаунта недействительна", category="danger")
 
     return redirect(url_for('main.index'))
 

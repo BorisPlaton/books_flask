@@ -94,8 +94,7 @@ def delete_review(review_id):
         db.session.delete(review_)
         db.session.commit()
         flash("Рецензия удалена", category="warning")
-        next_route = request.args.get("next")
-        return redirect(next_route)
+        return redirect(request.referrer)
     return redirect(url_for('main.index'))
 
 
@@ -106,8 +105,7 @@ def delete_comment(comment_id):
     if current_user.id == comment.review.author.id:
         db.session.delete(comment)
         db.session.commit()
-        next_route = request.args.get("next")
-        return redirect(next_route)
+        return redirect(request.referrer)
     return redirect(url_for('main.index'))
 
 
@@ -119,7 +117,6 @@ def status_up(review_id):
     :param review_id: ID Поста, на который ставят лайк
     """
     c_review = Review.query.get(review_id)
-    next_page = request.args.get('next')
 
     # Делаем анализ. Если лайк уже стоял, то убираем его,
     # если нет, то наоборот ставим. Делаем изменения в
@@ -133,7 +130,7 @@ def status_up(review_id):
             current_user.dislikes.remove(c_review)
         c_review.popularity += 1
     db.session.commit()
-    return redirect(next_page)
+    return redirect(request.referrer)
 
 
 @book.route('/status_down/<int:review_id>')
@@ -144,7 +141,6 @@ def status_down(review_id):
     :param review_id: ID Пост, на который ставят дизлайк
     """
     c_review = Review.query.get(review_id)
-    next_page = request.args.get('next')
 
     # Делаем анализ. Если дизлайк уже стоял, то убираем его,
     # если нет, то наоборот ставим. Делаем изменения в
@@ -158,4 +154,4 @@ def status_down(review_id):
         if c_review in current_user.likes:
             current_user.likes.remove(c_review)
     db.session.commit()
-    return redirect(next_page)
+    return redirect(request.referrer)

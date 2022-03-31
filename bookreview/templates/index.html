@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="col bg-light p-4 pb-3 rounded mb-1">
-	<div class="row row-cols-md-2 row-cols-1">
+	<div class="row row-cols-md-3 row-cols-1">
 
 		<div class="col-12 pb-4 border-bottom mb-3">
 			<h2 class="fw-light m-0">Свежие записи</h2>
@@ -17,7 +17,7 @@
 					<div class="container d-flex align-self-stretch p-0">
 			 			<div class="row row-cols-1 align-self-stretch shadow-sm rounded border">
 
-			 				<div class="col book_cover rounded-top" style="background-image: url({{ url_for('static', filename='book_covers/'+review.book.cover) }}); height:250px">
+			 				<div class="col book_cover rounded-top" style="background-image: url({{ url_for('static', filename='book_covers/'+review.book.cover) }}); height:125px">
 	    					</div>
 
 			 				<div class="col p-3 bg-white">
@@ -42,14 +42,14 @@
 			 				</div>
 
 			 				<div class="d-flex fs-4 align-items-center border-top px-3 py-2">
-		 						<div class="{% if review.users_like|length - review.users_dislike|length >= 0 %}text-success {% else %} text-danger {% endif %} fw-light me-3 fs-6">
-									{{ review.users_like|length - review.users_dislike|length }}
+		 						<div class="{% if review.popularity >= 0 %}text-success {% else %} text-danger {% endif %} fw-light me-3 fs-6">
+									{{ review.popularity }}
 								</div>
- 								<a href="{{ url_for('book.status_up', review_id=review.id, next='/') }}" 
+ 								<a href="{{ url_for('book.status_up', review_id=review.id) }}" 
  								class='{% if review in current_user.likes %}liked{% else %}up_button{% endif %} me-2'>
  									<i class="bi bi-chevron-up"></i>
  								</a>
- 								<a href="{{ url_for('book.status_down', review_id=review.id, next='/') }}" 
+ 								<a href="{{ url_for('book.status_down', review_id=review.id) }}" 
  								class='{% if review in current_user.dislikes %}disliked{% else %}down_button{% endif %} me-3'>
  									<i class="bi bi-chevron-down"></i>
  								</a>
@@ -62,7 +62,7 @@
 
  								{% if current_user.id == review.author.id %}
 			 						<div class="d-flex fs-6 ms-auto">
-			 							<a href="{{ url_for('book.delete_review', review_id=review.id, next='/' )}}" class='sidebar_link'><i class="bi bi-trash"></i></a>
+			 							<a href="{{ url_for('book.delete_review', review_id=review.id )}}" class='sidebar_link'><i class="bi bi-trash"></i></a>
 			 						</div>
 			 					{% endif %}
 

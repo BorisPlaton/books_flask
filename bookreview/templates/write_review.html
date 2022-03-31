@@ -12,7 +12,7 @@
 			</div>
 
 			<div class="col">
-			{% if current_user.books %}
+			{% if current_user.books.all() %}
 			<form action="{{ url_for('book.write_review') }}" method='post' novalidate>
 				{{ form.csrf_token }}
 				<div class="col">

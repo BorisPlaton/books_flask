@@ -13,7 +13,7 @@ def index():
     Домашняя страница.
     """
     page = request.args.get("page", 1, type=int)
-    reviews = Review.query.order_by(Review.date.desc(), Review.popularity.desc()).paginate(per_page=10,
+    reviews = Review.query.order_by(Review.date.desc(), Review.popularity.desc()).paginate(per_page=12,
                                                                                            page=page)
     return render_template('index.html', reviews=reviews)
 

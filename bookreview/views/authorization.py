@@ -126,8 +126,8 @@ def register():
         db.session.commit()
         login_user(user)
 
-        # send_confirm_message(user)
-        # flash("На вашу почту отправлено письмо для подтверждения регистрации аккаунта", category="primary")
+        send_confirm_message(user)
+        flash("На вашу почту отправлено письмо для подтверждения регистрации аккаунта", category="primary")
         return redirect(url_for("main.index"))
 
     return render_template('register.html', form=register_form)

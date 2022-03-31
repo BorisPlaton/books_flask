@@ -100,6 +100,7 @@ class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     book_id = db.Column(db.Integer, db.ForeignKey('book.id', ondelete='CASCADE'), nullable=False)
+
     popularity = db.Column(db.Integer, nullable=False, default=0)
     text = db.Column(db.String(10000), nullable=False)
     date = db.Column(db.Date, nullable=False, default=date.today)
@@ -144,6 +145,7 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     review_id = db.Column(db.Integer, db.ForeignKey('review.id', ondelete='CASCADE'), nullable=False)
+
     text = db.Column(db.String(1000), nullable=False)
     date = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
@@ -155,12 +157,13 @@ class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     # Пользователь, который создал эту книгу
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+
     title = db.Column(db.String(200), nullable=False)
     author = db.Column(db.String(100), nullable=False)
     cover = db.Column(db.String(200), default="default_cover_img.jpg")
     description = db.Column(db.String(350))
 
-    review = db.relationship('Review', backref='book', uselist=False, passive_deletes=True, lazy=True)
+    review = db.relationship('Review', backref='book', passive_deletes=True, lazy=True)
 
     @staticmethod
     def create_fake(count=25):

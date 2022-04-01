@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, url_for, redirect, flash, request
 from flask_login import current_user, login_user, logout_user, login_required
-from werkzeug.security import generate_password_hash
 
 from bookreview.forms import LoginForm, RegisterForm, EmailSendForm, SetNewPassword
 from bookreview.models import User
@@ -75,7 +74,7 @@ def set_new_password(token, user_id):
 
     if user and user.confirm_token(token):
         if password_resset_form.validate_on_submit():
-            user.password = generate_password_hash(password_resset_form.new_password.data).encode('utf-8')
+            user.password = password_resset_form.new_password.data
             db.session.commit()
             flash("Пароль успешно изменён", category="success")
             return redirect(url_for("authorization.login"))
@@ -120,8 +119,7 @@ def register():
     if register_form.validate_on_submit():
         user = User(login=register_form.login.data,
                     email=register_form.email.data,
-                    password=generate_password_hash(register_form.password.data)
-                    )
+                    password=register_form.password.data)
         db.session.add(user)
         db.session.commit()
         login_user(user)

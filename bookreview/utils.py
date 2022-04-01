@@ -1,10 +1,9 @@
 import re
 from functools import wraps
 
-from flask import url_for, request, flash
+from flask import url_for, request, flash, redirect
 from flask_login import current_user
 from flask_mail import Message
-from werkzeug.utils import redirect
 
 from bookreview import mail
 

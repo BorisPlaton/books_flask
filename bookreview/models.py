@@ -3,7 +3,7 @@ from datetime import datetime, date
 
 from flask_login import UserMixin
 from itsdangerous import Serializer, BadSignature, SignatureExpired
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from bookreview import db, login_manager
 
@@ -50,6 +50,15 @@ class User(db.Model, UserMixin):
     books = db.relationship("Book", backref="user", passive_deletes=True, lazy='dynamic')
 
     @staticmethod
+    def create_password_hash(target, value, oldvalue, initiator):
+        """
+        Автоматически хэширует пароль
+        """
+        if check_password_hash(oldvalue, value):
+            return oldvalue
+        return generate_password_hash(value)
+
+    @staticmethod
     def create_fake(count=10):
         """
         Случайно созданные пользователи для тестовых данных.
@@ -94,6 +103,9 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return f"id user {self.id} | Login {self.login} | Email {self.email} | password {self.password}"
+
+
+db.event.listen(User.password, 'set', User.create_password_hash, retval=True)
 
 
 class Review(db.Model):

@@ -1,8 +1,8 @@
-from flask import Blueprint, render_template, url_for, request, redirect
-from flask_login import login_required, current_user
+from flask import Blueprint, render_template, request
+from flask_login import login_required
 
-from bookreview.forms import LoadPhoto, DeletePhoto, ChangeUsername, WriteReview
-from bookreview.models import Review, User, Book
+from bookreview.forms import LoadPhoto, DeletePhoto, ChangeUsername
+from bookreview.models import Review, User
 
 main = Blueprint("main", __name__)
 

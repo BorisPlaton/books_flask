@@ -15,6 +15,7 @@ flask-migrate = "*"
 pymysql = "*"
 wtforms-sqlalchemy = "*"
 forgerypy = "*"
+flask-admin = "*"
 
 [dev-packages]
 

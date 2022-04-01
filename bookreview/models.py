@@ -1,23 +1,11 @@
 import os
 from datetime import datetime, date
-
 from flask_login import UserMixin
 from itsdangerous import Serializer, BadSignature, SignatureExpired
+from sqlalchemy.orm.base import NO_VALUE
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from bookreview import db, login_manager
-
-
-def same_as(column):
-    """
-    Устанавливает значение default равным другой колонке в таблице SQLAlchemy
-    :param column: название колонки
-    """
-
-    def func(context):
-        return context.get_current_parameters()[column]
-
-    return func
 
 
 @login_manager.user_loader
@@ -41,7 +29,7 @@ class User(db.Model, UserMixin):
     confirmed = db.Column(db.Boolean, nullable=False, default=False)
     password = db.Column(db.String(200), nullable=False)
     profile_photo = db.Column(db.String(200), default='default_user_img.jpg')
-    username = db.Column(db.String(24), default=same_as('login'))
+    username = db.Column(db.String(24))
 
     reviews = db.relationship("Review", backref="author", passive_deletes=True, lazy='dynamic')
     likes = db.relationship("Review", backref="users_like", secondary=user_likes, passive_deletes=True)
@@ -49,12 +37,17 @@ class User(db.Model, UserMixin):
     comments = db.relationship("Comment", backref="author")
     books = db.relationship("Book", backref="user", passive_deletes=True, lazy='dynamic')
 
+    def __init__(self,  **kwargs):
+        super(User, self).__init__(**kwargs)
+        self.username = self.login
+
     @staticmethod
     def create_password_hash(target, value, oldvalue, initiator):
         """
         Автоматически хэширует пароль
         """
-        if check_password_hash(oldvalue, value):
+        print(f"new   {value}\nold    {oldvalue}\ninitiator  {initiator}\ntarget   {target}")
+        if oldvalue is not NO_VALUE and check_password_hash(oldvalue, value):
             return oldvalue
         return generate_password_hash(value)
 

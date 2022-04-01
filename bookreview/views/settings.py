@@ -2,7 +2,6 @@ from pathlib import Path
 from os import remove
 from flask import Blueprint, render_template, url_for, redirect, request, flash
 from flask_login import current_user, login_required
-from werkzeug.security import generate_password_hash
 
 from bookreview import db, profile
 from bookreview.forms import LoadPhoto, DeletePhoto, ChangeUsername, ChangePassword
@@ -94,7 +93,7 @@ def change_password():
     """
     change_password_form = ChangePassword()
     if change_password_form.validate_on_submit():
-        current_user.password = generate_password_hash(change_password_form.new_password.data)
+        current_user.password = change_password_form.new_password.data
         db.session.commit()
         flash("Пароль успешно изменён", category="success")
         return redirect(url_for("main.settings"))

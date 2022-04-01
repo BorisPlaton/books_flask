@@ -107,7 +107,7 @@ class Review(db.Model):
     book_id = db.Column(db.Integer, db.ForeignKey('book.id', ondelete='CASCADE'), nullable=False)
 
     popularity = db.Column(db.Integer, nullable=False, default=0)
-    text = db.Column(db.String(10000), nullable=False)
+    text = db.Column(db.String(8000), nullable=False)
     date = db.Column(db.Date, nullable=False, default=date.today)
     post_time = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
@@ -151,7 +151,7 @@ class Comment(db.Model):
     author_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     review_id = db.Column(db.Integer, db.ForeignKey('review.id', ondelete='CASCADE'), nullable=False)
 
-    text = db.Column(db.String(1000), nullable=False)
+    text = db.Column(db.String(600), nullable=False)
     date = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
     def __repr__(self):

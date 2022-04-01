@@ -1,4 +1,4 @@
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm, RecaptchaField
 from flask_wtf.file import FileField, FileRequired, FileSize, FileAllowed
 from flask_login import current_user
 from werkzeug.security import check_password_hash
@@ -45,6 +45,7 @@ class RegisterForm(FlaskForm):
                                                           message="Пароль может содержать только цифры и буквы латиницы")
                                                    ])
     confirm_password = PasswordField("Повторите пароль", validators=[EqualTo('password', "Пароли должны совпадать")])
+    recaptcha = RecaptchaField()
     submit = SubmitField("Зарегистрироваться")
 
     def validate_email(self, email):

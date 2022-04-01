@@ -20,11 +20,11 @@
     <div class="row flex-column justify-content-center align-items-center" style="height:100%;">
 
         {% for ctg, msg in get_flashed_messages(True) %}
-            <div class="col-md-4 col-8 alert alert-{{ ctg }}">{{ msg }}</div>
+            <div class="col-md-5 col-8 alert alert-{{ ctg }}">{{ msg }}</div>
         {% endfor %}
 
         <!-- LOGIN FORM -->
-        <div class="col-lg-4 col-8 border rounded p-5 justify-content-center">
+        <div class="col-lg-5 col-8 border rounded p-5 justify-content-center">
             <form action="{% block form_action %} {% endblock %}" method="post" novalidate>
                 {{ form.csrf_token }}
 

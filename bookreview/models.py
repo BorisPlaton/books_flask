@@ -22,6 +22,52 @@ user_dislikes = db.Table('user_dislikes',
                          db.Column('review_id', db.Integer, db.ForeignKey('review.id', ondelete='CASCADE')))
 
 
+class Permissions:
+    """
+    Привилегии пользователей.
+
+    READ - чтение
+    FOLLOW - следить за пользователями
+    WRITE - писать комментарии, рецензии, добавлять книги
+    DELETE - удалять комментарии, рецензии, книги
+    MODERATE_COMS - удалять комментарии, рецензии других пользователей
+    ADMINISTER - удалять пользователей, назначать роли, доступ к админке
+    """
+    READ = 1  # 0001
+    FOLLOW = 2  # 0010
+    WRITE = 4  # 0100
+    DELETE = 8  # 1000
+    MODERATE_COMS = 16  # 0001 0000
+    ADMINISTER = 128  # 1000 0000
+
+
+class Role(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    role = db.Column(db.String(32), unique=True)
+    permissions = db.Column(db.Integer)
+
+    users = db.relationship('User', backref='role', lazy='dynamic')
+
+    @staticmethod
+    def create_roles():
+        roles_dict = {
+            "UnconfirmedUser": Permissions.READ,
+            "User": Permissions.READ | Permissions.FOLLOW | Permissions.WRITE | Permissions.DELETE,
+            "Moderator": Permissions.READ | Permissions.FOLLOW | Permissions.WRITE | Permissions.DELETE |
+                         Permissions.MODERATE_COMS,
+            "Admin": Permissions.READ | Permissions.FOLLOW | Permissions.WRITE | Permissions.DELETE |
+                     Permissions.MODERATE_COMS | Permissions.ADMINISTER,
+        }
+        for (role, permission) in roles_dict.items():
+            if not Role.query.filter_by(role=role).first():
+                new_role = Role(role=role, permissions=permission)
+                db.session.add(new_role)
+        db.session.commit()
+
+    def __repr__(self):
+        return f"{self.role} | {self.permissions} "
+
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(24), unique=True, nullable=False)
@@ -31,15 +77,25 @@ class User(db.Model, UserMixin):
     profile_photo = db.Column(db.String(200), default='default_user_img.jpg')
     username = db.Column(db.String(24))
 
+    role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
+
     reviews = db.relationship("Review", backref="author", passive_deletes=True, lazy='dynamic')
     likes = db.relationship("Review", backref="users_like", secondary=user_likes, passive_deletes=True)
     dislikes = db.relationship("Review", backref="users_dislike", secondary=user_dislikes, passive_deletes=True)
     comments = db.relationship("Comment", backref="author")
     books = db.relationship("Book", backref="user", passive_deletes=True, lazy='dynamic')
 
-    def __init__(self,  **kwargs):
+    def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
         self.username = self.login
+        if not self.role:
+            self.role = Role.query.filter_by(role='UnconfirmedUser' if not self.confirmed else "User").first()
+
+    def can(self, permission):
+        return self.role.permissions & permission == permission
+
+    def is_admin(self):
+        return self.can(Permissions.ADMINISTER)
 
     @staticmethod
     def create_password_hash(target, value, oldvalue, initiator):
@@ -103,13 +159,13 @@ db.event.listen(User.password, 'set', User.create_password_hash, retval=True)
 
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    author_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
-    book_id = db.Column(db.Integer, db.ForeignKey('book.id', ondelete='CASCADE'), nullable=False)
-
     popularity = db.Column(db.Integer, nullable=False, default=0)
     text = db.Column(db.String(8000), nullable=False)
     date = db.Column(db.Date, nullable=False, default=date.today)
     post_time = db.Column(db.DateTime, nullable=False, default=datetime.now)
+
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    book_id = db.Column(db.Integer, db.ForeignKey('book.id', ondelete='CASCADE'), nullable=False)
 
     comments = db.relationship("Comment", backref="review", passive_deletes=True, lazy='dynamic')
 
@@ -148,11 +204,11 @@ class Review(db.Model):
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    author_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
-    review_id = db.Column(db.Integer, db.ForeignKey('review.id', ondelete='CASCADE'), nullable=False)
-
     text = db.Column(db.String(600), nullable=False)
     date = db.Column(db.DateTime, nullable=False, default=datetime.now)
+
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    review_id = db.Column(db.Integer, db.ForeignKey('review.id', ondelete='CASCADE'), nullable=False)
 
     def __repr__(self):
         return f"id comment {self.id} | Text {self.text}"
@@ -160,13 +216,13 @@ class Comment(db.Model):
 
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    # Пользователь, который создал эту книгу
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
-
     title = db.Column(db.String(200), nullable=False)
     author = db.Column(db.String(100), nullable=False)
     cover = db.Column(db.String(200), default="default_cover_img.jpg")
     description = db.Column(db.String(350))
+
+    # Пользователь, который создал эту книгу
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
 
     review = db.relationship('Review', backref='book', passive_deletes=True, lazy=True)
 

@@ -53,16 +53,12 @@ def review(review_id):
 
     write_comment = WriteComment()
     if write_comment.validate_on_submit():
-        if current_user.confirmed:
-            comment = Comment(author_id=current_user.id,
-                              review_id=review_id,
-                              text=write_comment.text.data)
-            db.session.add(comment)
-            db.session.commit()
-            return redirect(url_for('book.review', review_id=review_id, page=page))
-        else:
-            flash('Сперва подтвердите аккаунт', category='danger')
-            return redirect(url_for('authorization.confirm_account'))
+        comment = Comment(author_id=current_user.id,
+                          review_id=review_id,
+                          text=write_comment.text.data)
+        db.session.add(comment)
+        db.session.commit()
+        return redirect(url_for('book.review', review_id=review_id, page=page))
 
     return render_template('review.html', review=current_review,
                            form=write_comment,

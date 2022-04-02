@@ -1,0 +1,19 @@
+{% extends 'base_auth.html' %}
+
+{% block form %}
+{% endblock %}
+{% block auth_body %}
+
+	<!-- TITLE -->
+    <div class="col-12">
+        <h4 class="text-center fs-5 mb-3">Подтверждение аккаунта</h4>
+    </div>
+
+    <div class="col-12">
+    	<p>Привет, {{ current_user.username }}!</p>
+        <p>Судя по всему, ты ещё не подтвердили свой аккаунт. Перейди по <a href="{{ url_for('authorization.send_confirm_message') }}" class="link-primary">ссылке</a>, чтоб это сделать.</p>
+    </div>
+
+{% endblock %}
+{% block form_end %}
+{% endblock %}

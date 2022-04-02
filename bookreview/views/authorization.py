@@ -1,18 +1,13 @@
+from flask_mail import Message
+
 from flask import Blueprint, render_template, url_for, redirect, flash
 from flask_login import current_user, login_user, logout_user, login_required
 
 from bookreview.forms import LoginForm, RegisterForm, EmailSendForm, SetNewPassword
 from bookreview.models import User
-from bookreview.utils import send_confirm_message, send_reset_message
-from bookreview import db
+from bookreview import db, mail
 
 authorization = Blueprint('authorization', __name__)
-
-
-# @authorization.before_app_request
-# def before_request():
-#     if current_user.is_authenticated and not current_user.confirmed:
-#         pass
 
 
 @authorization.route('/login', methods=["POST", "GET"])
@@ -49,12 +44,26 @@ def resset_password():
     email_form = EmailSendForm()
 
     if email_form.validate_on_submit():
-        user = User.query.filter_by(email=email_form.email.data).first()
-        send_reset_message(user)
-        flash(f"На вашу почту было отправлено письмо для изменения пароля", category="primary")
-        return redirect(url_for('authorization.login'))
+        user_id = User.query.filter_by(email=email_form.email.data).first().id
+        return redirect(url_for('authorization.send_reset_message', user_id=user_id))
 
     return render_template("recovery.html", form=email_form)
+
+
+@authorization.route("/send_reset_message/<int:user_id>", methods=["POST", "GET"])
+def send_reset_message(user_id):
+    """
+    Отправляет лист на почту пользователя со ссылкой для изменения пароля.
+
+    :param user_id: Id Пользователя, которому отправляется письмо
+    """
+    user = User.query.get_or_404(user_id)
+    msg = Message(f'Изменение пароля', recipients=[user.email])
+    msg.body = f"""Перейдите по ссылке, чтоб изменить пароль, если вы этого не делали, тогда просто проигнорируйте это письмо:
+{url_for('authorization.set_new_password', token=user.generate_token(), _external=True)}"""
+    mail.send(msg)
+    flash(f"На вашу почту было отправлено письмо для изменения пароля", category="primary")
+    return redirect(url_for('authorization.login'))
 
 
 @authorization.route("/set_new_password/<token>", methods=["POST", "GET"])
@@ -83,6 +92,15 @@ def set_new_password(token, user_id):
     return render_template("set_new_password.html", form=password_resset_form, token=token)
 
 
+@authorization.route("/confirm_account")
+@login_required
+def confirm_account():
+    if not current_user.confirmed:
+        return render_template('confirm_account.html')
+    flash('Вы уже подтвердили свой аккаунт', category='primary')
+    return redirect(url_for('main.index'))
+
+
 @authorization.route("/confirm_registration/<token>")
 @login_required
 def confirm_registration(token):
@@ -105,6 +123,20 @@ def confirm_registration(token):
     return redirect(url_for('main.index'))
 
 
+@authorization.route('/send_confirm_message')
+def send_confirm_message():
+    """
+    Отправляет письмо с подтверждением регистрации
+    """
+    if not current_user.confirmed:
+        msg = Message(f'Подтверждение регистрации', recipients=[current_user.email])
+        msg.body = f"""Перейдите по ссылке, чтоб подтвердить регистрацию, если вы этого не делали, тогда просто проигнорируйте это письмо:
+    {url_for('authorization.confirm_registration', token=current_user.generate_token(), user_id=current_user.id, _external=True)}"""
+        mail.send(msg)
+        flash("На вашу почту отправлено письмо для подтверждения регистрации аккаунта", category="primary")
+    return redirect(url_for('main.index'))
+
+
 @authorization.route('/register', methods=["POST", "GET"])
 def register():
     """
@@ -123,10 +155,7 @@ def register():
         db.session.add(user)
         db.session.commit()
         login_user(user)
-
-        send_confirm_message(user)
-        flash("На вашу почту отправлено письмо для подтверждения регистрации аккаунта", category="primary")
-        return redirect(url_for("main.index"))
+        return redirect(url_for('authorization.send_confirm_message'))
 
     return render_template('register.html', form=register_form)
 

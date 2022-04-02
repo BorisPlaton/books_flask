@@ -25,8 +25,10 @@
 
         <!-- LOGIN FORM -->
         <div class="col-lg-5 col-8 border rounded p-5 justify-content-center">
+            {% block form %}
             <form action="{% block form_action %} {% endblock %}" method="post" novalidate>
                 {{ form.csrf_token }}
+            {% endblock %}
 
                 <div class="row justify-content-center g-2">
 
@@ -85,8 +87,9 @@
                     {% endblock %}
 
                 </div>
-
+            {% block form_end %}
             </form>
+            {% endblock %}
         </div>
     </div>
 

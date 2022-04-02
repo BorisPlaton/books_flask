@@ -6,61 +6,69 @@
 
 <div class="col bg-light p-4 rounded mb-1">
 	<div class="container p-0">
-	<form action="{{ url_for('book.add_book')}}" method="post" enctype="multipart/form-data" novalidate>
-		{{ form.csrf_token }}
 		<div class="row g-4">
+		{% if current_user.is_authenticated and current_user.id == user.id %}
+			<form action="{{ url_for('book.add_book', user_id=current_user.id, page=page)}}" method="post" enctype="multipart/form-data" novalidate>
+				<div class="row g-4">
+				{{ form.csrf_token }}
 
-			<div class="col-lg-12 pb-4 border-bottom">
-				<h2 class="fw-light m-0">Новая книга</h2>
-			</div>
+					<div class="col-lg-12 pb-4 border-bottom">
+						<h2 class="fw-light m-0">Новая книга</h2>
+					</div>
 
-			<div class="col-lg-5">
-				<h5 class="fw-light">Автор</h5>
-				<div class="d-flex flex-column mb-2">
-					{{ load_field(form.author, class="form-control form-control-sm", autocomplete="off") }}					
+					<div class="col-lg-5">
+						<h5 class="fw-light">Автор</h5>
+						<div class="d-flex flex-column mb-2">
+							{{ load_field(form.author, class="form-control form-control-sm", autocomplete="off") }}					
+						</div>
+
+						<h5 class="fw-light">Название</h5>
+						<div class="d-flex flex-column mb-2">
+							{{ load_field(form.title, class="form-control form-control-sm", autocomplete="off") }}					
+						</div>
+
+						<h5 class="fw-light">Обложка</h5>
+						<div class="d-flex flex-column">
+							{{ load_field(form.cover, class="form-control form-control-sm", placeholder=form.cover.label.text, autocomplete="off") }}				
+						</div>
+					</div>
+
+					<div class="col-lg-7">
+						<h5 class="fw-light">Описание</h5>
+						<div class="input-group">
+							{{ load_field(form.description, class="form-control form-control-sm", style="height:173px; resize: none;", placeholder="Можно ничего не писать, но лучше это сделать, чтоб люди знали о чём эта книга", autocomplete="off")}}
+						</div>
+					</div>
+
+					<div class="col-lg-2">
+						{{ form.submit(class='btn btn-outline-primary btn-sm')}}
+					</div>
 				</div>
-
-				<h5 class="fw-light">Название</h5>
-				<div class="d-flex flex-column mb-2">
-					{{ load_field(form.title, class="form-control form-control-sm", autocomplete="off") }}					
-				</div>
-
-				<h5 class="fw-light">Обложка</h5>
-				<div class="d-flex flex-column">
-					{{ load_field(form.cover, class="form-control form-control-sm", placeholder=form.cover.label.text, autocomplete="off") }}				
-				</div>
-			</div>
-
-			<div class="col-lg-7">
-				<h5 class="fw-light">Описание</h5>
-				<div class="input-group">
-					{{ load_field(form.description, class="form-control form-control-sm", style="height:173px; resize: none;", placeholder="Можно ничего не писать, но лучше это сделать, чтоб люди знали о чём эта книга", autocomplete="off")}}
-				</div>
-			</div>
-
-			<div class="col-lg-2">
-				{{ form.submit(class='btn btn-outline-primary btn-sm')}}
-			</div>
+			</form>
+		{% endif %}
 
 			<div class="col-12 border-bottom"></div>
 
 			<div class="col-lg-12">
-				<h4 class="fw-light m-0">Ваши книги</h4>
+				<h4 class="fw-light m-0" id="user_books">{% if current_user.is_authenticated and current_user.id == user.id %}Ваши книги{% else %}Книги {{ user.username }}{% endif %}</h4>
 			</div>
 
+			<!-- LIST OF BOOKS -->
 			{% if books.items %}
-			<div class="col-lg-12 mt-0">
+			<div class="col-lg-12">
 				<div class="row row-cols-lg-3 row-cols-md-2 row-cols-1">	
 
 					{% for book in books.items %}
-						<div class="p-4 pb-0">
-							<div class="col">
+						<div class="col">
+							<div class="p-2">
 		 			 			<div class="row row-cols-1 shadow-sm rounded border position-relative">
-		 			 				<a class="delete_btn" href="{{ url_for('book.delete_book', book_id=book.id, next='book.add_book') }}">
+		 			 				{% if current_user.is_authenticated and current_user.id == user.id %}
+		 			 				<a class="delete_btn" href="{{ url_for('book.delete_book', book_id=book.id) }}">
 			 			 				<div class="position-absolute bg-light p-1 rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 25px; height: 25px; top: 10px;">
 				 							<i class="bi bi-trash"></i>
 			 			 				</div>
 			 			 			</a>
+			 			 			{% endif %}
 					 				<div class="col book_cover rounded-top" style="background-image: url({{ url_for('static', filename='book_covers/'+book.cover) }}); height:250px">
 			    					</div>
 
@@ -82,7 +90,6 @@
 			{% endif %}
 
 		</div>
-	</form>
 	</div>
 </div>
 
@@ -90,9 +97,9 @@
 	<div class="col my-3 bg-light rounded p-3 mt-3 mb-0">
 	{% for page in books.iter_pages(left_edge=2, right_edge=2, left_current=3, right_current=3) %}
 		{% if books.page == page %}
-			<a href="{{ url_for('book.add_book', page=page) }}" class="link-dark me-1">{{ page }}</a>
+			<a href="{{ url_for('book.add_book', user_id=user.id, page=page) }}" class="link-dark me-1">{{ page }}</a>
 		{% elif page %}
-			<a href="{{ url_for('book.add_book', page=page) }}" class="link-primary me-1">{{ page }}</a>
+			<a href="{{ url_for('book.add_book', user_id=user.id, page=page) }}" class="link-primary me-1">{{ page }}</a>
 		{% endif %}
 	{% endfor %}
 	</div>

@@ -20,6 +20,6 @@ class BaseConfig:
 
 
 class DevConfig(BaseConfig):
-    SQLALCHEMY_ECHO = True
+    SQLALCHEMY_ECHO = False
     DEBUG = True
     TESTING = True

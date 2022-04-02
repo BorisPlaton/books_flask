@@ -60,29 +60,3 @@ def month_translate(data: str, lang='rus') -> str:
     if month:
         assert month.group().lower() in month_table[lang]
         return data.replace(month.group(), month_table[lang][month.group().lower()].capitalize())
-
-
-# def delete_gaps(text: str) -> str:
-#     """
-#     Удаляет лишние теги <br> в тексте
-#
-#     :param text: Текст, что нужно отредактировать
-#     :return: Текст без лишних тегов <br>
-#     """
-#     pattern = "(?:\\r\\n\\r\\n)(?=(?:\\n|\\r))"
-#     new_text = re.sub(pattern, "", text)
-#     return new_text
-
-def confirmed_required(func):
-    """
-    Декоратор. Проверяет подтвержденный ли аккаунт пользователя.
-    """
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        if request.method == "POST" and not current_user.confirmed:
-            flash("Сперва подтвердите аккаунт", category='warning')
-            return redirect(request.referrer)
-        return func(*args, **kwargs)
-
-    return wrapper
-

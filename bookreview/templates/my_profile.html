@@ -39,10 +39,12 @@
 								</span>
 							</div>
 
+							<a href="{{ url_for('book.add_book', user_id=user.id)}}#user_books">
 							<div class="d-flex flex-column align-items-center py-2 px-4 border rounded bg-white">
-								<span class="">Книг</span>
-								<span>{{ user.books.all()|count }}</span>
+								<span class="text-dark">Книги</span>
+								<span class="text-dark">{{ user.books.all()|count }}</span>
 							</div>
+							</a>
 
 						</div>
 
@@ -117,7 +119,7 @@
 				{% else %}
 					<div class="mt-3">
 						<p class="mb-2">
-							<small class="text-secondary">Здесь пока ничего нет, <a href="{{ url_for('book.write_review') }}" class="text-primary">сделайте свою первую запись</a></small>
+							<small class="text-secondary">{% if current_user.is_authenticated and current_user.id == user.id %}Здесь пока ничего нет, <a href="{{ url_for('book.write_review', user_id=current_user.id) }}" class="text-primary">сделайте свою первую запись</a>{% else %}{{ user.username }} ещё ничего не писал.{% endif %}</small>
 						</p>
 					</div>
 				{% endif %}

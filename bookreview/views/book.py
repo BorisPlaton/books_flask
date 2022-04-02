@@ -4,21 +4,20 @@ from flask_login import login_required, current_user
 from bookreview import bookcover, db
 from bookreview.forms import AddBook, WriteReview, WriteComment
 from bookreview.models import Book, Review, User, Comment
-from bookreview.utils import confirmed_required
 
 book = Blueprint('book', __name__)
 
 
-@book.route('/add_book', methods=["POST", "GET"])
+@book.route('/books/<int:user_id>', methods=["POST", "GET"])
 @login_required
-@confirmed_required
-def add_book():
+def add_book(user_id):
     """
     Добавление новой книги. Показывает уже добавленные книги.
     """
     add_book_form = AddBook()
+    user = User.query.get(user_id)
     page = request.args.get('page', 1, type=int)
-    books = current_user.books.paginate(per_page=9, page=page)
+    books = user.books.paginate(per_page=9, page=page)
     if add_book_form.validate_on_submit():
         new_book = Book(user_id=current_user.id,
                         title=add_book_form.title.data,
@@ -28,9 +27,9 @@ def add_book():
         db.session.add(new_book)
         db.session.commit()
         flash("Книга добавлена", category="success")
-        return redirect(url_for('book.add_book'))
+        return redirect(url_for('book.add_book', user_id=user_id))
 
-    return render_template('add_book.html', form=add_book_form, books=books)
+    return render_template('add_book.html', form=add_book_form, books=books, user=user)
 
 
 @book.route('/delete_book/<int:book_id>')
@@ -40,14 +39,12 @@ def delete_book(book_id):
     if current_user.id == book_.user.id:
         db.session.delete(book_)
         db.session.commit()
-        next_route = request.args.get("next")
         flash("Книга удалена", category="warning")
-        return redirect(url_for(next_route))
+        return redirect(request.referrer)
     return redirect(url_for('main.index'))
 
 
 @book.route('/review/<int:review_id>', methods=["POST", "GET"])
-@confirmed_required
 def review(review_id):
     page = request.args.get('page', 1, type=int)
     current_review = Review.query.get_or_404(review_id)
@@ -69,10 +66,13 @@ def review(review_id):
                            comments=comments)
 
 
-@book.route('/write_review', methods=["POST", "GET"])
+@book.route('/reviews/<int:user_id>', methods=["POST", "GET"])
 @login_required
-@confirmed_required
-def write_review():
+def write_review(user_id):
+    user = User.query.get(user_id)
+    page = request.args.get('page', 1, type=int)
+    reviews = user.reviews.order_by(Review.date.desc(), Review.popularity.desc()).paginate(per_page=15, page=page)
+
     write_review_form = WriteReview()
     if write_review_form.validate_on_submit():
         review_ = Review(author_id=current_user.id,
@@ -83,7 +83,7 @@ def write_review():
         flash("Запись сохранена", category="success")
         return redirect(url_for('main.profile', profile_id=current_user.id))
 
-    return render_template("write_review.html", form=write_review_form)
+    return render_template("write_review.html", form=write_review_form, user=user, page=page, reviews=reviews)
 
 
 @book.route('/delete_review/<int:review_id>')
@@ -94,7 +94,8 @@ def delete_review(review_id):
         db.session.delete(review_)
         db.session.commit()
         flash("Рецензия удалена", category="warning")
-        return redirect(request.referrer)
+        next_page = request.args.get('next')
+        return redirect(next_page if next_page else request.referrer)
     return redirect(url_for('main.index'))
 
 
@@ -126,9 +127,9 @@ def status_up(review_id):
         c_review.popularity -= 1
     else:
         current_user.likes.append(c_review)
-        if c_review in current_user.dislikes:
-            current_user.dislikes.remove(c_review)
         c_review.popularity += 1
+        if c_review in current_user.dislikes:
+            status_down(review_id)
     db.session.commit()
     return redirect(request.referrer)
 
@@ -152,6 +153,6 @@ def status_down(review_id):
         current_user.dislikes.append(c_review)
         c_review.popularity -= 1
         if c_review in current_user.likes:
-            current_user.likes.remove(c_review)
+            status_up(review_id)
     db.session.commit()
     return redirect(request.referrer)

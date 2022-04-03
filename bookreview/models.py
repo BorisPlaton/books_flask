@@ -1,6 +1,6 @@
 import os
 from datetime import datetime, date
-from flask_login import UserMixin
+from flask_login import UserMixin, AnonymousUserMixin
 from itsdangerous import Serializer, BadSignature, SignatureExpired
 from sqlalchemy.orm.base import NO_VALUE
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -102,10 +102,16 @@ class User(db.Model, UserMixin):
         """
         Автоматически хэширует пароль
         """
-        print(f"new   {value}\nold    {oldvalue}\ninitiator  {initiator}\ntarget   {target}")
         if oldvalue is not NO_VALUE and check_password_hash(oldvalue, value):
             return oldvalue
         return generate_password_hash(value)
+
+    @staticmethod
+    def set_confirmed_account(target, value, oldvalue, initiator):
+        """
+        Устанавливает роль пользователя на "User" после подтверждения регистрации
+        """
+        target.role = Role.query.filter_by(role='User').first()
 
     @staticmethod
     def create_fake(count=10):
@@ -155,6 +161,23 @@ class User(db.Model, UserMixin):
 
 
 db.event.listen(User.password, 'set', User.create_password_hash, retval=True)
+db.event.listen(User.confirmed, 'set', User.set_confirmed_account)
+
+
+class AnonymousUser(AnonymousUserMixin):
+
+    def can(self, permission):
+        return False
+
+    def is_admin(self):
+        return False
+
+    @property
+    def confirmed(self):
+        return False
+
+
+login_manager.anonymous_user = AnonymousUser
 
 
 class Review(db.Model):

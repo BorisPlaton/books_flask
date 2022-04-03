@@ -1,11 +1,23 @@
+from functools import wraps
+
 from flask import Blueprint, url_for, redirect, flash, render_template, request
 from flask_login import login_required, current_user
 
 from bookreview import bookcover, db
 from bookreview.forms import AddBook, WriteReview, WriteComment
-from bookreview.models import Book, Review, User, Comment
+from bookreview.models import Book, Review, User, Comment, Permissions
 
 book = Blueprint('book', __name__)
+
+
+# @book.before_app_request
+# def check_permissions_post():
+#     if request.method == 'POST' and current_user.is_anonymous:
+#         flash('Войдите в аккаунт', category='warning')
+#         return redirect(url_for('authorization.login'))
+#     if request.method == "POST" and not current_user.confirmed:
+#         flash('Сперва подтвердите аккаунт', category='danger')
+#         return request.args
 
 
 @book.route('/books/<int:user_id>', methods=["POST", "GET"])
@@ -53,11 +65,18 @@ def review(review_id):
 
     write_comment = WriteComment()
     if write_comment.validate_on_submit():
-        comment = Comment(author_id=current_user.id,
-                          review_id=review_id,
-                          text=write_comment.text.data)
-        db.session.add(comment)
-        db.session.commit()
+        if current_user.can(Permissions.WRITE):
+            comment = Comment(author_id=current_user.id,
+                              review_id=review_id,
+                              text=write_comment.text.data)
+            db.session.add(comment)
+            db.session.commit()
+        elif current_user.is_anonymous:
+            flash('Войдите в аккаунт', category='warning')
+        elif not current_user.confirmed:
+            flash('Подтвердите свой аккаунт', category='warning')
+        else:
+            flash('Вы не можете писать комментарии', category='warning')
         return redirect(url_for('book.review', review_id=review_id, page=page))
 
     return render_template('review.html', review=current_review,

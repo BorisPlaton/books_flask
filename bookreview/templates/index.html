@@ -1,1 +1,97 @@
 {% extends 'base.html' %}
+
+{% block title %} Bookreview | Главная страница {% endblock %}
+
+{% block content %}
+<div class="col bg-light p-4 pb-3 rounded mb-1">
+	<div class="row row-cols-md-3 row-cols-1">
+
+		<div class="col-12 pb-4 border-bottom mb-3">
+			<h2 class="fw-light m-0">Свежие записи</h2>
+		</div>
+
+		{% if reviews.items %}
+			{% for review in reviews.items %}
+			<div class="col d-flex">
+				<div class="p-3 d-flex align-self-stretch">
+					<div class="container d-flex align-self-stretch p-0">
+			 			<div class="row row-cols-1 align-self-stretch shadow-sm rounded border">
+
+			 				<div class="col book_cover rounded-top" style="background-image: url({{ url_for('static', filename='book_covers/'+review.book.cover) }}); height:125px">
+	    					</div>
+
+			 				<div class="col p-3 bg-white">
+			 					<h5 class="mb-1">{{ review.book.title }}</h5>
+			 					<small class="text-secondary">{{ review.book.author }}</small>
+			 				</div>
+
+			 				<div class="col p-3 d-flex flex-column justify-content-between bg-light rounded-bottom ">
+			 					<div>
+				 					<p class="mb-1">
+					 					{% if review.text|length < 150 %}
+					 						{{ review.text }}
+					 					{% else %}
+					 						{{ review.text[:150]}} <span class='text-secondary'>(...)</span>
+					 					{% endif %}
+				 					</p>
+				 					<small><a href="{{ url_for('book.review', review_id=review.id) }}" class="link-primary">Читать полностью</a></small>
+			 					</div>
+			 					<div class="mt-2">
+									<small class="text-secondary">{{ month_translate(review.post_time.strftime('%d %B, %Y')) }}</small>
+								</div>
+			 				</div>
+
+			 				<div class="d-flex fs-4 align-items-center border-top px-3 py-2">
+		 						<div class="{% if review.popularity >= 0 %}text-success {% else %} text-danger {% endif %} fw-light me-3 fs-6">
+									{{ review.popularity }}
+								</div>
+ 								<a href="{{ url_for('book.status_up', review_id=review.id) }}" 
+ 								class='{% if review in current_user.likes %}liked{% else %}up_button{% endif %} me-2'>
+ 									<i class="bi bi-chevron-up"></i>
+ 								</a>
+ 								<a href="{{ url_for('book.status_down', review_id=review.id) }}" 
+ 								class='{% if review in current_user.dislikes %}disliked{% else %}down_button{% endif %} me-3'>
+ 									<i class="bi bi-chevron-down"></i>
+ 								</a>
+		 						<div class="d-flex align-items-center justify-content-start">
+									<div class="user_photo rounded-circle" 
+									style="background-image: url({{ url_for('static', filename='profile_img/' + review.author.profile_photo) }}); width: 30px; height:30px;">
+									</div>
+									<a href="{{ url_for('main.profile', profile_id=review.author.id) }}" class="text-dark lead ms-2 fs-5">{{ review.author.username }}</a>
+								</div>
+
+ 								{% if current_user.id == review.author.id %}
+			 						<div class="d-flex fs-6 ms-auto">
+			 							<a href="{{ url_for('book.delete_review', review_id=review.id )}}" class='sidebar_link'><i class="bi bi-trash"></i></a>
+			 						</div>
+			 					{% endif %}
+
+ 							</div>
+
+			 			</div>
+				    </div>
+				</div>
+			</div>
+			{% endfor %}
+		{% else %}
+			<div class="col-lg-12 mt-2">
+				<p class="text-secondary mb-3"><small>Здесь пока ничего нет.</small></p>
+			</div>
+		{% endif %}
+
+	</div>
+</div>
+
+{% if reviews.items and reviews.pages > 1 %}
+	<div class="col my-3 bg-light rounded p-3 mt-3 mb-0">
+	{% for page in reviews.iter_pages(left_edge=2, right_edge=2, left_current=3, right_current=3) %}
+		{% if reviews.page == page %}
+			<a href="{{ url_for('main.index', page=page) }}" class="link-dark me-1">{{ page }}</a>
+		{% elif page %}
+			<a href="{{ url_for('main.index', page=page) }}" class="link-primary me-1">{{ page }}</a>
+		{% endif %}
+	{% endfor %}
+	</div>
+{% endif %}
+
+{% endblock %}

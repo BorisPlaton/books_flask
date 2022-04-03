@@ -1,34 +1,46 @@
-from os import environ
-from flask import url_for
-from flask_mail import Message
-from itsdangerous import URLSafeTimedSerializer
-
-from bookreview import mail
+import re
 
 
-def send_reset_message(user):
+def month_translate(data: str, lang='rus') -> str:
     """
-    Отправляет лист на почту пользователя со ссылкой для изменения пароля.
+    Переводит название месяца с английского на язык, что указан в параметре lang.
 
-    :param user: Пользователь, которому отправляется письмо
+    :param data: Строка с месяцем
+    :param lang: Язык на который надо перевести
+    :return: Строка с новым названием месяца
     """
-    s = URLSafeTimedSerializer(environ.get("SECRET_KEY"))
-    token = s.dumps({"id": user.id})
-    msg = Message(f'Изменение пароля', recipients=[user.email])
-    msg.body = f"""Перейдите по ссылке, чтоб изменить пароль, если вы этого не делали, тогда просто проигнорируйте это письмо: 
-{url_for('authorization.set_new_password', token=token, _external=True)}"""
-    mail.send(msg)
+    month = re.search("[a-zA-Z]+", data)
+    month_table = {
+        "rus": {
+            "january": "января",
+            "february": "февраля",
+            "march": "марта",
+            "april": "апреля",
+            "may": "мая",
+            "june": "июня",
+            "july": "июля",
+            "august": "августа",
+            "september": "сентября",
+            "october": "октября",
+            "november": "ноября",
+            "december": "декабря"
+        }
+    }
+    if month:
+        assert month.group().lower() in month_table[lang]
+        return data.replace(month.group(), month_table[lang][month.group().lower()].capitalize())
 
 
-def send_confirm_message(user_info: dict):
+def create_fake_db_data(amount_users=10, amount_reviews=20, amount_books=20):
     """
-    Отправляет письмо с подтверждением регистрации
-
-    :param user_info: Информация о пользователе
+    Создает фейковые данные для таблиц User, Review, Book
+    :param amount_users: количество пользователей
+    :param amount_reviews: количество рецензий
+    :param amount_books: количество книг
     """
-    s = URLSafeTimedSerializer(environ.get("SECRET_KEY"))
-    token = s.dumps(user_info)
-    msg = Message(f'Подтверждение регистрации', recipients=[user_info["email"]])
-    msg.body = f"""Перейдите по ссылке, чтоб зарегистрироваться, если вы этого не делали, тогда просто проигнорируйте это письмо:
-{url_for('authorization.confirm_registration', token=token, _external=True)}"""
-    mail.send(msg)
+    from bookreview.models import User, Review, Book
+    databases = [(User, amount_users),
+                 (Book, amount_books),
+                 (Review, amount_reviews)]
+    for database, amount in databases:
+        database.create_fake(amount)

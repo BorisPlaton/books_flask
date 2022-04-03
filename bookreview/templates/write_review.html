@@ -3,8 +3,7 @@
 {% block title %} Bookview | Написать рецензию {% endblock %}
 
 {% block content %}
-
-<div class="col bg-light p-4 rounded">
+<div class="col bg-light p-4 pb-2 rounded">
 	<div class="container p-0">
 		<div class="row g-4">
 			<div class="col-12 pb-4 border-bottom">
@@ -12,8 +11,8 @@
 			</div>
 
 			<div class="col">
-			{% if current_user.books %}
-			<form action="{{ url_for('book.write_review') }}" method='post' novalidate>
+			{% if current_user.books.all() %}
+			<form action="{{ url_for('book.write_review', user_id=current_user.id) }}" method='post' novalidate>
 				{{ form.csrf_token }}
 				<div class="col">
 					<h5 class="fw-light">Книга</h5>
@@ -21,7 +20,7 @@
 				</div>
 
 				<div class="col mt-3">
-					{{ load_field(form.text, class="form-control", style="height: 450px;", placeholder="Расскажите, что думаете об этой книге")}}
+					{{ load_field(form.text, only_input=True, class="form-control", style="height: 400px; ", placeholder="Расскажите, что думаете об этой книге")}}
 				</div>
 
 				<div class="col mt-3">
@@ -29,13 +28,86 @@
 				</div>
 
 			</form>
+			<div class="col-12 border-bottom mt-3"></div>
+
+			<div class="col-lg-12 mt-4">
+				<h4 class="fw-light m-0" id="user_books">
+					{% if current_user.is_authenticated and current_user.id == user.id %}Ваши рецензии{% else %}Рецензии {{ user.username }}{% endif %}
+				</h4>
+			</div>
+
+				{% if reviews.items %}
+				<div class="col-lg-12 mt-4">
+					<div class="row row-cols-1">	
+
+						{% for review in reviews.items %}
+							<div class="col bg-white border mb-1 m-0">
+								<div class="p-2">
+									<div class="d-flex align-items-center justify-content-between">
+										<div class="d-flex fs-4 align-items-center">
+											<div class="{% if review.popularity >= 0 %}text-success {% else %} text-danger {% endif %} bg-white py-2 px-3 rounded lead me-3 border">
+												{{ review.popularity }}
+											</div>
+											<a href="{{ url_for('book.status_up', review_id=review.id) }}" 
+											class='{% if review in current_user.likes %}liked{% else %}up_button{% endif %} me-2'>
+												<i class="bi bi-chevron-up"></i>
+											</a>
+											<a href="{{ url_for('book.status_down', review_id=review.id) }}" 
+											class='{% if review in current_user.dislikes %}disliked{% else %}down_button{% endif %} me-2'>
+												<i class="bi bi-chevron-down"></i>
+											</a>
+											{% if current_user.id == review.author.id %}
+											<div class="d-flex fs-6 me-3">
+												<a href="{{ url_for('book.delete_review', review_id=review.id)}}" class='sidebar_link'><i class="bi bi-trash"></i></a>
+											</div>
+											{% endif %}
+											<div class="d-flex flex-column">
+												<span class="lead">{{ review.book.author }} - {{ review.book.title }}</span>
+								    			<a href="{{ url_for('book.review', review_id=review.id) }}" class='link-primary fs-6'><small>Читать</small></a>
+											</div>
+										</div>
+										<div class="d-flex flex-column">
+											<small class="text-secondary">{{ month_translate(review.post_time.strftime('%d %B, %Y')) }}</small>
+											<small class="text-secondary">{{ review.post_time.strftime('%H:%M') }}</small>
+										</div>
+									</div>
+							    </div>
+						    </div>
+						{% endfor %}
+					
+					</div>
+				</div>
+				{% else %}
+				<div class="col-lg-12 mt-4">
+					<p class="text-secondary mb-4"><small>Кажется, здесь ничего нет.</small></p>
+				</div>
+				{% endif %}
+
 			{% else %}
-				<small class="text-secondary">У вас нет книг, чтоб сделать запись. <a href="{{ url_for('book.add_book') }}" class="text-primary">Добавьте</a> их и возвращайтесь сюда.</small>
+				<p class="mb-4">
+					<small class="text-secondary">
+						У вас нет книг, чтобы написать рецензию. <a href="{{ url_for('book.add_book', user_id=current_user.id) }}" class="text-primary">Добавьте</a> какую-то и возвращайтесь сюда.
+					</small>
+				</p>
 			{% endif %}
 			</div>
 
+			
 
 		</div>
 	</div>
 </div>
+
+{% if reviews and reviews.pages > 1 %}
+	<div class="col my-3 bg-light rounded p-3 mt-3 mb-0">
+	{% for page in reviews.iter_pages(left_edge=2, right_edge=2, left_current=3, right_current=3) %}
+		{% if reviews.page == page %}
+			<a href="{{ url_for('book.write_review', user_id=user.id, page=page) }}" class="link-dark me-1">{{ page }}</a>
+		{% elif page %}
+			<a href="{{ url_for('book.write_review', user_id=user.id, page=page) }}" class="link-primary me-1">{{ page }}</a>
+		{% endif %}
+	{% endfor %}
+	</div>
+{% endif %}
+
 {% endblock %}

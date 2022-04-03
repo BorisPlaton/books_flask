@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template
-from flask_login import login_required, current_user
-from bookreview.forms import LoadPhoto, DeletePhoto, ChangeUsername, WriteReview
+from flask import Blueprint, render_template, request
+from flask_login import login_required
+
+from bookreview.forms import LoadPhoto, Delete, ChangeUsername
 from bookreview.models import Review, User
 
 main = Blueprint("main", __name__)
@@ -11,22 +12,18 @@ def index():
     """
     Домашняя страница.
     """
-    return render_template('index.html')
+    page = request.args.get("page", 1, type=int)
+    reviews = Review.query.order_by(Review.date.desc(), Review.popularity.desc()).paginate(per_page=12,
+                                                                                           page=page)
+    return render_template('index.html', reviews=reviews)
 
 
 @main.route('/profile/<int:profile_id>', methods=["POST", "GET"])
-@login_required
 def profile(profile_id):
-    user = User.query.get(profile_id)
-    likes = 0
-    dislikes = 0
-    for review in user.reviews:
-        likes += len(review.users_like)
-        dislikes += len(review.users_dislike)
-    return render_template("my_profile.html",
-                           user=user,
-                           likes=likes,
-                           dislikes=dislikes)
+    page = request.args.get("page", 1, type=int)
+    user = User.query.get_or_404(profile_id)
+    user_reviews = user.reviews.order_by(Review.post_time.desc()).paginate(per_page=7, page=page)
+    return render_template("my_profile.html", user=user, reviews=user_reviews)
 
 
 @main.route('/settings')
@@ -36,7 +33,7 @@ def settings():
     Страница настроек. Обработчики форм вынесены в модуль bookreview.views.settings
     """
     load_photo = LoadPhoto()
-    delete_photo = DeletePhoto()
+    delete_photo = Delete()
     change_username = ChangeUsername()
 
     return render_template('settings.html',

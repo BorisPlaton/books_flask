@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<div class="col bg-light p-4 pb-2 rounded">
+<div class="col bg-light p-4 rounded mb-1">
 	<div class="row">
 
 		<!-- ACCOUNT INFO -->
@@ -29,20 +29,22 @@
 
 							<div class="d-flex flex-column align-items-center py-2 px-3 me-3 border rounded  bg-white">
 								<span class="">Рецензий</span>
-								<span>{{ user.reviews|count }}</span>
+								<span>{{ user.reviews.all()|count }}</span>
 							</div>
 
 							<div class="d-flex flex-column align-items-center py-2 px-3 border me-3 rounded bg-white">
 								<span class="">Рейтинг</span>
-								<span class="{% if likes - dislikes >= 0 %}text-success{% else %}text-danger{% endif %}">
-									{{ likes - dislikes }}
+								<span class="{% if user.popularity >= 0 %}text-success{% else %}text-danger{% endif %}">
+									{{ user.popularity }}
 								</span>
 							</div>
 
+							<a href="{{ url_for('book.add_book', user_id=user.id)}}#user_books">
 							<div class="d-flex flex-column align-items-center py-2 px-4 border rounded bg-white">
-								<span class="">Книг</span>
-								<span>{{ user.books|count }}</span>
+								<span class="text-dark">Книги</span>
+								<span class="text-dark">{{ user.books.all()|count }}</span>
 							</div>
+							</a>
 
 						</div>
 
@@ -53,75 +55,91 @@
 		</div>
 
 		<!-- REVIEWS -->
-		<div class="col-12 my-4">
-			<h4 class="fw-light m-0">Рецензии</h4>
+		<div class="col-12 mt-4 mb-2">
+			<h4 class="fw-light m-0" id="reviews">Рецензии</h4>
 		</div>
 
 		<div class="col">
 			<div class="container p-0">
 
-				{% if user.reviews %}
-					{% for review in user.reviews %}
-						<div class="row row-cols-2 g-0 bg-white border rounded mb-3 shadow-sm">
+				{% if reviews.items %}
+					{% for review in reviews.items %}
+						<div class="row row-cols-2 g-0 bg-white border rounded mt-3 shadow-sm">
 							<div class="col-md-4">
 								<div class="col book_cover rounded-start" style="background-image: url({{ url_for('static', filename='book_covers/'+review.book.cover) }}); height:100%">
 		    					</div>	
 							</div>
 
 							<div class="col-md-8 p-3">
-								<div class="mb-3">
-									<div class="d-flex align-items-center justify-content-between">
+								<div class="mb-3 d-flex justify-content-between align-items-center">
+									<div class="d-flex flex-column justify-content-between">
 				 						<h5 class="mb-0">{{ review.book.title }}</h5>
-				 						<div class="d-flex">
-				 							<a href="{{ url_for('book.delete_review', review_id=review.id, next='/profile/'~current_user.id )}}" class='sidebar_link'><i class="bi bi-trash"></i></a>
-				 						</div>
+				 						<small class="text-secondary">{{ review.book.author }}</small>
 				 					</div>
-				 					<small class="text-secondary">{{ review.book.author }}</small>
+
+				 					<div class="d-flex fs-4 align-items-center shadow-sm rounded px-3 py-1">
+				 						<div class="{% if review.popularity >= 0 %}text-success {% else %} text-danger {% endif %} fw-light me-3 fs-6">
+											{{ review.popularity }}
+										</div>
+		 								<a href="{{ url_for('book.status_up', review_id=review.id) }}" 
+		 								class='{% if review in current_user.likes %}liked{% else %}up_button{% endif %} me-2'>
+		 									<i class="bi bi-chevron-up"></i>
+		 								</a>
+		 								<a href="{{ url_for('book.status_down', review_id=review.id) }}" 
+		 								class='{% if review in current_user.dislikes %}disliked{% else %}down_button{% endif %}'>
+		 									<i class="bi bi-chevron-down"></i>
+		 								</a>
+		 								{% if current_user.id == review.author.id %}
+				 						<div class="d-flex fs-6 ms-2">
+				 							<a href="{{ url_for('book.delete_review', review_id=review.id)}}" class='sidebar_link'><i class="bi bi-trash"></i></a>
+				 						</div>
+				 						{% endif %}
+		 							</div>
+
 				 				</div>
 
 				 				<div class="mb-3">
-				 					<p>
+				 					<p class="mb-2">
 				 					{% if review.text|length < 350 %}
 				 						{{ review.text }}
 				 					{% else %}
 				 						{{ review.text[:350]}} <span class='text-secondary'>(...)</span>
 				 					{% endif %}
-				 					<a href="{{ url_for('book.review', review_id=review.id) }}" class="link-primary">Читать</a>
 				 					</p>
+				 					<small><a href="{{ url_for('book.review', review_id=review.id) }}" class="link-primary">Читать полностью</a></small>
 				 				</div>
 
-				 				<div class="d-flex align-items-center justify-content-between">
-				 					<div class="d-flex fs-4 align-items-center">
-		 								<a href="{{ url_for('book.status_up', review_id=review.id, next='/profile/'~user.id) }}" 
-		 								class='{% if review in current_user.likes %}liked{% else %}up_button{% endif %} me-2'>
-		 									<i class="bi bi-chevron-up"></i>
-		 								</a>
-		 								<a href="{{ url_for('book.status_down', review_id=review.id, next='/profile/'~user.id) }}" 
-		 								class='{% if review in current_user.dislikes %}disliked{% else %}down_button{% endif %} me-2'>
-		 									<i class="bi bi-chevron-down"></i>
-		 								</a>
-		 								<!-- <a href="#" class="link-primary fs-6">Читать</a> -->
-		 							</div>
-		 							<div class="d-flex flex-column">
-					 					<small class="text-secondary">{{ review.date.strftime('%d %B, %Y') }}</small>
-					 					<small class="text-secondary">{{ review.date.strftime('%H:%M') }}</small>
-				 					</div>
+				 				<div class="d-flex align-items-center justify-content-end">
+				 					<small class="text-secondary">{{ month_translate(review.date.strftime('%d %B, %Y')) }}</small>
 				 				</div>
 
 							</div>
 						</div>
 					{% endfor %}
 				{% else %}
-					<div class="col-lg-12 mb-3">
-						<small class="text-secondary">Здесь пока ничего нет, <a href="{{ url_for('book.write_review') }}" class="text-primary">сделайте свою первую запись</a></small>
+					<div class="mt-3">
+						<p class="mb-2">
+							<small class="text-secondary">{% if current_user.is_authenticated and current_user.id == user.id %}Здесь пока ничего нет, <a href="{{ url_for('book.write_review', user_id=current_user.id) }}" class="text-primary">сделайте свою первую запись</a>{% else %}{{ user.username }} ещё ничего не писал.{% endif %}</small>
+						</p>
 					</div>
 				{% endif %}
 
 			</div>
 		</div>
 
-		
-
 	</div>
 </div>
+
+{% if reviews.items and reviews.pages > 1 %}
+	<div class="col my-3 bg-light rounded p-3 mt-3 mb-0">
+	{% for page in reviews.iter_pages(left_edge=2, right_edge=2, left_current=3, right_current=3) %}
+		{% if reviews.page == page %}
+			<a href="{{ url_for('main.profile', profile_id=user.id, page=page) }}" class="link-dark me-1">{{ page }}</a>
+		{% elif page %}
+			<a href="{{ url_for('main.profile', profile_id=user.id, page=page) }}" class="link-primary me-1">{{ page }}</a>
+		{% endif %}
+	{% endfor %}
+	</div>
+{% endif %}
+
 {% endblock %}

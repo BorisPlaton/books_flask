@@ -28,17 +28,15 @@
 
     <!-- REMEMBER ME CHECKBOX -->
     <div class="col-12 d-flex align-items-center">
-        {{ form.remember(class='form-check-input me-1') }}
+        {{ load_field(form.remember, class='form-check-input me-1') }}
         {{ form.remember.label }}
     </div>
 
     <!-- SUBMIT BUTTON -->
     <div class="col-12 d-flex justify-content-between align-items-center mt-5">
         <small><a href="{{ url_for('authorization.register') }}" class="text-primary">Создать аккаунт</a></small>
-        {{ form.submit(class='btn btn-outline-primary', style="width: 40%;") }}
+        {{ load_field(form.submit, class='btn btn-outline-primary', style="width: 40%;")}}
     </div>
-
-    
 
 {% endblock %}
 

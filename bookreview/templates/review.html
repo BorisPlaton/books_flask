@@ -3,44 +3,135 @@
 {% block title %} Bookreview | {{ review.book.title }} {% endblock %}
 
 {% block content %}
-<div class="col bg-light p-4 pb-2 rounded">
-	<div class="row">
-		<div class="col-lg-12 pb-4 border-bottom">
-			<h2 class="fw-light mb-1">{{ review.book.title }}</h2>
-			<h5 class="lead m-0">{{ review.book.author }}</h5>
-			{% if review.book.description %}
-				<p class="text-secondary fs-6 m-0 mt-3"><i>{{ review.book.description}}</i></p>
-			{% endif %}
-		</div>
 
-		<div class="col-lg-12 mt-4">
-			<p>{{ review.text }}</p>
-		</div>
-	</div>	
-</div>
-
-<div class="col bg-light p-3 rounded mt-3">
+<!-- INFO ABOUT POST -->
+<div class="col bg-light p-3 rounded mb-3">
 	<div class="d-flex align-items-center justify-content-between">
 			<div class="d-flex fs-4 align-items-center">
-				<a href="{{ url_for('book.status_up', review_id=review.id, next='/review/'~review.id) }}" 
+				<div class="{% if review.popularity >= 0 %}text-success {% else %} text-danger {% endif %} bg-white py-2 px-3 rounded lead me-3 border">
+					{{ review.popularity }}
+				</div>
+				<a href="{{ url_for('book.status_up', review_id=review.id) }}" 
 				class='{% if review in current_user.likes %}liked{% else %}up_button{% endif %} me-2'>
 					<i class="bi bi-chevron-up"></i>
 				</a>
-				<a href="{{ url_for('book.status_down', review_id=review.id, next='/review/'~review.id) }}" 
+				<a href="{{ url_for('book.status_down', review_id=review.id) }}" 
 				class='{% if review in current_user.dislikes %}disliked{% else %}down_button{% endif %} me-2'>
 					<i class="bi bi-chevron-down"></i>
 				</a>
-				<div class="d-lg-flex d-none align-items-center justify-content-start">
+				{% if current_user.id == review.author.id %}
+				<div class="d-flex fs-6  me-3">
+					<a href="{{ url_for('book.delete_review', review_id=review.id, next='/profile/'~current_user.id)}}" class='sidebar_link'><i class="bi bi-trash"></i></a>
+				</div>
+				{% endif %}
+				<div class="d-flex align-items-center justify-content-start">
 					<div class="user_photo rounded-circle" 
-					style="background-image: url({{ url_for('static', filename='profile_img/' + current_user.profile_photo) }}); width: 30px; height:30px;">
+					style="background-image: url({{ url_for('static', filename='profile_img/' + review.author.profile_photo) }}); width: 30px; height:30px;">
 					</div>
 					<a href="{{ url_for('main.profile', profile_id=review.author.id) }}" class="text-dark lead ms-2 fs-5">{{ review.author.username }}</a>
 				</div>
 			</div>
 			<div class="d-flex flex-column">
-				<small class="text-secondary">{{ review.date.strftime('%d %B, %Y') }}</small>
-				<small class="text-secondary">{{ review.date.strftime('%H:%M') }}</small>
+				<small class="text-secondary">{{ month_translate(review.post_time.strftime('%d %B, %Y')) }}</small>
+				<small class="text-secondary">{{ review.post_time.strftime('%H:%M') }}</small>
 			</div>
 		</div>
 </div>
+
+
+
+<!-- POST -->
+<div class="col bg-light p-4 pb-2 rounded mb-1">
+	<div class="row">
+
+		<!-- BOOK INFO -->
+		<div class="col-lg-12 pb-4 border-bottom">
+			<div class="row g-3">
+				<div class="col-lg-3 shadow p-0">
+					<div class="book_cover rounded" style="background-image: url({{ url_for('static', filename='book_covers/'+review.book.cover) }}); height:300px;">
+					</div>
+				</div>
+				<div class="col-lg-9">
+					<h2 class="fw-light ms-3 mb-1">{{ review.book.title }}</h2>
+					<h5 class="lead ms-3 m-0">{{ review.book.author }}</h5>
+					{% if review.book.description %}
+						<p class="text-secondary fs-6 ms-3 m-0 mt-3"><i>{{ review.book.description }}</i></p>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+
+		<!-- REVIEW TEXT -->
+		<div class="col-lg-12" style="white-space: pre-line;">
+			<p class="m-0">{{ review.text }}</p>
+		</div>
+
+	</div>	
+</div>
+
+<div class="col mt-3 border-bottom pb-2">
+	<h4 class="fw-light">Комментарии</h4>
+</div>
+
+<!-- LEAVE COMMENT FORM -->
+<div class="col p-3 rounded mt-3">
+	<form action="{{ url_for('book.review', review_id=review.id )}}" method="post" novalidate>
+		<div class="d-flex flex-column">
+		{{ form.csrf_token }}
+		{{ load_field(form.text, class='form-control', placeholder="Введите текст комментария", style="height: 125px;")}}
+		{{ form.submit(class='btn btn-outline-primary btn-sm mt-3 me-auto')}}
+		</div>
+	</form>
+</div>
+
+<!-- COMMENTS -->
+{% if comments.items %}
+	{% for comment in comments.items %}
+	<div class="col rounded mt-3">	
+		<div class="d-flex flex-column shadow-sm rounded p-3 pb-4">
+
+			<div class="d-flex justify-content-between align-items-center">
+				<div class="d-flex align-items-center justify-content-start">
+					<div class="user_photo rounded-circle mt-1" 
+					style="background-image: url({{ url_for('static', filename='profile_img/' + comment.author.profile_photo) }}); width: 30px; height:30px;">
+					</div>
+					<div class="d-flex flex-column ms-2 ">
+						<a href="{{ url_for('main.profile', profile_id=comment.author.id) }}" class="text-dark lead fs-5">{{ comment.author.username }}</a>
+						<span class="text-secondary fw-light fs-6">{{ month_translate(comment.date.strftime('%d %B, %Y')) }}, {{ comment.date.strftime('%H:%M') }}</span>
+					</div>
+				</div>
+				{% if current_user.id == author_id %}
+				<div class="d-flex">
+					<a href="{{ url_for('book.delete_comment', comment_id=comment.id, next='/review/'~review.id )}}" class='sidebar_link'><i class="bi bi-trash"></i></a>
+				</div>
+				{% endif %}
+			</div>
+
+			<div class="mt-3">
+				<p class="m-0">{{ comment.text }}</p>
+			</div>
+
+		</div>
+	</div>
+	{% endfor %}
+
+	{% if comments.pages > 1 %}
+		<div class="col my-3 p-3 mt-5 mb-0 border-top">
+		{% for page in comments.iter_pages(left_edge=2, right_edge=2, left_current=3, right_current=3) %}
+			{% if comments.page == page %}
+				<a href="{{ url_for('book.review', review_id=review.id, page=page) }}" class="link-dark me-1">{{ page }}</a>
+			{% elif page %}
+				<a href="{{ url_for('book.review', review_id=review.id, page=page) }}" class="link-primary me-1">{{ page }}</a>
+			{% endif %}
+		{% endfor %}
+		</div>
+	{% endif %}
+
+{% else %}
+	<div class="col text-secondary p-3">	
+		<small>Ещё никто не оставил свой комментарий. Сделайте это первым!</small>
+	</div>
+{% endif %}
+
+
 {% endblock %}

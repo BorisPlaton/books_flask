@@ -29,3 +29,18 @@ def month_translate(data: str, lang='rus') -> str:
     if month:
         assert month.group().lower() in month_table[lang]
         return data.replace(month.group(), month_table[lang][month.group().lower()].capitalize())
+
+
+def create_fake_db_data(amount_users=10, amount_reviews=20, amount_books=20):
+    """
+    Создает фейковые данные для таблиц User, Review, Book
+    :param amount_users: количество пользователей
+    :param amount_reviews: количество рецензий
+    :param amount_books: количество книг
+    """
+    from bookreview.models import User, Review, Book
+    databases = [(User, amount_users),
+                 (Book, amount_books),
+                 (Review, amount_reviews)]
+    for database, amount in databases:
+        database.create_fake(amount)

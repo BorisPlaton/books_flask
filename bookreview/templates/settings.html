@@ -95,7 +95,7 @@ DONT PUT THIS IN THE ANOTHER PLACE DUE IT WILL NOT WORK.
 			<div class="mt-2">
 				<form action="{{ url_for('settings.delete_photo_def') }}" method="post" novalidate>
 					{{ delete_photo_form.csrf_token }}
-					{{ delete_photo_form.submit(class='btn btn-outline-danger btn-sm')}}
+					{{ delete_photo_form.submit(class='btn btn-outline-danger btn-sm', placeholder='Удалить фото')}}
 				</form>
 			</div>
 
@@ -140,6 +140,7 @@ DONT PUT THIS IN THE ANOTHER PLACE DUE IT WILL NOT WORK.
 				<div class="col-lg-6 d-flex flex-column fs-6">
 					<a href="{{ url_for('settings.change_password') }}" class="link-primary">Поменять пароль</a>
 					<a href="{{ url_for('authorization.confirm_account') }}" class="link-primary">Подтвердить регистрацию аккаунта</a>
+					<a href="{{ url_for('settings.delete_account') }}" class="link-danger">Удалить аккаунт</a>
 				</div>
 
 			</div>

@@ -115,11 +115,20 @@ class LoadPhoto(FlaskForm):
     submit = SubmitField("Сохранить")
 
 
-class DeletePhoto(FlaskForm):
+class Delete(FlaskForm):
     """
     Удаление фото пользователя
     """
-    submit = SubmitField("Удалить фото")
+    submit = SubmitField("Удалить")
+
+
+class DeleteAccount(FlaskForm):
+    old_password = PasswordField("Старый пароль", validators=[InputRequired("Введите старый пароль")])
+    submit = SubmitField("Удалить аккаунт")
+
+    def validate_old_password(self, old_password):
+        if not check_password_hash(current_user.password, old_password.data):
+            raise ValidationError("Неверный пароль")
 
 
 def _choice_query():

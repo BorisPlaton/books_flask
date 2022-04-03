@@ -1,0 +1,33 @@
+{% extends 'base_auth.html' %}
+
+{% block title %} Bookview | Удаление аккаунта {% endblock %}
+
+{% block form_action %} {{ url_for('settings.delete_account') }} {% endblock %}
+
+{% block auth_body %}
+    
+    <!-- FORM TITLE -->
+    <div class="col-12">
+        <h4 class="text-center fs-5 mb-3">Удаление аккаунта</h4>
+    </div>
+
+    <div class="col-12">
+        <p>После удаления аккаунт, вы не сможете его больше восстановить. Все данные связанные с ним будут утеряны навсегда. </p>
+        <p>Вы точно хотите удалить свой аккаунт?</p>
+    </div>
+
+    <!-- LOGIN INPUT -->
+    <div class="col-12">
+        {{ load_field(form.old_password, class='form-control', placeholder="Введите старый пароль")}}
+    </div>
+
+    <!-- SUBMIT BUTTON -->
+    <div class="col-12 d-flex justify-content-between align-items-center mt-5">
+        <small><a href="{{ url_for('main.settings') }}" class="text-primary">Вернуться в настройки</a></small>
+        {{ load_field(form.submit, class='btn btn-outline-danger')}}
+    </div>
+
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

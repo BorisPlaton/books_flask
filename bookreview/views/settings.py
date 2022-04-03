@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, url_for, redirect, request, flash
 from flask_login import current_user, login_required
 
 from bookreview import db, profile
-from bookreview.forms import LoadPhoto, DeletePhoto, ChangeUsername, ChangePassword
+from bookreview.forms import LoadPhoto, Delete, ChangeUsername, ChangePassword, DeleteAccount
 
 settings = Blueprint("settings", __name__)
 
@@ -19,7 +19,7 @@ def load_photo_def():
         return redirect(url_for("main.settings"))
 
     load_photo = LoadPhoto()
-    delete_photo = DeletePhoto()
+    delete_photo = Delete()
     change_username = ChangeUsername()
     if load_photo.validate_on_submit():
         if not current_user.profile_photo == "default_user_img.jpg":
@@ -45,7 +45,7 @@ def change_username_def():
         return redirect(url_for("main.settings"))
 
     load_photo = LoadPhoto()
-    delete_photo = DeletePhoto()
+    delete_photo = Delete()
     change_username = ChangeUsername()
     if change_username.validate_on_submit():
         current_user.username = change_username.username.data
@@ -55,6 +55,18 @@ def change_username_def():
                            load_photo_form=load_photo,
                            delete_photo_form=delete_photo,
                            change_username_form=change_username)
+
+
+@settings.route("/delete_account", methods=["GET", "POST"])
+@login_required
+def delete_account():
+    delete_account_form = DeleteAccount()
+    if delete_account_form.validate_on_submit():
+        db.session.delete(current_user)
+        db.session.commit()
+        flash('Вы удалили свой аккаунт', category='success')
+        return redirect(url_for('authorization.login'))
+    return render_template('delete_account.html', form=delete_account_form)
 
 
 @settings.route("/delete_photo", methods=["GET", "POST"])
@@ -68,7 +80,7 @@ def delete_photo_def():
         return redirect(url_for("main.settings"))
 
     load_photo = LoadPhoto()
-    delete_photo = DeletePhoto()
+    delete_photo = Delete()
     change_username = ChangeUsername()
     if delete_photo.validate_on_submit():
         if not current_user.profile_photo == "default_user_img.jpg":

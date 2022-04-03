@@ -38,6 +38,7 @@ class Permissions:
     WRITE = 4  # 0100
     DELETE = 8  # 1000
     MODERATE_COMS = 16  # 0001 0000
+    LIKE = 32  # 0010 0000
     ADMINISTER = 128  # 1000 0000
 
 
@@ -52,16 +53,21 @@ class Role(db.Model):
     def create_roles():
         roles_dict = {
             "UnconfirmedUser": Permissions.READ,
-            "User": Permissions.READ | Permissions.FOLLOW | Permissions.WRITE | Permissions.DELETE,
+            "User": Permissions.READ | Permissions.FOLLOW | Permissions.WRITE | Permissions.DELETE | Permissions.LIKE,
             "Moderator": Permissions.READ | Permissions.FOLLOW | Permissions.WRITE | Permissions.DELETE |
-                         Permissions.MODERATE_COMS,
+                         Permissions.MODERATE_COMS | Permissions.LIKE,
             "Admin": Permissions.READ | Permissions.FOLLOW | Permissions.WRITE | Permissions.DELETE |
-                     Permissions.MODERATE_COMS | Permissions.ADMINISTER,
+                     Permissions.MODERATE_COMS | Permissions.ADMINISTER | Permissions.LIKE,
         }
         for (role, permission) in roles_dict.items():
+            # Проверяем присутствие новых ролей
             if not Role.query.filter_by(role=role).first():
                 new_role = Role(role=role, permissions=permission)
                 db.session.add(new_role)
+            # Проверяем не изменились ли разрешения старых ролей
+            elif Role.query.filter_by(role=role).first().permissions != permission:
+                old_role = Role.query.filter_by(role=role).first()
+                old_role.permissions = permission
         db.session.commit()
 
     def __repr__(self):
@@ -121,7 +127,6 @@ class User(db.Model, UserMixin):
         если будет вызываться ошибка IntegrityError.
 
         :param count: Количество новых пользователей
-        :return:
         """
         from sqlalchemy.exc import IntegrityError
         import forgery_py
@@ -131,7 +136,7 @@ class User(db.Model, UserMixin):
                 login=forgery_py.internet.user_name(),
                 email=forgery_py.internet.email_address(),
                 confirmed=True,
-                password=generate_password_hash("1")
+                password="1",
             )
             db.session.add(u)
             try:
@@ -200,7 +205,6 @@ class Review(db.Model):
         если будет вызываться ошибка IntegrityError.
 
         :param count: Количество новых записей
-        :return:
         """
         from sqlalchemy.exc import IntegrityError
         import random

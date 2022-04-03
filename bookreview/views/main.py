@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request
 from flask_login import login_required
 
-from bookreview.forms import LoadPhoto, DeletePhoto, ChangeUsername
+from bookreview.forms import LoadPhoto, Delete, ChangeUsername
 from bookreview.models import Review, User
 
 main = Blueprint("main", __name__)
@@ -33,7 +33,7 @@ def settings():
     Страница настроек. Обработчики форм вынесены в модуль bookreview.views.settings
     """
     load_photo = LoadPhoto()
-    delete_photo = DeletePhoto()
+    delete_photo = Delete()
     change_username = ChangeUsername()
 
     return render_template('settings.html',

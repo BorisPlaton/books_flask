@@ -1,24 +1,12 @@
-from functools import wraps
-
-from flask import Blueprint, url_for, redirect, flash, render_template, request
+from flask import Blueprint, url_for, redirect, flash, render_template, request, abort
 from flask_login import login_required, current_user
 
 from bookreview import bookcover, db
 from bookreview.forms import AddBook, WriteReview, WriteComment
 from bookreview.models import Book, Review, User, Comment, Permissions
+from decorators import permission_required
 
 book = Blueprint('book', __name__)
-
-
-def confirm_required(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        if not current_user.confirmed:
-            flash('Подтвердите свой аккаунт', category='warning')
-            return redirect(request.referrer)
-        return func(*args, **kwargs)
-
-    return wrapper
 
 
 @book.route('/books/<int:user_id>', methods=["POST", "GET"])
@@ -28,7 +16,7 @@ def add_book(user_id):
     Добавление новой книги. Показывает уже добавленные книги.
     """
     add_book_form = AddBook()
-    user = User.query.get(user_id)
+    user = User.query.get_or_404(user_id)
     page = request.args.get('page', 1, type=int)
     books = user.books.paginate(per_page=9, page=page)
     if add_book_form.validate_on_submit():
@@ -52,12 +40,14 @@ def add_book(user_id):
 @login_required
 def delete_book(book_id):
     book_ = Book.query.get_or_404(int(book_id))
-    if current_user.id == book_.user.id and current_user.can(Permissions.DELETE):
-        db.session.delete(book_)
-        db.session.commit()
-        flash("Книга удалена", category="warning")
-        return redirect(request.referrer)
-    return redirect(url_for('main.index'))
+
+    if current_user.id != book_.user.id and not current_user.can(Permissions.ADMINISTER):
+        abort(403)
+
+    db.session.delete(book_)
+    db.session.commit()
+    flash("Книга удалена", category="warning")
+    return redirect(request.referrer)
 
 
 @book.route('/review/<int:review_id>', methods=["POST", "GET"])
@@ -111,34 +101,32 @@ def write_review(user_id):
 
 @book.route('/delete_review/<int:review_id>')
 @login_required
-@confirm_required
 def delete_review(review_id):
     review_ = Review.query.get_or_404(int(review_id))
-    if (current_user.id == review_.author.id and current_user.can(Permissions.DELETE)) or \
-            current_user.can(Permissions.MODERATE_COMS):
-        db.session.delete(review_)
-        db.session.commit()
-        flash("Рецензия удалена", category="warning")
-        next_page = request.args.get('next')
-        return redirect(next_page if next_page else request.referrer)
-    return redirect(url_for('main.index'))
+    if current_user.id != review_.author.id and not current_user.can(Permissions.ADMINISTER):
+        abort(403)
+    db.session.delete(review_)
+    db.session.commit()
+    flash("Рецензия удалена", category="warning")
+    next_page = request.args.get('next')
+    return redirect(next_page if next_page else request.referrer)
 
 
 @book.route('/delete_comment/<comment_id>')
 @login_required
-@confirm_required
+@permission_required(Permissions.DELETE)
 def delete_comment(comment_id):
     comment = Comment.query.get_or_404(int(comment_id))
-    if current_user.id == comment.review.author.id and current_user.can(Permissions.DELETE):
-        db.session.delete(comment)
-        db.session.commit()
-        return redirect(request.referrer)
-    return redirect(url_for('main.index'))
+    if current_user.id != comment.author.id and not current_user.can(Permissions.MODERATE_COMS):
+        abort(403)
+    db.session.delete(comment)
+    db.session.commit()
+    return redirect(request.referrer)
 
 
 @book.route('/status_up/<int:review_id>')
 @login_required
-@confirm_required
+@permission_required(Permissions.WRITE)
 def status_up(review_id):
     """
     Ставит лайк на пост
@@ -163,7 +151,7 @@ def status_up(review_id):
 
 @book.route('/status_down/<int:review_id>')
 @login_required
-@confirm_required
+@permission_required(Permissions.WRITE)
 def status_down(review_id):
     """
     Ставит дизлайк на пост

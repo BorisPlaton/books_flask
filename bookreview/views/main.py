@@ -30,8 +30,8 @@ def index():
 def search_bar():
     search_form = SearchQuery()
     if search_form.validate_on_submit():
-        if search_form.text.data[1] == "@":
-            return redirect(url_for('main.users_list', user=search_form.text.data[1:]))
+        if search_form.text.data and search_form.text.data[0] == "@":
+            return redirect(url_for('main.users_list', username=search_form.text.data[1:]))
         return redirect(url_for('main.index', review_title=search_form.text.data))
 
 
@@ -62,6 +62,15 @@ def settings():
                            search_form=search_form)
 
 
-@main.route('/users/<username>')
-def users_list(username):
-    pass
+@main.route('/users')
+def users_list():
+    search_form = SearchQuery()
+    page = request.args.get("page", 1, type=int)
+    username = request.args.get('username')
+
+    if username:
+        users = User.query.filter(User.login.like(f"%{username}%")).paginate(per_page=25, page=page)
+    else:
+        users = User.query.paginate(per_page=25, page=page)
+
+    return render_template("list_users.html", users=users, search_form=search_form)

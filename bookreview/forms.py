@@ -167,5 +167,5 @@ class WriteComment(FlaskForm):
 
 
 class SearchQuery(FlaskForm):
-    text = StringField("Введите запрос", validators=[InputRequired("Это поле не может быть пустым")])
+    text = StringField("Введите запрос")
     submit = SubmitField("Поиск")

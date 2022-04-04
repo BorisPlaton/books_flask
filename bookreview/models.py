@@ -148,6 +148,14 @@ class User(db.Model, UserMixin):
     def popularity(self):
         return sum([review.popularity for review in self.reviews])
 
+    @property
+    def reviews_amount(self):
+        return len(list(self.reviews))
+
+    @property
+    def books_amount(self):
+        return len(list(self.books))
+
     def confirm_token(self, token, expiration=3600):
         s = Serializer(os.environ.get('SECRET_KEY'))
         try:

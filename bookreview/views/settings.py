@@ -9,52 +9,44 @@ from bookreview.forms import LoadPhoto, Delete, ChangeUsername, ChangePassword, 
 settings = Blueprint("settings", __name__)
 
 
-@settings.route("/load_photo", methods=["GET", "POST"])
+@settings.route("/load_photo", methods=["POST"])
 @login_required
 def load_photo_def():
     """
     Загружает фото пользователя
     """
-    if request.method == "GET":
-        return redirect(url_for("main.settings"))
-
     load_photo = LoadPhoto()
-    delete_photo = Delete()
-    change_username = ChangeUsername()
     if load_photo.validate_on_submit():
         if not current_user.profile_photo == "default_user_img.jpg":
-            path = Path(Path.cwd(), "bookreview", "static", "profile_img", current_user.profile_photo)
-            remove(path)
+            try:
+                path = Path(Path.cwd(), "bookreview", "static", "profile_img", current_user.profile_photo)
+                remove(path)
+            except FileNotFoundError:
+                pass
         current_user.profile_photo = profile.save(load_photo.photo.data)
         db.session.commit()
-        return redirect(url_for("main.settings"))
-    return render_template('settings.html',
-                           load_photo_form=load_photo,
-                           delete_photo_form=delete_photo,
-                           change_username_form=change_username)
+    else:
+        for _, errors in load_photo.errors.items():
+            for error in errors:
+                flash(error, category='warning')
+    return redirect(url_for("main.settings"))
 
 
-@settings.route("/change_username", methods=["GET", "POST"])
+@settings.route("/change_username", methods=["POST"])
 @login_required
 def change_username_def():
     """
     Меняет имя пользователя
     """
-
-    if request.method == "GET":
-        return redirect(url_for("main.settings"))
-
-    load_photo = LoadPhoto()
-    delete_photo = Delete()
     change_username = ChangeUsername()
     if change_username.validate_on_submit():
         current_user.username = change_username.username.data
         db.session.commit()
-        return redirect(url_for("main.settings"))
-    return render_template('settings.html',
-                           load_photo_form=load_photo,
-                           delete_photo_form=delete_photo,
-                           change_username_form=change_username)
+    else:
+        for _, errors in change_username.errors.items():
+            for error in errors:
+                flash(error, category='warning')
+    return redirect(url_for("main.settings"))
 
 
 @settings.route("/delete_account", methods=["GET", "POST"])
@@ -69,31 +61,24 @@ def delete_account():
     return render_template('delete_account.html', form=delete_account_form)
 
 
-@settings.route("/delete_photo", methods=["GET", "POST"])
+@settings.route("/delete_photo", methods=["POST"])
 @login_required
 def delete_photo_def():
     """
     Удаляет фото пользователя, если это не стандартное фото
     """
-
-    if request.method == "GET":
-        return redirect(url_for("main.settings"))
-
-    load_photo = LoadPhoto()
     delete_photo = Delete()
-    change_username = ChangeUsername()
-    if delete_photo.validate_on_submit():
-        if not current_user.profile_photo == "default_user_img.jpg":
-            path = Path(Path.cwd(), "bookreview", "static", "profile_img", current_user.profile_photo)
-            remove(path)
-            # Устанавливаем стандартное фото пользователя
-            current_user.profile_photo = "default_user_img.jpg"
-            db.session.commit()
-            return redirect(url_for("main.settings"))
-    return render_template('settings.html',
-                           load_photo_form=load_photo,
-                           delete_photo_form=delete_photo,
-                           change_username_form=change_username)
+    if delete_photo.validate_on_submit() and current_user.profile_photo != "default_user_img.jpg":
+        path = Path(Path.cwd(), "bookreview", "static", "profile_img", current_user.profile_photo)
+        remove(path)
+        # Устанавливаем стандартное фото пользователя
+        current_user.profile_photo = "default_user_img.jpg"
+        db.session.commit()
+    else:
+        for _, errors in delete_photo.errors.items():
+            for error in errors:
+                flash(error, category='warning')
+    return redirect(url_for("main.settings"))
 
 
 @settings.route("/change_password", methods=["POST", "GET"])

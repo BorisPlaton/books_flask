@@ -7,7 +7,7 @@
 	<div class="row row-cols-md-3 row-cols-1">
 
 		<div class="col-12 pb-4 border-bottom mb-3">
-			<h2 class="fw-light m-0">Свежие записи</h2>
+			<h2 class="fw-light m-0">{% if review_title %} «{{review_title}}» {% else %}Свежие записи{% endif %}</h2>
 		</div>
 
 		{% if reviews.items %}
@@ -86,9 +86,9 @@
 	<div class="col my-3 bg-light rounded p-3 mt-3 mb-0">
 	{% for page in reviews.iter_pages(left_edge=2, right_edge=2, left_current=3, right_current=3) %}
 		{% if reviews.page == page %}
-			<a href="{{ url_for('main.index', page=page) }}" class="link-dark me-1">{{ page }}</a>
+			<a href="{{ url_for('main.index', page=page, review_title=review_title) }}" class="link-dark me-1">{{ page }}</a>
 		{% elif page %}
-			<a href="{{ url_for('main.index', page=page) }}" class="link-primary me-1">{{ page }}</a>
+			<a href="{{ url_for('main.index', page=page, review_title=review_title) }}" class="link-primary me-1">{{ page }}</a>
 		{% endif %}
 	{% endfor %}
 	</div>

@@ -251,7 +251,7 @@ class Book(db.Model):
     # Пользователь, который создал эту книгу
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
 
-    review = db.relationship('Review', backref='book', passive_deletes=True, lazy=True)
+    review = db.relationship('Review', backref='book', passive_deletes=True)
 
     @staticmethod
     def create_fake(count=25):

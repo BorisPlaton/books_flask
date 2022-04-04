@@ -2,7 +2,7 @@ from flask import Blueprint, url_for, redirect, flash, render_template, request,
 from flask_login import login_required, current_user
 
 from bookreview import bookcover, db
-from bookreview.forms import AddBook, WriteReview, WriteComment
+from bookreview.forms import AddBook, WriteReview, WriteComment, SearchQuery
 from bookreview.models import Book, Review, User, Comment, Permissions
 from decorators import permission_required
 
@@ -16,6 +16,7 @@ def add_book(user_id):
     Добавление новой книги. Показывает уже добавленные книги.
     """
     add_book_form = AddBook()
+    search_form = SearchQuery()
     user = User.query.get_or_404(user_id)
     page = request.args.get('page', 1, type=int)
     books = user.books.paginate(per_page=9, page=page)
@@ -33,7 +34,7 @@ def add_book(user_id):
             flash('Подтвердите аккаунт, чтоб добавлять книги', category='warning')
         return redirect(url_for('book.add_book', user_id=user_id))
 
-    return render_template('add_book.html', form=add_book_form, books=books, user=user)
+    return render_template('add_book.html', form=add_book_form, books=books, user=user, search_form=search_form)
 
 
 @book.route('/delete_book/<int:book_id>')
@@ -56,7 +57,7 @@ def review(review_id):
     current_review = Review.query.get_or_404(review_id)
     comments = current_review.comments.order_by(Comment.date.desc()).paginate(per_page=25, page=page)
     author_review = current_review.author.id
-
+    search_form = SearchQuery()
     write_comment = WriteComment()
     if write_comment.validate_on_submit():
         if current_user.can(Permissions.WRITE):
@@ -76,16 +77,17 @@ def review(review_id):
     return render_template('review.html', review=current_review,
                            form=write_comment,
                            author_id=author_review,
-                           comments=comments)
+                           comments=comments,
+                           search_form=search_form)
 
 
 @book.route('/reviews/<int:user_id>', methods=["POST", "GET"])
 @login_required
 def write_review(user_id):
+    search_form = SearchQuery()
     user = User.query.get(user_id)
     page = request.args.get('page', 1, type=int)
     reviews = user.reviews.order_by(Review.date.desc(), Review.popularity.desc()).paginate(per_page=15, page=page)
-
     write_review_form = WriteReview()
     if write_review_form.validate_on_submit() and current_user.can(Permissions.WRITE):
         review_ = Review(author_id=current_user.id,
@@ -96,7 +98,8 @@ def write_review(user_id):
         flash("Запись сохранена", category="success")
         return redirect(url_for('main.profile', profile_id=current_user.id))
 
-    return render_template("write_review.html", form=write_review_form, user=user, page=page, reviews=reviews)
+    return render_template("write_review.html", form=write_review_form, user=user, page=page,
+                           reviews=reviews, search_form=search_form)
 
 
 @book.route('/delete_review/<int:review_id>')

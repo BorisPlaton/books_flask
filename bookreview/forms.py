@@ -164,3 +164,8 @@ class WriteComment(FlaskForm):
     text = TextAreaField("Комментарий", validators=[InputRequired("Это поле не может быть пустым"),
                                                     Length(max=1000)])
     submit = SubmitField("Оставить комментарий")
+
+
+class SearchQuery(FlaskForm):
+    text = StringField("Введите запрос", validators=[InputRequired("Это поле не может быть пустым")])
+    submit = SubmitField("Поиск")

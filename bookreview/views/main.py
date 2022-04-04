@@ -1,29 +1,47 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, url_for, redirect
 from flask_login import login_required
 
-from bookreview.forms import LoadPhoto, Delete, ChangeUsername
-from bookreview.models import Review, User
+from bookreview.forms import LoadPhoto, Delete, ChangeUsername, SearchQuery
+from bookreview.models import Review, User, Book
 
 main = Blueprint("main", __name__)
 
 
-@main.route('/')
+@main.route('/', methods=["GET"])
 def index():
     """
     Домашняя страница.
     """
+    search_form = SearchQuery()
     page = request.args.get("page", 1, type=int)
-    reviews = Review.query.order_by(Review.date.desc(), Review.popularity.desc()).paginate(per_page=12,
-                                                                                           page=page)
-    return render_template('index.html', reviews=reviews)
+    review_title = request.args.get('review_title')
+
+    if review_title:
+        reviews = Review.query.join(Book, Review.book_id == Book.id).filter(
+            Book.title.like(f"%{review_title}%")).order_by(Review.date.desc(), Review.popularity.desc()).paginate(
+            per_page=12, page=page)
+    else:
+        reviews = Review.query.order_by(Review.date.desc(), Review.popularity.desc()).paginate(per_page=12, page=page)
+
+    return render_template('index.html', reviews=reviews, search_form=search_form, review_title=review_title)
+
+
+@main.route('/search_bar', methods=["POST"])
+def search_bar():
+    search_form = SearchQuery()
+    if search_form.validate_on_submit():
+        if search_form.text.data[1] == "@":
+            return redirect(url_for('main.users_list', user=search_form.text.data[1:]))
+        return redirect(url_for('main.index', review_title=search_form.text.data))
 
 
 @main.route('/profile/<int:profile_id>', methods=["POST", "GET"])
 def profile(profile_id):
+    search_form = SearchQuery()
     page = request.args.get("page", 1, type=int)
     user = User.query.get_or_404(profile_id)
     user_reviews = user.reviews.order_by(Review.post_time.desc()).paginate(per_page=7, page=page)
-    return render_template("my_profile.html", user=user, reviews=user_reviews)
+    return render_template("my_profile.html", user=user, reviews=user_reviews, search_form=search_form)
 
 
 @main.route('/settings')
@@ -32,6 +50,7 @@ def settings():
     """
     Страница настроек. Обработчики форм вынесены в модуль bookreview.views.settings
     """
+    search_form = SearchQuery()
     load_photo = LoadPhoto()
     delete_photo = Delete()
     change_username = ChangeUsername()
@@ -39,4 +58,10 @@ def settings():
     return render_template('settings.html',
                            load_photo_form=load_photo,
                            delete_photo_form=delete_photo,
-                           change_username_form=change_username)
+                           change_username_form=change_username,
+                           search_form=search_form)
+
+
+@main.route('/users/<username>')
+def users_list(username):
+    pass

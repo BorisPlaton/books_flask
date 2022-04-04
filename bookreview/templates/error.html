@@ -2,18 +2,49 @@
 
 {% block title %} Bookreview | {% endblock %}
 
-{% block sidebar %} {% endblock %}
+{% block navbar %} 
+{% endblock %}
 
+{% block sidebar %} 
+{% endblock %}
 
 {% block content %}
-<div class="col alert alert-danger p-4 rounded">
-	<div class="">
+<div class="col">
+	<div class="p-4 rounded alert alert-danger ">
 		<h2 class="fw-light">{{ e.code }} {{ e.name }}</h2>
-		{% if e.code == 404 %}
-			<p class="lead mt-3 mb-2">Такого URL адреса не существует. Если вы вводили данные вручную, проверьте корректность написания и попробуйте ещё раз.</p>
-		{% else %}
-			<p class="lead mt-3 mb-2">{{ e.description }}</p>
-		{% endif %}
+		<p class="lead mt-3 mb-2">{% if description_error %}{{description_error}}{% else %}{{ e.description }}{% endif %}</p>
 	</div>
 </div>
+
+<div class="col-auto mt-2 d-flex flex-column">
+	<div class="row">
+		
+		<div class="col-auto">
+			<ul>
+				<li><a href="" class="link-primary">Главная страница</a></li>
+				{% if current_user.is_authenticated %}
+					<li><a href="{{ url_for('main.profile', profile_id=current_user.id ) }}" class="link-primary">Мой профиль</a></li>
+					<li><a href="" class="link-primary">Настройки</a></li>
+					<li><a href="{{ url_for('authorization.logout') }}" class="link-primary">Выйти из аккаунта</a></li>
+				{% else %}
+					<li><a href="{{ url_for('authorization.login') }}" class="link-primary">Войти в аккаунт</a></li>
+				{% endif %}
+			</ul>
+		</div>
+
+		<div class="col ms-3">
+			<div class="fs-5 fw-light">
+				<p>
+					Если вы не ожидали эту ошибку или что-то пошло не так, тогда можете написать нам на <a href="#" class="link-primary">почту</a>, и объяснить что произошло.
+				</p>
+				<p>
+					Мы попытаемся сделать всё возможное, чтоб эта ошибка больше не появлялась.
+				</p>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
 {% endblock %}

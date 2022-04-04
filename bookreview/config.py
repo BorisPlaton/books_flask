@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 
 class BaseConfig:
@@ -22,4 +23,10 @@ class BaseConfig:
 class DevConfig(BaseConfig):
     SQLALCHEMY_ECHO = False
     DEBUG = True
+
+
+class TestConfig(BaseConfig):
     TESTING = True
+    SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(os.getcwd(), 'test.db')
+    WTF_CSRF_ENABLED = False
+    DEBUG = False

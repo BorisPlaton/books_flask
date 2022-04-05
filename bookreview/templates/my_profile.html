@@ -21,7 +21,7 @@
 
 						<div class="mt-3">
 							{% if current_user.id == user.id %}
-							{% elif current_user.is_following(user.id )%}
+							{% elif current_user.is_following(user.id)%}
 								<a href="{{ url_for('main.subscribe', user_id=user.id) }}" class="btn btn-success btn-sm">Вы уже подписаны</a>
 							{% else %}
 								<a href="{{ url_for('main.subscribe', user_id=user.id) }}" class="btn btn-primary btn-sm">Подписаться</a>

@@ -23,7 +23,7 @@ user_dislikes = db.Table('user_dislikes',
 
 followers = db.Table('followers',
                      db.Column('follower', db.Integer, db.ForeignKey('user.id', ondelete='CASCADE')),
-                     db.Column('followed_user', db.Integer, db.ForeignKey('user.id', ondelete='CASCADE')))
+                     db.Column('followed', db.Integer, db.ForeignKey('user.id', ondelete='CASCADE')))
 
 
 class Permissions:
@@ -95,11 +95,9 @@ class User(db.Model, UserMixin):
     comments = db.relationship("Comment", backref="author")
     books = db.relationship("Book", backref="user", passive_deletes=True, lazy='dynamic')
     # На кого подписан
-    follows_users = db.relationship("User", backref='followers_users', foreign_keys=[followers.c.follower],
-                                    secondary=followers, passive_deletes=True, lazy='dynamic')
-    # Подписчики
-    followed_by_users = db.relationship("User", backref='followed_users', foreign_keys=[followers.c.followed_user],
-                                        secondary=followers, passive_deletes=True, lazy='dynamic')
+    followed = db.relationship("User", backref=db.backref('followers', lazy='dynamic'),
+                               secondary=followers, lazy='dynamic',
+                               primaryjoin=(followers.c.follower == id), secondaryjoin=(followers.c.followed == id))
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -168,23 +166,24 @@ class User(db.Model, UserMixin):
 
     @property
     def follow_amount(self):
-        return len(self.follows_users.all())
+        return len(self.followed.all())
 
     @property
     def followers_amount(self):
-        return len(self.followed_by_users.all())
+        return len(self.followers.all())
 
     def is_following(self, user_id):
-        return User.query.get(user_id) in self.follows_users
+        return self.followed.filter(followers.c.followed == user_id).first()
 
     def follow(self, user_id):
-        user = User.query.get(user_id)
-        self.follows_users.append(user)
+        if not self.is_following(user_id):
+            user = User.query.get(user_id)
+            self.followed.append(user)
 
     def unfollow(self, user_id):
-        user = User.query.get(user_id)
-        self.follows_users.remove(user)
-        user.followed_by_users.remove(self)
+        if self.is_following(user_id):
+            user = User.query.get(user_id)
+            self.followed.remove(user)
 
     def confirm_token(self, token, expiration=3600):
         s = Serializer(os.environ.get('SECRET_KEY'))

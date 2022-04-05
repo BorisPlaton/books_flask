@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, url_for, redirect, flash
 from flask_login import login_required, current_user
+from werkzeug.exceptions import abort
 
 from bookreview import db
 from bookreview.forms import LoadPhoto, Delete, ChangeUsername, SearchQuery
@@ -37,13 +38,31 @@ def search_bar():
         return redirect(url_for('main.index', review_title=search_form.text.data))
 
 
-@main.route('/profile/<int:profile_id>', methods=["POST", "GET"])
+@main.route('/profile/<int:profile_id>', methods=["GET"])
 def profile(profile_id):
     search_form = SearchQuery()
     page = request.args.get("page", 1, type=int)
     user = User.query.get_or_404(profile_id)
     user_reviews = user.reviews.order_by(Review.post_time.desc()).paginate(per_page=7, page=page)
     return render_template("my_profile.html", user=user, reviews=user_reviews, search_form=search_form)
+
+
+@main.route('/show')
+def show_users():
+    type_option = request.args.get('type_option')
+    user_id = request.args.get("user_id")
+    search_form = SearchQuery()
+    page = request.args.get("page", 1, type=int)
+    user = User.query.get_or_404(user_id)
+    if type_option == "followed":
+        list_users = user.followed.paginate(per_page=25, page=page)
+    elif type_option == "followers":
+        list_users = user.followers.paginate(per_page=25, page=page)
+    else:
+        abort(404)
+
+    return render_template("subscribers.html", user=user, list_users=list_users,
+                           page=page, search_form=search_form, option=type_option)
 
 
 @main.route('/settings')

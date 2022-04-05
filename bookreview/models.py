@@ -185,6 +185,10 @@ class User(db.Model, UserMixin):
             user = User.query.get(user_id)
             self.followed.remove(user)
 
+    def promote(self, role):
+        new_role = Role.query.filter_by(role=role).first()
+        self.role = new_role or self.role
+
     def confirm_token(self, token, expiration=3600):
         s = Serializer(os.environ.get('SECRET_KEY'))
         try:

@@ -28,8 +28,8 @@
 {% block navbar %}
 <!-- NAVBAR -->
 <nav class="container-fluid bg-secondary">
-	<div class="container py-2">
-		<div class="d-flex flex-wrap justify-content-between">
+	<div class="container">
+		<div class="d-flex flex-wrap justify-content-between py-2">
 
 			{% if current_user.is_authenticated %}
 			<!-- USER'S PHOTO -->
@@ -125,7 +125,7 @@
 				<!-- SIDEBAR -->
 				{% block sidebar %}
 				{% if current_user.is_authenticated %}
-				<div class="col-lg-auto d-lg-flex d-none justify-content-lg-start me-2">
+				<div class="col-lg-auto d-lg-flex d-none justify-content-lg-start">
 					<div>
 						<div class="sticky-top pt-4">
 						<div class="bg-light rounded p-3">
@@ -168,7 +168,11 @@
 			        <div class="row row-cols-1">
 
 		        	{% for ctg, msg in get_flashed_messages(True) %}
-			            <div class="col alert alert-{{ ctg }}">{{ msg }}</div>
+			            <div class="col">
+			            	<div class="alert alert-{{ ctg }}">
+			            		{{ msg }}
+			            	</div>
+			            </div>
 			        {% endfor %}
 
 					{% block content %}

@@ -4,16 +4,29 @@
 
 {% block content %}
 
-<div class="col bg-light p-4 rounded mb-1">
+<div class="col">
+	<div class=" bg-light p-4 rounded mb-1">
 	<div class="row">
 
 		<!-- ACCOUNT INFO -->
-		<div class="col-12 pb-4 border-bottom">
+		<div class="col-12 pb-3 border-bottom">
 			<div class="row align-items-center justify-content-center">
 
-				<div class="col-md-3 d-flex align-items-center justify-content-md-center">
-					<div class="col-12 rounded-circle user_photo" 
-					style="background-image: url({{ url_for('static', filename='profile_img/' + user.profile_photo) }});">
+				<div class="col-md-3">
+					<div class="d-flex flex-column align-items-center justify-content-md-center">
+
+						<div class="col-12 rounded-circle user_photo" 
+						style="background-image: url({{ url_for('static', filename='profile_img/' + user.profile_photo) }});">
+						</div>
+
+						<div class="mt-3">
+							{% if current_user.id == user.id %}
+							{% elif current_user.is_following(user.id )%}
+								<a href="{{ url_for('main.subscribe', user_id=user.id) }}" class="btn btn-success btn-sm">Вы уже подписаны</a>
+							{% else %}
+								<a href="{{ url_for('main.subscribe', user_id=user.id) }}" class="btn btn-primary btn-sm">Подписаться</a>
+							{% endif %}
+						</div>
 					</div>
 				</div>
 
@@ -26,26 +39,52 @@
 						</div>
 
 						<div class="col-lg-12 d-flex">
+							<div class="row g-2">
 
-							<div class="d-flex flex-column align-items-center py-2 px-3 me-3 border rounded  bg-white">
-								<span class="">Рецензий</span>
-								<span>{{ user.reviews.all()|count }}</span>
+								<div class="col-auto">
+									<div class="d-flex flex-column align-items-center py-2 px-3 border rounded  bg-white">
+										<span class="">Рецензий</span>
+										<span>{{ user.reviews_amount }}</span>
+									</div>
+								</div>
+
+								<div class="col-auto">
+									<div class="d-flex flex-column align-items-center py-2 px-3 border rounded bg-white">
+										<span class="">Рейтинг</span>
+										<span class="{% if user.popularity >= 0 %}text-success{% else %}text-danger{% endif %}">
+											{{ user.popularity }}
+										</span>
+									</div>
+								</div>
+
+								<div class="col-auto">
+									<a href="{{ url_for('book.add_book', user_id=user.id)}}#user_books">
+										<div class="d-flex flex-column align-items-center py-2 px-3 border rounded bg-white">
+											<span class="text-dark">Книги</span>
+											<span class="text-dark">{{ user.books_amount }}</span>
+										</div>
+									</a>
+								</div>
+
+								<div class="col-auto">
+									<a href="{{ url_for('book.add_book', user_id=user.id)}}#user_books">
+										<div class="d-flex flex-column align-items-center py-2 px-3 border rounded bg-white">
+											<span class="text-dark">Подписки</span>
+											<span class="text-dark">{{ user.follow_amount }}</span>
+										</div>
+									</a>
+								</div>
+
+								<div class="col-auto">
+									<a href="{{ url_for('book.add_book', user_id=user.id)}}#user_books">
+										<div class="d-flex flex-column align-items-center py-2 px-3 border rounded bg-white">
+											<span class="text-dark">Подписчиков</span>
+											<span class="text-dark">{{ user.followers_amount }}</span>
+										</div>
+									</a>
+								</div>
+
 							</div>
-
-							<div class="d-flex flex-column align-items-center py-2 px-3 border me-3 rounded bg-white">
-								<span class="">Рейтинг</span>
-								<span class="{% if user.popularity >= 0 %}text-success{% else %}text-danger{% endif %}">
-									{{ user.popularity }}
-								</span>
-							</div>
-
-							<a href="{{ url_for('book.add_book', user_id=user.id)}}#user_books">
-							<div class="d-flex flex-column align-items-center py-2 px-4 border rounded bg-white">
-								<span class="text-dark">Книги</span>
-								<span class="text-dark">{{ user.books.all()|count }}</span>
-							</div>
-							</a>
-
 						</div>
 
 					</div>
@@ -126,7 +165,7 @@
 
 			</div>
 		</div>
-
+	</div>
 	</div>
 </div>
 

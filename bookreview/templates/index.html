@@ -3,7 +3,8 @@
 {% block title %} Bookreview | Главная страница {% endblock %}
 
 {% block content %}
-<div class="col bg-light p-4 pb-3 rounded mb-1">
+<div class="col">
+	<div class=" bg-light p-4 pb-3 rounded mb-1">
 	<div class="row row-cols-md-3 row-cols-1">
 
 		<div class="col-12 pb-4 border-bottom mb-3">
@@ -80,17 +81,20 @@
 		{% endif %}
 
 	</div>
+	</div>
 </div>
 
 {% if reviews.items and reviews.pages > 1 %}
-	<div class="col my-3 bg-light rounded p-3 mt-3 mb-0">
-	{% for page in reviews.iter_pages(left_edge=2, right_edge=2, left_current=3, right_current=3) %}
-		{% if reviews.page == page %}
-			<a href="{{ url_for('main.index', page=page, review_title=review_title) }}" class="link-dark me-1">{{ page }}</a>
-		{% elif page %}
-			<a href="{{ url_for('main.index', page=page, review_title=review_title) }}" class="link-primary me-1">{{ page }}</a>
-		{% endif %}
-	{% endfor %}
+	<div class="col">
+		<div class=" my-3 bg-light rounded p-3 mt-3 mb-0">
+			{% for page in reviews.iter_pages(left_edge=2, right_edge=2, left_current=3, right_current=3) %}
+				{% if reviews.page == page %}
+					<a href="{{ url_for('main.index', page=page, review_title=review_title) }}" class="link-dark me-1">{{ page }}</a>
+				{% elif page %}
+					<a href="{{ url_for('main.index', page=page, review_title=review_title) }}" class="link-primary me-1">{{ page }}</a>
+				{% endif %}
+			{% endfor %}
+		</div>
 	</div>
 {% endif %}
 

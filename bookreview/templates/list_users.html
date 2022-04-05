@@ -3,7 +3,8 @@
 {% block title %} Bookreview | Пользователи {% endblock %}
 
 {% block content %}
-<div class="col bg-light p-4 rounded mb-1">
+<div class="col">
+	<div class="bg-light p-4 rounded mb-1">
 	<div class="row row-cols-1">
 
 		<div class="col-12 pb-4 border-bottom mb-3">
@@ -34,12 +35,13 @@
 		</a>
 		</div>
 		{% endfor %}
-
+	</div>
 	</div>
 </div>
 
 {% if users.items and users.pages > 1 %}
-	<div class="col my-3 bg-light rounded p-3 mt-3 mb-0">
+	<div class="col">
+	<div class=" my-3 bg-light rounded p-3 mt-3 mb-0">
 	{% for page in users.iter_pages(left_edge=2, right_edge=2, left_current=3, right_current=3) %}
 		{% if users.page == page %}
 			<a href="{{ url_for('main.users_list', page=page, username=username) }}" class="link-dark me-1">{{ page }}</a>
@@ -47,6 +49,7 @@
 			<a href="{{ url_for('main.users_list', page=page, username=username) }}" class="link-primary me-1">{{ page }}</a>
 		{% endif %}
 	{% endfor %}
+	</div>
 	</div>
 {% endif %}
 

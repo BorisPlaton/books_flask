@@ -1,8 +1,10 @@
-from flask import Blueprint, render_template, request, url_for, redirect
-from flask_login import login_required
+from flask import Blueprint, render_template, request, url_for, redirect, flash
+from flask_login import login_required, current_user
 
+from bookreview import db
 from bookreview.forms import LoadPhoto, Delete, ChangeUsername, SearchQuery
-from bookreview.models import Review, User, Book
+from bookreview.models import Review, User, Book, Permissions
+from decorators import permission_required
 
 main = Blueprint("main", __name__)
 
@@ -74,3 +76,19 @@ def users_list():
         users = User.query.paginate(per_page=25, page=page)
 
     return render_template("list_users.html", users=users, search_form=search_form)
+
+
+@main.route('/subscribe/<int:user_id>')
+@permission_required(Permissions.FOLLOW)
+def subscribe(user_id):
+    if current_user.id == user_id:
+        return redirect(request.referrer)
+
+    if current_user.is_following(user_id):
+        flash('Вы отписались', category='success')
+        current_user.unfollow(user_id)
+    else:
+        flash('Вы подписались', category='success')
+        current_user.follow(user_id)
+    db.session.commit()
+    return redirect(request.referrer)

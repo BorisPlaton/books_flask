@@ -15,6 +15,7 @@ login_manager.login_view = 'authorization.login'
 login_manager.login_message = 'Войдите в аккаунт'
 login_manager.login_message_category = 'warning'
 mail = Mail()
+admin = Admin(name='Bookreview', template_mode='bootstrap4')
 
 profile = UploadSet("profile", IMAGES)
 bookcover = UploadSet("bookcover", IMAGES)
@@ -26,9 +27,14 @@ def create_app(config_class=BaseConfig):
     db.init_app(app)
     login_manager.init_app(app)
     mail.init_app(app)
+    admin.init_app(app)
 
     from .models import User, Review, Comment
     Migrate(app, db)
+
+    admin.add_view(ModelView(User, db.session, name='Пользователи'))
+    admin.add_view(ModelView(Review, db.session, name='Рецензии'))
+    admin.add_view(ModelView(Comment, db.session, name='Комментарии'))
 
     configure_uploads(app, (profile, bookcover))
 

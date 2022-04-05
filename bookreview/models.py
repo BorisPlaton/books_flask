@@ -172,6 +172,10 @@ class User(db.Model, UserMixin):
     def followers_amount(self):
         return len(self.followers.all())
 
+    @property
+    def user_feed(self):
+        return Review.query.join(followers, Review.author_id == followers.c.followed).filter(self.id == followers.c.follower)
+
     def is_following(self, user_id):
         return self.followed.filter(followers.c.followed == user_id).first()
 

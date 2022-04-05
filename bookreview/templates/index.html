@@ -8,7 +8,15 @@
 	<div class="row row-cols-md-3 row-cols-1">
 
 		<div class="col-12 pb-4 border-bottom mb-3">
-			<h2 class="fw-light m-0">{% if review_title %} «{{review_title}}» {% else %}Свежие записи{% endif %}</h2>
+			<h2 class="fw-light m-0">
+				{% if review_title=="all" %}
+					Свежие записи \ <a href="{{ url_for('main.index', review_title='user') }}" class="link-primary fs-4">Мои подписки</a>
+				{% elif review_title=="user" %}
+					<a href="{{ url_for('main.index') }}" class="link-primary fs-4">Свежие записи</a> / Мои подписки
+				{% else %}
+					«{{review_title}}»
+				{% endif %}
+			</h2>
 		</div>
 
 		{% if reviews.items %}

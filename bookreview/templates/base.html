@@ -139,6 +139,12 @@
 									<div>
 										<a href="{{ url_for('main.index') }}" class="sidebar_link"><i class="bi bi-house me-1"></i>Главная страница</a>
 									</div>
+									<!-- ADMIN PANEL -->
+									{% if current_user.is_admin() %}
+									<div>
+										<a href="#" class="link-success"><i class="bi bi-house me-1"></i>Админ-панель</a>
+									</div>
+									{% endif %}
 									<!-- WRITE A NEW REVIEW -->
 									<div>
 										<a href="{{ url_for('book.write_review', user_id=current_user.id) }}" class="sidebar_link"><i class="bi bi-blockquote-right me-1"></i>Сделать запись</a>

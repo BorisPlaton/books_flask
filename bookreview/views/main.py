@@ -17,17 +17,20 @@ def index():
     """
     search_form = SearchQuery()
     page = request.args.get("page", 1, type=int)
-    review_title = request.args.get('review_title', "all")
+    review_title = request.args.get('review_title')
+    option = request.args.get('option')
 
-    if review_title == "all":
-        reviews = Review.query.order_by(Review.date.desc(), Review.popularity.desc()).paginate(per_page=12, page=page)
-    elif review_title == "user":
+    if option == "user" and current_user.is_authenticated:
         reviews = current_user.user_feed.paginate(per_page=12, page=page)
-    else:
+    elif review_title:
         reviews = Review.query.join(Book, Review.book_id == Book.id).filter(
             Book.title.like(f"%{review_title}%")).order_by(Review.date.desc(), Review.popularity.desc()).paginate(
             per_page=12, page=page)
-    return render_template('index.html', reviews=reviews, search_form=search_form, review_title=review_title)
+    else:
+        reviews = Review.query.order_by(Review.date.desc(), Review.popularity.desc()).paginate(per_page=12, page=page)
+        option = "all"
+
+    return render_template('index.html', reviews=reviews, option=option, search_form=search_form, review_title=review_title)
 
 
 @main.route('/search_bar', methods=["POST"])

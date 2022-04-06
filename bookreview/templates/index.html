@@ -9,9 +9,9 @@
 
 		<div class="col-12 pb-4 border-bottom mb-3">
 			<h2 class="fw-light m-0">
-				{% if review_title=="all" %}
-					Свежие записи \ <a href="{{ url_for('main.index', review_title='user') }}" class="link-primary fs-4">Мои подписки</a>
-				{% elif review_title=="user" %}
+				{% if option=="all" %}
+					Свежие записи {% if current_user.is_authenticated %}\ <a href="{{ url_for('main.index', option='user') }}" class="link-primary fs-4">Мои подписки</a>{% endif %}
+				{% elif option=="user" and current_user.is_authenticated %}
 					<a href="{{ url_for('main.index') }}" class="link-primary fs-4">Свежие записи</a> / Мои подписки
 				{% else %}
 					«{{review_title}}»
@@ -97,9 +97,9 @@
 		<div class=" my-3 bg-light rounded p-3 mt-3 mb-0">
 			{% for page in reviews.iter_pages(left_edge=2, right_edge=2, left_current=3, right_current=3) %}
 				{% if reviews.page == page %}
-					<a href="{{ url_for('main.index', page=page, review_title=review_title) }}" class="link-dark me-1">{{ page }}</a>
+					<a href="{{ url_for('main.index', page=page, option=option, review_title=review_title) }}" class="link-dark me-1">{{ page }}</a>
 				{% elif page %}
-					<a href="{{ url_for('main.index', page=page, review_title=review_title) }}" class="link-primary me-1">{{ page }}</a>
+					<a href="{{ url_for('main.index', page=page, option=option, review_title=review_title) }}" class="link-primary me-1">{{ page }}</a>
 				{% endif %}
 			{% endfor %}
 		</div>

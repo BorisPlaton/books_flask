@@ -27,7 +27,6 @@ def month_translate(data: str, lang='rus') -> str:
         }
     }
     if month:
-        assert month.group().lower() in month_table[lang]
         return data.replace(month.group(), month_table[lang][month.group().lower()].capitalize())
 
 

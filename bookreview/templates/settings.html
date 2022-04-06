@@ -64,52 +64,58 @@ DONT PUT THIS IN THE ANOTHER PLACE DUE IT WILL NOT WORK.
 
 
 <!-- SETTING PAGE -->
-<div class="col bg-light p-4 rounded">
+<div class="col">
+	<div class="bg-light p-4 rounded">
 	
-	<div class="row border-bottom pb-3 align-items-top">
+	<div class="pb-3 align-items-top border-bottom">
+	<div class="row">
 
 		<!-- PROFILE PIC -->
-		<div class="col-lg-3 p-0 d-flex flex-column align-items-center justify-content-center">
+		<div class="col-lg-3">
+			<div class=" p-0 d-flex flex-column align-items-center justify-content-center">
 
-			<div class="user_photo rounded-circle" style="background-image: url({{ url_for('static', filename='profile_img/' + current_user.profile_photo) }});">
-				<div class="holder rounded-circle d-flex justify-content-center align-items-center">
+				<div class="user_photo rounded-circle" style="background-image: url({{ url_for('static', filename='profile_img/' + current_user.profile_photo) }});">
+					<div class="holder rounded-circle d-flex justify-content-center align-items-center">
 
-					<!-- ACTIVATE MODAL WINDOW BUTTON -->
-					<button type="button" class="btn click-btn-icon p-5 border-none" data-bs-toggle="modal" data-bs-target="#loadUserPhotoModal">
-					  <i class="bi bi-camera-fill text-light fs-5"></i>
-					</button>
+						<!-- ACTIVATE MODAL WINDOW BUTTON -->
+						<button type="button" class="btn click-btn-icon p-5 border-none" data-bs-toggle="modal" data-bs-target="#loadUserPhotoModal">
+						  <i class="bi bi-camera-fill text-light fs-5"></i>
+						</button>
 
+					</div>
 				</div>
-			</div>
 
-			<div>
-				<!-- LOAD PHOTO FORM'S ERRORS -->
-				{% for error in load_photo_form.photo.errors %}
-            <small class="form-text text-danger m-0">
-                {{ error }}
-            </small>
-        {% endfor %}
-			</div>
+				<div>
+					<!-- LOAD PHOTO FORM'S ERRORS -->
+					{% for error in load_photo_form.photo.errors %}
+	            <small class="form-text text-danger m-0">
+	                {{ error }}
+	            </small>
+	        {% endfor %}
+				</div>
 
-			<!-- DELETE PHOTO BUTTON -->
-			<div class="mt-2">
-				<form action="{{ url_for('settings.delete_photo_def') }}" method="post" novalidate>
-					{{ delete_photo_form.csrf_token }}
-					{{ delete_photo_form.submit(class='btn btn-outline-danger btn-sm', placeholder='Удалить фото')}}
-				</form>
-			</div>
+				<!-- DELETE PHOTO BUTTON -->
+				<div class="mt-2">
+					<form action="{{ url_for('settings.delete_photo_def') }}" method="post" novalidate>
+						{{ delete_photo_form.csrf_token }}
+						{{ delete_photo_form.submit(class='btn btn-outline-danger btn-sm', placeholder='Удалить фото')}}
+					</form>
+				</div>
 
+			</div>
 		</div>
 
 		<!-- USER INFO -->
-		<div class="col-lg-9 p-0">
+		<div class="col-lg-9">
 
 			<div class="row g-3 lead">
 
 				<!-- EMAIL -->
-				<div class="col-lg-6 d-flex flex-column">
-					<h5 class="text-secondary mb-0">Почта:</h5>
-					<span>{{ current_user.email }}</span>
+				<div class="col-lg-6">
+					<div class="d-flex flex-column">
+						<h5 class="text-secondary mb-0">Почта:</h5>
+						<span>{{ current_user.email }}</span>
+					</div>
 				</div>
 
 				<!-- USERNAME -->
@@ -148,14 +154,17 @@ DONT PUT THIS IN THE ANOTHER PLACE DUE IT WILL NOT WORK.
 
 	</div>
 
-		<div class="col mt-4">
-			<p class="mb-1">
-				<small class="text-secondary">
-					Скоро здесь появится что-то ещё!
-				</small>
-			</p>
-		</div>
+	</div>
 
+			<div class="col mt-4">
+				<p class="mb-1">
+					<small class="text-secondary">
+						Скоро здесь появится что-то ещё!
+					</small>
+				</p>
+			</div>
+			
+</div>
 </div>
 
 {% endblock %}

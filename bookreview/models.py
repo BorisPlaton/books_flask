@@ -21,6 +21,10 @@ user_dislikes = db.Table('user_dislikes',
                          db.Column('user_id', db.Integer, db.ForeignKey('user.id', ondelete='CASCADE')),
                          db.Column('review_id', db.Integer, db.ForeignKey('review.id', ondelete='CASCADE')))
 
+followers = db.Table('followers',
+                     db.Column('follower', db.Integer, db.ForeignKey('user.id', ondelete='CASCADE')),
+                     db.Column('followed', db.Integer, db.ForeignKey('user.id', ondelete='CASCADE')))
+
 
 class Permissions:
     """
@@ -90,6 +94,10 @@ class User(db.Model, UserMixin):
     dislikes = db.relationship("Review", backref="users_dislike", secondary=user_dislikes, passive_deletes=True)
     comments = db.relationship("Comment", backref="author")
     books = db.relationship("Book", backref="user", passive_deletes=True, lazy='dynamic')
+    # На кого подписан
+    followed = db.relationship("User", backref=db.backref('followers', lazy='dynamic'),
+                               secondary=followers, lazy='dynamic',
+                               primaryjoin=(followers.c.follower == id), secondaryjoin=(followers.c.followed == id))
 
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
@@ -147,6 +155,43 @@ class User(db.Model, UserMixin):
     @property
     def popularity(self):
         return sum([review.popularity for review in self.reviews])
+
+    @property
+    def reviews_amount(self):
+        return len(list(self.reviews))
+
+    @property
+    def books_amount(self):
+        return len(list(self.books))
+
+    @property
+    def follow_amount(self):
+        return len(self.followed.all())
+
+    @property
+    def followers_amount(self):
+        return len(self.followers.all())
+
+    @property
+    def user_feed(self):
+        return Review.query.join(followers, Review.author_id == followers.c.followed).filter(self.id == followers.c.follower)
+
+    def is_following(self, user_id):
+        return self.followed.filter(followers.c.followed == user_id).first()
+
+    def follow(self, user_id):
+        if not self.is_following(user_id):
+            user = User.query.get(user_id)
+            self.followed.append(user)
+
+    def unfollow(self, user_id):
+        if self.is_following(user_id):
+            user = User.query.get(user_id)
+            self.followed.remove(user)
+
+    def promote(self, role):
+        new_role = Role.query.filter_by(role=role).first()
+        self.role = new_role or self.role
 
     def confirm_token(self, token, expiration=3600):
         s = Serializer(os.environ.get('SECRET_KEY'))
@@ -251,7 +296,7 @@ class Book(db.Model):
     # Пользователь, который создал эту книгу
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
 
-    review = db.relationship('Review', backref='book', passive_deletes=True, lazy=True)
+    review = db.relationship('Review', backref='book', passive_deletes=True)
 
     @staticmethod
     def create_fake(count=25):

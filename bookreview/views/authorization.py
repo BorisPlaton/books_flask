@@ -154,7 +154,7 @@ def register():
                     password=register_form.password.data)
         db.session.add(user)
         db.session.commit()
-        login_user(user)
+        login_user(user, remember=True)
         return redirect(url_for('authorization.send_confirm_message'))
 
     return render_template('register.html', form=register_form)

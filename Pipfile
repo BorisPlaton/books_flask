@@ -16,6 +16,7 @@ pymysql = "*"
 wtforms-sqlalchemy = "*"
 forgerypy = "*"
 flask-admin = "*"
+coverage = "*"
 
 [dev-packages]
 
